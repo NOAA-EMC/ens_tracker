@@ -24,8 +24,7 @@ if [ ${pmodel} = 'ens' ]; then
 #  export DATAin=/com/gens/prod/gefs.${JYYYY}${JMM}${JDD}/${JCYC}/track
   export DATAin=${COMOUT}
   memblist="c00 p01 p02 p03 p04 p05 p06 p07 p08 p09 p10 \
-                p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 \
-                p21 p22 p23 p24 p25 p26 p27 p28 p29 p30"
+                p11 p12 p13 p14 p15 p16 p17 p18 p19 p20"
   hurlist="01 02 03 04 05 06 07 08 09 10 \
            11 12 13 14 15 16 17 18 19 20 \
            21 22 23 24 25 26 27 28 29 30 \

@@ -24,7 +24,7 @@ c          integer       atx_nw_quad     ! Wind radius in NW quad (nm)
       end module define_atcfunix_rec
 
       module maxparms
-        integer, parameter :: ncmaxmem = 30 ! max # ncep ensemble perts
+        integer, parameter :: ncmaxmem = 20 ! max # ncep ensemble perts
         integer, parameter :: nrmaxmem = 10 ! max # Tom ensemble perts
         integer, parameter :: n0maxmem = 20 ! max # ncep_bc ensemble perts
         integer, parameter :: h0maxmem = 20 ! max # hwrf ensemble
@@ -76,7 +76,7 @@ cJ.Peng-------2010-10-29------------2010-11-02-----------------
         integer, parameter :: d4maxmem =  4 ! max # AVNO+CMC+EMX+3EMN
         integer, parameter :: d2maxmem =  2 ! max # 3EMN+3DET..
 
-        integer, parameter :: ncminmem = 12 ! min # of ncep ensemble 
+        integer, parameter :: ncminmem =  8 ! min # of ncep ensemble 
                          ! perts needed at a given fcst hr to get a mean
         integer, parameter :: nrminmem =  4 ! min # of Tom ensemble
         integer, parameter :: n0minmem =  8 ! min # of ncep_bc ensemble
@@ -149,8 +149,7 @@ c                              ! which we'll carry out the accum probs
         character*4 :: ncperts(ncmaxmem) = (/'AP01','AP02','AP03'
      &          ,'AP04','AP05','AP06','AP07','AP08','AP09','AP10'
      &          ,'AP11','AP12','AP13','AP14','AP15','AP16','AP17'
-     &          ,'AP18','AP19','AP20','AP21','AP22','AP23','AP24'
-     &          ,'AP25','AP26','AP27','AP28','AP29','AP30'/)
+     &          ,'AP18','AP19','AP20'/)
 
         character*4 :: nrperts(nrmaxmem) = (/'GR01','GR02','GR03'
      &          ,'GR04','GR05','GR06','GR07','GR08','GR09','GR10'

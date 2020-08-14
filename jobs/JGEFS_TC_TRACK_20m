@@ -77,15 +77,14 @@ export cmodel=ens
 export loopnum=1
 export ymdh=${PDY}${cyc}
 
-export ensdira=${COMINgefs}/atmos/pgrb2ap5
-export ensdirb=${COMINgefs}/atmos/pgrb2bp5
+export ensdira=${COMINgefs}/pgrb2ap5
+export ensdirb=${COMINgefs}/pgrb2bp5
 
 mkdir ${DATA}/${cmodel}
 cd ${DATA}/${cmodel}
 
 pertstring="c00 p01 p02 p03 p04 p05 p06 p07 p08 p09 p10
-                p11 p12 p13 p14 p15 p16 p17 p18 p19 p20
-                p21 p22 p23 p24 p25 p26 p27 p28 p29 p30"
+                p11 p12 p13 p14 p15 p16 p17 p18 p19 p20"
 
 #-----------input data checking -----------------
 ${USHens_tracker}/data_check.sh

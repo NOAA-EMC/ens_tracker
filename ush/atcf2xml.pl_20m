@@ -681,8 +681,7 @@ sub set_model_prefs {
 		$sub_center        = "EMC";
 		$more_info         = "http://www.nco.ncep.noaa.gov/pmb/nwprod/analysis/";
 		@atcf_model_name   = ('ac00','ap01','ap02','ap03','ap04','ap05','ap06','ap07','ap08','ap09','ap10',
-							'ap11','ap12','ap13','ap14','ap15','ap16','ap17','ap18','ap19','ap20',
-                                                        'ap21','ap22','ap23','ap24','ap25','ap26','ap27','ap28','ap29','ap30');
+							'ap11','ap12','ap13','ap14','ap15','ap16','ap17','ap18','ap19','ap20');
 		#$atcf_DIR          = "/com/gens/prod/gefs.$yyyymmdd/$hh/track";
 		#unless ($atcf_DIR) {$atcf_DIR = "/cpc/save/wx53mc/tracking/data/atcf/$yyyymmdd";}
 		unless ($atcf_DIR) {$atcf_DIR = "/global/noscrub/wx20rw/t/tracking/data/atcf/$yyyymmdd";}

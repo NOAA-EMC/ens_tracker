@@ -18,7 +18,7 @@ if [ ${cmodel} = 'gfs' ]; then
 
 elif [ ${cmodel} = "ens" ]; then
   datdir=$ensdira
-  leadhour=192
+  leadhour=240
   datfile=gep20.t${cyc}z.pgrb2a.0p50.f${leadhour} 
 
 elif [ ${cmodel} = "cmc" ]; then

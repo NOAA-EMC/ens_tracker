@@ -24,7 +24,7 @@
       end module define_atcfunix_rec
 
       module maxparms
-        integer, parameter :: ncmaxmem = 20 ! max # ncep ensemble perts
+        integer, parameter :: ncmaxmem = 30 ! max # ncep ensemble perts
         integer, parameter :: n0maxmem = 20 ! max # ncep_bc ensemble perts
         integer, parameter :: ukmaxmem = 23 ! max # UKMET ensemble perts
 
@@ -60,7 +60,7 @@ cJ.Peng-------2010-10-29------------2010-11-02-----------------
 c        integer, parameter :: ncminmem =  8 ! min # of ncep ensemble
 c  J.Peng----2012-02-28
 c  2-member for mean track calculation and at least 10% for probability
-        integer, parameter :: ncminmem =  2 ! min # of ncep ensemble 
+        integer, parameter :: ncminmem =  3 ! min # of ncep ensemble 
                          ! perts needed at a given fcst hr to get a mean
         integer, parameter :: n0minmem =  8 ! min # of ncep_bc ensemble
         integer, parameter :: ukminmem =  9 ! min # of UKMET ensemble
@@ -119,7 +119,8 @@ c                              ! which we'll carry out the accum probs
         character*4 :: ncperts(ncmaxmem) = (/'AP01','AP02','AP03'
      &          ,'AP04','AP05','AP06','AP07','AP08','AP09','AP10'
      &          ,'AP11','AP12','AP13','AP14','AP15','AP16','AP17'
-     &          ,'AP18','AP19','AP20'/)
+     &          ,'AP18','AP19','AP20','AP21','AP22','AP23','AP24'
+     &          ,'AP25','AP26','AP27','AP28','AP29','AP30'/)
 
 c        character*4 :: ncperts(ncmaxmem) = (/'GE01','GE02','GE03'
 c     &          ,'GE04','GE05','GE06','GE07','GE08','GE09','GE10'

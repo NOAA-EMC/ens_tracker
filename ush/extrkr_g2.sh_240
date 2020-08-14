@@ -182,7 +182,7 @@ case ${cmodel} in
        ensgfileb=ge${pert}.t${cyc}z.pgrb2b.0p50.f          ;
 
        vit_incr=6                                          ;
-       fcstlen=192                                         ;
+       fcstlen=240                                         ;
        fcsthrs=$(seq -w -s' ' 0 $vit_incr $fcstlen)        ;
        atcfnum=91                                          ;
        pert_posneg=` echo "${pert}" | cut -c1-1`           ;

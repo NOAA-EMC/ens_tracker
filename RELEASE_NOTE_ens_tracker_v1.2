@@ -1,3 +1,31 @@
+Release Note:  ens_tracker.v1.2.1 (2020/08/13)
+This version is based on /gpfs/hps/nco/ops/nwpara/ens_tracker.v1.2.0
+This package is updated for GEFS-V12 (FV3-GEFS) tracker (31-members and 192hrs tracking).
+LUNA/SURGE: /gpfs/hps3/emc/ensemble/save/Jiayi.Peng/ens_tracker.v1.2.1_to_NCO
+(1)./control
+jgefs_track_00.ecf   .... updated with 5 nodes
+jgefs_genesis_00.ecf .... updated with 5 nodes
+
+(2)./fix
+ens.tracker_leadtimes .... updated with 11520 minutes (8 days, GEFS)
+
+(3)./jobs
+JGEFS_TC_TRACK      .... updated for 31-member (gefs)
+
+(4)./script
+exgefs_tc_genesis.sh .... updated for 31 members (gefs)
+
+(5)./ush
+atcf_2_cxml.sh  .... updated for 31 members (gefs)
+atcf2xml.pl     .... updated for 31 members (gefs)
+data_check.sh  .... updated for 192hr (8 days, gefs)
+extrkr_g2.sh   .... updated for 192hr (8 days, gefs)
+
+(6) ./sorc
+./ens_trak_ave.fd/ens_trak_ave.f .... changed for 30-member mean (gefs)
+./ens_trak_ave_2d.fd/ens_trak_ave_2d.f .... changed for 30-member mean (gefs)
+
+
 Release Note:  ens_tracker.v1.2.0 (2020/08/07)
 This version is based on /gpfs/hps/nco/ops/nwprod/ens_tracker.v1.1.18.
 A new component (FSU TC genesis for GFS forecast) is added in this package.
