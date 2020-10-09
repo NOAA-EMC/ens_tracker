@@ -313,7 +313,7 @@ d6ahead_str="${d6ahead_ymd} ${d6ahead_hh}00"
 if [ ${modtyp} = 'global' ]
 then
 #  synvitdir=${COMROOT}/gfs/prod/gfs.${PDY}
-  synvitdir=${COMINgfs:?}/${cyc}
+  synvitdir=${COMINgfs:?}/${cyc}/atmos
   synvitfile=gfs.t${cyc}z.syndata.tcvitals.tm00
 #  synvit6ago_dir=${COMROOT}/gfs/prod/gfs.${d6ago_4ymd}
   synvit6ago_dir=${synvitdir%.*}.${d6ago_4ymd}/${d6ago_hh}

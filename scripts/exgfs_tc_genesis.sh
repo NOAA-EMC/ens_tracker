@@ -5,7 +5,7 @@ export cmodel=gfs
 export loopnum=1
 export ymdh=${PDY}${cyc}
 
-export gfsdir=${COMINgfs}/${cyc}
+export gfsdir=${COMINgfs}/${cyc}/atmos
 
 #---- first run to get GFS genesis vital at time=00 06 12 18Z -----------
 

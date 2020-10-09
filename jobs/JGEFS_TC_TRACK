@@ -55,7 +55,7 @@ setpdy.sh
 # Define COM directories
 ##############################################
 export JYYYY=`echo ${PDY} | cut -c1-4`
-export COMINgefs=${COMINgefs:-$(compath.py gens/prod/${RUN}.${PDY})/${cyc}}
+export COMINgefs=${COMINgefs:-$(compath.py gefs/prod)/${RUN}.${PDY}/${cyc}}
 
 export COMINgfs=${COMINgfs:-$(compath.py gfs/prod/gfs.$PDY)}
 export COMINsyn=${COMINsyn:-$(compath.py gfs/prod/syndat)}

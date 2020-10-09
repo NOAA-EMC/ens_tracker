@@ -12,7 +12,7 @@ export SLEEP_INT=60
 SLEEP_LOOP_MAX=`expr $SLEEP_TIME / $SLEEP_INT`
 
 if [ ${cmodel} = "gfs" ]; then
-  datdir=${gfsdir}/gfs.${PDY}/${cyc}
+  datdir=${COMINgfs}/gfs.${PDY}/${cyc}/atmos
   vit_incr=${FHOUT_CYCLONE:-6}                        
   fcstlen=${FHMAX_CYCLONE:-180}                       
   fcsthrs=$(seq -f%03g -s' ' 0 $vit_incr $fcstlen)    

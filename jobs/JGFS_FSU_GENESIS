@@ -59,6 +59,7 @@ setpdy.sh
 # Define COM directories
 ##############################################
 export COMOUT=${COMOUT:-${COMROOT:?}/${NET}/${envir}/${RUN}.${PDY}/${cyc}/tcgenesis}
+export COMINgfs=${COMINgfs:-$(compath.py gfs/prod)}
 mkdir -m 775 -p $COMOUT
 
 msg="HAS BEGUN on `hostname`"

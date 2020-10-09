@@ -205,7 +205,7 @@ case ${cmodel} in
   gfs) set +x; echo " "                                    ;
        echo " ++ operational FV3-GFS chosen"               ;
        echo " "; set -x                                    ;
-       gfsdir=${gfsdir:-${COMINgfs:?}/${cyc}}                     ;
+       gfsdir=${gfsdir:-${COMINgfs:?}/${cyc}/atmos}                     ;
        gfsgfile=gfs.t${cyc}z.pgrb2.0p25.f                  ;
 
        vit_incr=${FHOUT_CYCLONE:-6}                        ;
@@ -638,7 +638,7 @@ future_str="${future_ymd} ${future_hh}00"
 if [ ${modtyp} = 'global' ]
 then
 #  synvitdir=${COMROOT}/gfs/prod/gfs.${PDY}
-  synvitdir=${COMINgfs:?}/${cyc}
+  synvitdir=${COMINgfs:?}/${cyc}/atmos
   synvitfile=gfs.t${cyc}z.syndata.tcvitals.tm00
 #  synvitold_dir=${COMROOT}/gfs/prod/gfs.${old_4ymd}
   synvitold_dir=${synvitdir%.*}.${old_4ymd}/${old_hh}

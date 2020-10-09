@@ -3,7 +3,6 @@ set -x
 
 export cmodel=gfs
 export ymdh=${PDY}${cyc}
-export gfsdir=${gfsdir:-/gpfs/dell1/nco/ops/com/gfs/prod}
 
 export pert="p01"
 pertdir=${DATA}/${cmodel}/${pert}
@@ -22,12 +21,12 @@ outfile=${pertdir}/fsugenesis.${cmodel}.${pert}.${ymdh}.out
 if [[ -d /gpfs/hps && -e /etc/SuSE-release ]] ; then
   # We are on NOAA Luna or Surge
   machine=cray
-  ${APRUNTRACK} ${USHens_tracker}/extrkr_fsu.sh ${cmodel} ${ymdh} ${pertdir} ${gfsdir} #2>&1 >${outfile}
+  ${APRUNTRACK} ${USHens_tracker}/extrkr_fsu.sh ${cmodel} ${ymdh} ${pertdir} ${COMINgfs} #2>&1 >${outfile}
 
 elif [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then
   # We are on NOAA Mars or Venus
   machine=dell
-  ${USHens_tracker}/extrkr_fsu.sh ${cmodel} ${ymdh} ${pertdir} ${gfsdir}  #2>&1 >${outfile}
+  ${USHens_tracker}/extrkr_fsu.sh ${cmodel} ${ymdh} ${pertdir} ${COMINgfs}  #2>&1 >${outfile}
 
 else
   export machine=unknown
