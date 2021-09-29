@@ -1,0 +1,7 @@
+Library is defined in:
+  ./ens_tracker.v1.3.0/versions/build.ver ---- for WCOSS2
+
+To build codes:
+  cd /XXXX/sorc
+  ./build.sh
+
