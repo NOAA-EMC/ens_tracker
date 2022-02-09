@@ -1,0 +1,60 @@
+#!/bin/bash
+#PBS -N ens_tracker_navgem_tc_genesis_%CYC%
+#PBS -j oe
+#PBS -A %PROJ%-%PROJENVIR%
+#PBS -q %QUEUE%
+#PBS -S /bin/bash
+#PBS -l select=1:ncpus=1:mem=4GB
+#PBS -l walltime=00:30:00
+#PBS -l debug=true
+
+export model=ens_tracker
+%include <head.h>
+%include <envir-p1.h>
+#
+export PACKAGEHOME=%PACKAGEHOME%
+export cyc=%CYC%
+
+module load PrgEnv-intel/$PrgEnv_intel_ver
+module load intel/$intel_ver
+module load craype/$craype_ver
+
+module load hdf5/$hdf5_ver
+module load netcdf/$netcdf_ver
+
+module load g2/$g2_ver
+module load jasper/$jasper_ver
+module load libpng/$libpng_ver
+module load zlib/$zlib_ver
+
+module load w3emc/$w3emc_ver
+module load bacio/$bacio_ver
+
+module load libjpeg/$libjpeg_ver
+module load grib_util/$grib_util_ver
+module load wgrib2/$wgrib2_ver
+
+module list
+
+# CALL executable job script here
+${PACKAGEHOME}/jobs/JNAVGEM_TC_GENESIS
+
+if [ $? -ne 0 ]; then
+  ecflow_client --abort
+  exit
+fi
+
+%include <tail.h>
+%manual
+######################################################################
+#PURPOSE:  Executes the job that creates NAVGEM TC track forecasts
+######################################################################
+
+######################################################################
+# Job specific troubleshooting instructions:
+#  see generic troubleshoot manual page
+#
+######################################################################
+
+# include manual page below
+%end

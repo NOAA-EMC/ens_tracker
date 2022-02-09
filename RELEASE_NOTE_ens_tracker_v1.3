@@ -1,0 +1,560 @@
+Release Note:  ens_tracker.v1.3.1 (2022/02/09)
+
+Adding a new J-job to meet NHC's request:
+Trigering ECMWF track job at the time when the 180hr-data is avaible.
+-----------------------------------------------------------------------
+This version is copied from: /lfs/h1/ops/para/packages/ens_tracker.v1.3.0
+
+/lfs/h2/emc/vpppg/noscrub/Jiayi.Peng/ens_tracker.v1.3.1_to_NCO
+
+(1) ./jobs/JEMY_TC_TRACK ---- added----------
+
+(2) ./ush/data_check_emy_180hr.sh ---- added----------
+
+(3) ./ush/extrkr_emy_g1.sh ---- added----------
+
+
+Release Note:  ens_tracker.v1.3.0 (2021/10/22)
+This version is copied from /gpfs/hps/nco/ops/nwprod/ens_tracker.v1.2.2
+It is prepared for ens_tracker transition to WCOSS2.
+Cactus: /lfs/h2/emc/vpppg/noscrub/Jiayi.Peng/ens_tracker.v1.3.0_to_NCO
+
+The update is included in the following files.
+(1) ./sorc
+./gettrk_gfs.fd/gettrk_main_gfs.f  ---- updated ----
+< c J.Peng---09/01/2021 to free the memory in reading GRIB2 data
+<           call gf_free (gfld)
+18052,18053d18049
+< c J.Peng---09/01/2021 to free the memory in reading GRIB2 data
+<               call gf_free (gfld)
+20716,20717d20711
+< c J.Peng---09/01/2021 to free the memory in reading GRIB2 data
+<         call gf_free (gfld)
+
+./gettrk_g2.fd/gettrk_main_g2.f  ---- updated ----
+< c J.Peng---09/01/2021 to free the memory in reading GRIB2 data
+<           call gf_free (gfld)
+15142,15143d15139
+< c J.Peng---09/01/2021 to free the memory in reading GRIB2 data
+<               call gf_free (gfld)
+16661,16662d16656
+< c J.Peng---09/01/2021 to free the memory in reading GRIB2 data
+<         call gf_free (gfld)
+
+./gettrk_gen_g2.fd/gettrk_gen_main_g2.f ---- updated ----
+< c J.Peng---09/01/2021 to free the memory in reading GRIB2 data
+<           call gf_free (gfld)
+15409,15410d15406
+< c J.Peng---09/01/2021 to free the memory in reading GRIB2 data
+<               call gf_free (gfld)
+16936,16937d16931
+< c J.Peng---09/01/2021 to free the memory in reading GRIB2 data
+<         call gf_free (gfld)
+
+Module_ens_tracker.v1.1.8_Cray-intel-haswell  ---- removed -------
+Module_ens_tracker_v1.1  ---- removed -------
+
+build.sh  ---- updated ---------
+README.build ---- updated ---------
+
+(2) ./versions  ---- added ----
+build.ver  
+run.ver   
+
+(3)./modulefiles ---- added ----
+build.module_load
+run.module_load
+
+(4) ./control  ---- added as NCO's reference (Job-run Setting)----
+jgfs_fsu_genesis_00.ecf   jgfs_genesis_00.ecf 
+jgfs_track_avno_00.ecf    jgfs_track_avnx_00.ecf 
+jgefs_track_00.ecf        jgefs_genesis_00.ecf 
+
+jcmc_track_00.ecf         jcmc_genesis_00.ecf 
+jcens_track_00.ecf        jcens_genesis_00.ecf 
+
+jnavgem_track_00.ecf      jnavgem_genesis_00.ecf 
+jfens_track_00.ecf        jfens_genesis_00.ecf 
+
+jecmwf_track_00.ecf       jecmwf_genesis_00.ecf 
+jeens_grib_00.ecf         jeens_track_00.ecf 
+jeens_genesis_00.ecf  
+
+jukmet_grib_00.ecf        jukmet_track_00.ecf 
+jukmet_genesis_00.ecf
+
+(5) ./jobs  ---- the file updated  ----
+JGFS_FSU_GENESIS       JGFS_TC_TRACK_AVNO 
+JGFS_TC_TRACK_AVNX     JGFS_TC_GENESIS 
+JGEFS_TC_TRACK         JGEFS_TC_GENESIS 
+
+JCMC_TC_TRACK          JCMC_TC_GENESIS 
+JCENS_TC_TRACK         JCENS_TC_GENESIS 
+
+JNAVGEM_TC_TRACK       JNAVGEM_TC_GENESIS 
+JFENS_TC_TRACK         JFENS_TC_GENESIS 
+
+JECMWF_TC_TRACK        JECMWF_TC_GENESIS 
+JEENS_GRIB             JEENS_TC_TRACK 
+JEENS_TC_GENESIS  
+
+JUKMET_GRIB            JUKMET_TC_TRACK 
+JUKMET_TC_GENESIS  
+
+(6) ./scripts  ---- the file updated ----
+exgfs_fsu_genesis.sh    exgfs_tc_genesis.sh 
+exgefs_tc_genesis.sh    excmc_tc_genesis.sh 
+excens_tc_genesis.sh    exnavgem_tc_genesis.sh 
+exfens_tc_genesis.sh    execmwf_tc_genesis.sh 
+exeens_tc_genesis.sh    exukmet_grib.sh 
+exukmet_tc_genesis.sh 
+
+(7) ./ush/FSUgenesisPY
+pathlib.py is renamed as pathlibTC.py
+pathlib.pyc is rename as pathlibTC.pyc
+
+
+Release Note:  ens_tracker.v1.2.2 (2020/10/08)
+This version is copied from: /gpfs/hps/nco/ops/nwprod/ens_tracker.v1.2.1
+It is prepared for GFS-V16 path change (gfs.YYYYMMDD/cyc/atmos).
+
+The update is included in the following files.
+(1)./jobs
+JGFS_TC_TRACK_AVNO
+JGFS_TC_TRACK_AVNX
+
+(2)./scripts
+exgfs_tc_genesis.sh
+
+(3)./ush
+data_check_gfs_180hr.sh
+extrkr_fsu.sh
+extrkr_g1.sh
+extrkr_g2.sh
+extrkr_gen_g1.sh
+extrkr_gen_g2.sh
+extrkr_gfs.sh
+extrkr_tcv_g1.sh
+extrkr_tcv_g2.sh
+
+
+Release Note:  ens_tracker.v1.2.1 (2020/08/13)
+This version is based on /gpfs/hps/nco/ops/nwpara/ens_tracker.v1.2.0
+This package is updated for GEFS-V12 (FV3-GEFS) tracker (31-members and 192hrs tracking).
+LUNA/SURGE: /gpfs/hps3/emc/ensemble/save/Jiayi.Peng/ens_tracker.v1.2.1_to_NCO
+(1)./control
+jgefs_track_00.ecf   .... updated with 5 nodes
+jgefs_genesis_00.ecf .... updated with 5 nodes
+
+(2)./fix
+ens.tracker_leadtimes .... updated with 11520 minutes (8 days, GEFS)
+
+(3)./jobs
+JGEFS_TC_TRACK      .... updated for 31-member (gefs)
+
+(4)./script
+exgefs_tc_genesis.sh .... updated for 31 members (gefs)
+
+(5)./ush
+atcf_2_cxml.sh  .... updated for 31 members (gefs)
+atcf2xml.pl     .... updated for 31 members (gefs)
+data_check.sh  .... updated for 192hr (8 days, gefs)
+extrkr_g2.sh   .... updated for 192hr (8 days, gefs)
+
+(6) ./sorc
+./ens_trak_ave.fd/ens_trak_ave.f .... changed for 30-member mean (gefs)
+./ens_trak_ave_2d.fd/ens_trak_ave_2d.f .... changed for 30-member mean (gefs)
+
+
+Release Note:  ens_tracker.v1.2.0 (2020/08/07)
+This version is based on /gpfs/hps/nco/ops/nwprod/ens_tracker.v1.1.18.
+A new component (FSU TC genesis for GFS forecast) is added in this package.
+Luna/Surge: /gpfs/hps3/emc/ensemble/save/Jiayi.Peng/ens_tracker.v1.2.0_to_NCO
+The changes include:
+(0)RELEASE_NOTE_ens_tracker_v1.2 .... file name change
+
+(1)./ush/FSUgenesisPY  added with FSU TC genesis python package
+Please read "./ush/FSUgenesisPY/README_4_tclogg" for compile and run.
+
+(2)./ush/data_check_gfs_180hr.sh extrkr_fsu.sh .... added 
+
+(3)./scripts/exgfs_fsu_genesis.sh .... added
+
+(4)./jobs/JGFS_FSU_GENESIS .... added
+
+(5)./control/jgfs_fsu_genesis_00.ecf .... added
+
+Release Note:  ens_tracker.v1.1.16
+This package is updated for CMC deterministic forecast with NEW grib2 format dataset.
+(1)The code changes include:
+./sorc/gettrk_g2.fd/gettrk_main_g2.f
+c      data ig2_lev_11_cmcd /-3,-4,-3,-3,-4,-4,-3,-4,0,0,0,-4,-4,0/
+c      data ig2_lev_val_cmcd /85,7,85,85,7,7,85,7,0
+c     &                         ,10,10,5,5,40100/
+cJ.Peng----10/09/2019---------------------------
+      data ig2_lev_11_cmcd /-3,-4,-3,-3,-4,-4,-3,-4,-9999,0,0,-4,-4,0/
+      data ig2_lev_val_cmcd /85,7,85,85,7,7,85,7,-9999
+     &                         ,10,10,5,5,40100/
+./sorc/gettrk_gen_g2.fd/gettrk_gen_main_g2.f
+cJ.Peng---for CMC deterministic----------------------------------------
+c      data ig2_lev_11_cmcd /-3,-4,-3,-3,-4,-4,-3,-4,0,0,0
+c     &                   ,-4,-4,0,0,0/
+c      data ig2_lev_12_cmcd /85,7,85,85,7,7,85,7,0,10,10,5,5
+c     &                ,40100,50100,50000/
+cJ.Peng----10/09/2019---------------------------
+      data ig2_lev_11_cmcd /-3,-4,-3,-3,-4,-4,-3,-4,-9999,0,0
+     &                   ,-4,-4,0,0,0/
+      data ig2_lev_12_cmcd /85,7,85,85,7,7,85,7,-9999,10,10,5,5
+     &                ,40100,50100,50000/
+(2)The script changes include:
+./ush/extrkr_g2.sh extrkr_gen_g2.sh extrkr_tcv_g2.sh
+# J.Peng--04-05-2017--changing grid from 180E to 0E------------
+#  wgrib2 junk -small_grib 0:359.76 -90:90 junk2
+# J.Peng--10-09-2019----uncomment the next 4 lines --------
+    cp ${TRKDATA}/cmcgribfile.${PDY}${cyc} ${TRKDATA}/junk
+    rm -f ${TRKDATA}/cmcgribfile.${PDY}${cyc}
+    ${WGRIB2} ${TRKDATA}/junk -small_grib 0:359.76 -90:90 ${TRKDATA}/junk2
+    cp ${TRKDATA}/junk2 ${TRKDATA}/cmcgribfile.${PDY}${cyc}
+
+
+Release Note:  ens_tracker.v1.1.15
+This package is updated for FV3-GFS first implementation.
+
+(1)/gpfs/hps3/emc/ensemble/save/Jiayi.Peng/ens_tracker.v1.1.15_4_NCO/sorc
+
+Module_ens_tracker.v1.1.8_Cray-intel-haswell ...changed
+Module_ens_tracker_v1.1 ....changed
+build.sh  ....changed
+gettrk_gfs.fd....added
+
+The following codes have been changed for character length (old:120, new:255)
+gettrk_gfs.fd/gettrk_main_gfs.f:      character(255) gopen_g_file,gopen_i_file
+gettrk_g1.fd/gettrk_main_g1.f:      character(255) fnameg,fnamei
+gettrk_g2.fd/gettrk_main_g2.f:      character(255) gopen_g_file,gopen_i_file
+gettrk_gen_g1.fd/gettrk_main.gen_g1.f:      character(255) gopen_g_file,gopen_i_file
+gettrk_gen_g2.fd/gettrk_gen_main_g2.f:      character(255) gopen_g_file,gopen_i_file
+rhum_g2.fd/rhum_g2.f:      character(255) fnameg,fnamei,fnameo
+tave_g1.fd/tave_g1.f:      character(255) fnameg,fnamei,fnameo
+tave_g2.fd/tave_g2.f:      character(255) fnameg,fnamei,fnameo
+ushear_g1.fd/ushear_g1.f:      character(255) fnameg,fnamei,fnameo
+ushear_g2.fd/ushear_g2.f:      character(255) fnameg,fnamei,fnameo
+vint_g1.fd/vint_g1.f:      character(255) fnameg,fnamei,fnameo
+vint_g2.fd/vint_g2.f:      character(255) fnameg,fnamei,fnameo
+
+(2)./control
+jgfs_track_avno_00.ecf  is added.
+jgfs_track_avno_00.ecf_wcoss is added.
+jgfs_track_00.ecf is renamed as "jgfs_track_avnx_00.ecf"
+jgfs_track_00.ecf_wcoss is renamed as "jgfs_track_avnx_00.ecf_wcoss"
+
+(3)./jobs
+JGFS_TC_TRACK_AVNO is added.
+JGFS_TC_TRACK is renamed as "JGFS_TC_TRACK_AVNX"
+
+(4)./ush
+extrkr_gfs.sh is added.
+data_check_gfs.sh is added
+
+(5)In response GFS forecast data directory change (added with cyc),some scripts need modification:
+./jobs/JGFS_TC_TRACK_AVNO
+./jobs/JGFS_TC_TRACK_AVNX
+./scripts/exgfs_tc_genesis.sh
+./ush/data_check.sh
+./ush/data_check_gfs.sh
+./ush/extrkr_gfs.sh
+./ush/extrkr_g1.sh
+./ush/extrkr_g2.sh
+./ush/extrkr_gen_g1.sh
+./ush/extrkr_gen_g2.sh
+./ush/extrkr_tcv_g1.sh
+./ush/extrkr_tcv_g2.sh
+
+Release Note:  ens_tracker.v1.1.14
+
+The scripts are updated for UKMET_grib job failure on 11/02/2018 00Z 
+(1)./ens_tracker.v1.1.14/control
+jukmet_grib_00.ecf  ---- in MPMD run setting
+
+(2)./ens_tracker.v1.1.14/jobs
+JUKMET_GRIB  ---- updated
+JCENS_TC_GENESIS ---add one line "export cmodel=cens"
+
+(3)./ens_tracker.v1.1.14/ush
+data_check_ukmet.sh ---- added for UKMET GRIB1 data file checking
+
+(4)./ens_tracker.v1.1.14/scripts
+exukmet_grib.sh ---- updated 
+
+
+Release Note:  ens_tracker.v1.1.13
+
+Update the following three source files to fix the bug that caused the fens job failure 
+gettrk_g2.fd/gettrk_main_g2.f
+gettrk_gen_g1.fd/gettrk_main.gen_g1.f
+gettrk_gen_g2.fd/gettrk_gen_main_g2.f
+
+Release Note:  ens_tracker.v1.1.12
+
+This version could be run on WCOSS and CRAY machine. The changes include:
+(1)The Canadian Ensemble 0.5 degree GRIB2 data will be used for TC track/genesis calculations.
+(2)The Canadian deterministic forecast GRIB2 data (0.24 degree resolution) will be applied in TC track/genesis calculations.
+(3)The TC track/genesis data name will be changed for Navy Ensemble (FNMOC) to meet the request from NHC,i.e.,
+   nc00.t??z.cyclone.trackatcfunix is for control member TC track
+   np01.t??z.cyclone.trackatcfunix is for member-01 TC track
+   nemn.t??z.cyclone.trackatcfunix is for ensemble-mean TC track
+(4)The last 3-data for track-spread, standard deviation of minimum SLP,  and standard deviation of maximum surface wind speed in ensemble-mean TC track records will be removed.
+   The old data:
+     BB, 02, 2017053000, 03, FEMN, 024, 264N,  925E,  10, 1000, XX, 34, NEQ, 0000, 0000, 0000, 0000,   84,    2,   3
+   The new data:
+     BB, 02, 2017053000, 03, FEMN, 024, 264N,  925E,  10, 1000, XX, 34, NEQ, 0000, 0000, 0000, 0000
+(5)The new TC genesis file (such as aemn.trkprob.HC02.65nm.2017053000.indiv.gene) will include the location and genesis probability.
+   HC, 02, 2017053000, 03, AEMN, 120, 448N, 1707W,   5
+(6)The TC genesis files (named as storms.*.atcf_gen.altg.*) for each member of NCEP, Canadian and FNMOC ensembles will be posted on NCO FTP/web servers.
+(7)The TC track/genesis data will be located in /gpfs/hps/nco/ops/com/ens_tracker/prod
+The code/scripts are updated:
+(1) control....updated for Jiayi, not for NCO, which includes job-control for WCOSS/CRAY.
+(2) ecf....NCO needs to setup the ecf-files for CRAY.
+(3) exec....NCO compiles the codes on CRAY and generates the new EXEC files.
+(4) fix...adding 3 files: cmc.tracker_leadtimes
+          cmc_rh_levs.txt  cmc_rh_levs.txt_bak
+(5) jobs....All files were changed,i.e., gens----ens_tracker, adding $SITE for machine-control.
+(6) scripts....All files were changed,i.e., adding $SITE for machine-control.
+(7) sorc....adding 2 directories: readprobLL.fd  rhum_g2.fd
+(8) ush....All files were changed.
+
+Release Note:  ens_tracker.v1.1.10
+Applying new G2/libray in this package, to prevent GFS TC genesis job failure.
+(1) The changes for file ./sorc/Module_ens_tracker_v1.1
+    module load ibmpe/1.3.0.12 (the old version 1.3.0.10 replaced)
+    module load g2/v3.1.0  (the old version v2.5.0 replaced)
+    Please recompile with the new G2/library.
+(2) The new grib_util/v1.0.5 could not be applied for this packge, as the GEFS TC track/genesis jobs will be crashed.
+    Please keep using the old version. 		
+
+
+Release Note:  ens_tracker.v1.1.9
+Applying UK MetOffice higher resolution deterministic forecast for TC track/genesis jobs, we make the following changes:
+(1) control....updated for Jiayi, not for NCO.
+(2) ecf....NCO needs adding three ecf files for job control with UKMET TC track/genesis.
+(3) exec....NCO compiles the codes and generates the new EXEC files.
+(4) fix...adding 4 files: ukmet.genesis_leadtimes
+          ukmet.genesis_leadtimes_120  ukmet_hgt_levs.txt ukmet_tmp_levs.txt
+(5) jobs....adding 3 jobs: JUKMET_GRIB JUKMET_TC_GENESIS JUKMET_TC_TRACK
+(6) scripts....adding 2 files: ukmet_grib.sh exukmet_tc_genesis.sh
+(7) sorc....adding 3 directories: ukmet.fd filter_ukmet.fd ncep_tcv_ukmet.fd
+(8) ush....Changing data_check.sh extrkr_g1.sh extrkr_gen_g1.sh extrkr_tcv_g1.sh
+
+
+Release Note:  ens_tracker.v1.1.8
+Applying NAVGEM(0.5 degree data) and ECMWF (0.25 degree data) for TC track/genesis jobs, we make the following changes:
+
+Part 1: NAVGEM (0.5 degree forecast data)
+(1) ens_tracker.v1.1.8/ush/data_check.sh
+#  datfile=navgem_${PDY}${cyc}f${leadhour}.grib2
+  datfile=US058GMET-OPSbd2.NAVGEM${leadhour}-${PDY}${cyc}-NOAA-halfdeg.gr2
+
+(2) ens_tracker.v1.1.8/ush/extrkr_g2.sh
+#J.Peng-05-12-2016  ngpsgfile=navgem_${PDY}${cyc}f         ;
+#       ngemgfile=.grib2                                    ;
+   ngpsgfile=US058GMET-OPSbd2.NAVGEM                    ;
+   ngemgfile=-${PDY}${cyc}-NOAA-halfdeg.gr2             ;
+
+   vit_incr=6                                          ;
+   fcstlen=180                                         ;
+#J.Peng-05-12-2016   fcsthrs='000 006 012 018 024 030 036 042 048 054 060
+#                066 072 084 096 108 120 132 144 156 168 180';
+       fcsthrs=$(seq -f%03g -s' ' 0 $vit_incr $fcstlen)    ;
+
+(3) ens_tracker.v1.1.8/ush/extrkr_tcv_g2.sh
+#J.Peng-05-12-2016       ngpsgfile=navgem_${PDY}${cyc}f    ;
+#       ngemgfile=.grib2                                    ;
+   ngpsgfile=US058GMET-OPSbd2.NAVGEM                    ;
+   ngemgfile=-${PDY}${cyc}-NOAA-halfdeg.gr2               ;
+
+(4) ens_tracker.v1.1.8/ush/extrkr_gen_g2.sh
+#J.Peng-05-12-2016       ngpsgfile=navgem_${PDY}${cyc}f     ;
+#       ngemgfile=.grib2                                    ;
+   ngpsgfile=US058GMET-OPSbd2.NAVGEM                    ;
+   ngemgfile=-${PDY}${cyc}-NOAA-halfdeg.gr2             ;
+
+   vit_incr=6
+   fcstlen=120                                         ;
+#J.Peng-05-12-2016   fcsthrs=' 000 006 012 018 024 030 036 042 048 054
+#                 060 066 072 084 096 108 120'              ;
+       fcsthrs=$(seq -f%03g -s' ' 0 $vit_incr $fcstlen)    ;
+
+Part 2: ECMWF (0.25 degree forecast data) 
+(1) ens_tracker.v1.1.8/ush/data_check.sh
+#   datfile=ecens_DCD${immddhh}00${fmmddhh}001 # Original
+    if [ ${fmmddhh} -eq ${immddhh} ]; then
+      datfile=U1D${immddhh}00${fmmddhh}011
+    else
+      datfile=U1D${immddhh}00${fmmddhh}001
+    fi
+
+(2) ens_tracker.v1.1.8/ush/extrkr_g1.sh 
+#ec_hires_orig=ecens_DCD${immddhh}00${fmmddhh}001 # Original
+    if [ ${fmmddhh} -eq ${immddhh} ]; then
+      ec_hires_orig=U1D${immddhh}00${fmmddhh}011
+    else
+      ec_hires_orig=U1D${immddhh}00${fmmddhh}001
+    fi
+
+(3) ens_tracker.v1.1.8/ush/extrkr_tcv_g1.sh
+#   ec_hires_orig=ecens_DCD${immddhh}00${fmmddhh}001 # Original
+    if [ ${fmmddhh} -eq ${immddhh} ]; then
+      ec_hires_orig=U1D${immddhh}00${fmmddhh}011
+    else
+      ec_hires_orig=U1D${immddhh}00${fmmddhh}001
+    fi
+
+(4) ens_tracker.v1.1.8/ush/extrkr_gen_g1.sh
+#   ec_hires_orig=ecens_DCD${immddhh}00${fmmddhh}001 # Original
+    if [ ${fmmddhh} -eq ${immddhh} ]; then
+      ec_hires_orig=U1D${immddhh}00${fmmddhh}011
+    else
+      ec_hires_orig=U1D${immddhh}00${fmmddhh}001
+    fi
+
+(5) ens_tracker.v1.1.8/sorc/gettrk_g1.fd/gettrk_main_g1.f
+Line:4881
+c     parameter (jf=750*750,lugb=11,lugi=31)
+      parameter (jf=40000000,lugb=11,lugi=31)
+Line: 5422
+c     parameter (lugb=11,lugi=31,jf=750*750)
+      parameter (lugb=11,lugi=31,jf=40000000)
+
+(6) ens_tracker.v1.1.8/sorc/gettrk_gen_g1.fd/gettrk_main.gen_g1.f
+Line: 7730
+cJ.Peng----2016-03-04------------------------------
+c    &      ,imeanzeta(1),abs(igridzeta(1)),imeanzeta(2),abs(igridzeta(2))
+     &      ,abs(imeanzeta(1)),abs(igridzeta(1))
+     &      ,abs(imeanzeta(2)),abs(igridzeta(2))
+     
+Line:7753 
+cJ.Peng----2016-03-04------------------------------
+c    &      ,imeanzeta(1),abs(igridzeta(1)),imeanzeta(2),abs(igridzeta(2))
+     &      ,abs(imeanzeta(1)),abs(igridzeta(1))
+     &      ,abs(imeanzeta(2)),abs(igridzeta(2))
+Line: 7779 
+cJ.Peng----2016-03-04------------------------------
+c    &      ,imeanzeta(1),abs(igridzeta(1)),imeanzeta(2),abs(igridzeta(2))
+     &      ,abs(imeanzeta(1)),abs(igridzeta(1))
+     &      ,abs(imeanzeta(2)),abs(igridzeta(2))
+
+
+Release Note:  ens_tracker.v1.1.6
+Due to GEFS TC job was failed on 04/26/2016 00Z, we figured out one bug in the codes:
+(1) ens_tracker.v1.1.6/sorc/ens_trak_ave_2d.fd/ens_trak_ave_2d.f
+(2) ens_tracker.v1.1.6/sorc/ens_trak_ave.fd/ens_trak_ave.f
+(3) ens_tracker.v1.1.6/sorc/gettrk_g1.fd/gettrk_main_g1.f
+(4) ens_tracker.v1.1.6/sorc/gettrk_g2.fd/gettrk_main_g2.f
+(5) ens_tracker.v1.1.6/sorc/gettrk_gen_g1.fd/gettrk_main.gen_g1.f
+(6) ens_tracker.v1.1.6/sorc/gettrk_gen_g2.fd/gettrk_gen_main_g2.f
+We added the following lines in the above codes:
+c added on 04/28/2016--------------------------
+      if (cosanga < -1.0) then
+        cosanga = -1.0
+      endif
+c added on 04/28/2016--------------------------
+
+
+
+Release Note:  ens_tracker.v1.1.1
+
+ENS_TRACKER is a new application (model) which generates tropical cyclone (TC) track forecast and genesis probability forecast  from four global ensemble model output (GRIB2 or GRIB1 files).
+These global ensemble systems include GFS/GEFS ensemble, CMC/ CMCE ensemble, NAVGEM/FENS ensemble and ECMWF/ ECME ensemble.
+Note that the high resolution deterministic forecast of each system is treated as a member of the corresponding ensemble system.   
+
+v1.1.1 ----to be released by May/June 2015
+
+1.0 The first version in EE structure. 
+
+2.0 Output 
+    Replacing old TC track forecast products and generating new TC genesis probability forecast products as text files,
+      for global ensemble systems: GFS/GEFS, CMC/ CMCE, NAVGEM/FENS, ECMWF/(ECME), in their corresponding directories.
+
+3.0 Compute resource information
+
+    JGEFS_TC_TRACK    GEFS ensemble TC track forecast
+	1 node, 12+ minutes (or 3 nodes,  3+ minutes)
+
+    JGEFS_TC_GENESIS   GEFS ensemble TC genesis forecast
+	1 node, 12+ minutes (or 3 nodes,  3+ minutes)
+
+    JGFS_TC_TRACK    GFS TC track forecast
+	1 task, 4+ minutes
+
+    JGFS_TC_GENESIS    GFS TC genesis forecast
+	1 task, 14+ minutes 
+
+    JCENS_TC_TRACK   CMC ensemble TC track forecast
+	1 node, 12+ minutes (or 3 nodes,  3+ minutes)
+	Stopping job: /nwprod/naefs.v4.0.1/jobs/JCMC_ENS_POST 
+                      export RUN_TCTRACK=${RUN_TCTRACK:-YES} 
+                      Changed as:   export RUN_TCTRACK=${RUN_TCTRACK:-NO}
+
+    JCENS_TC_GENESIS   CMC ensemble TC genesis forecast
+	1 node, 12+ minutes (or 3 nodes,  3+ minutes)
+
+    JCMC_TC_TRACK  CMC deterministic  TC track forecast
+	1 task, 4+ minutes
+	Stopping job: /nwprod/naefs.v4.0.1/jobs/JCMC_HIRES_POST 
+                     sh ${UTILUSHnaefs}/extrkr.sh 
+                     Changed as: #sh ${UTILUSHnaefs}/extrkr.sh
+
+    JCMC_TC_GENESIS CMC deterministic  TC genesis forecast
+	1 task, 14+ minutes 
+
+    JFENS_TC_TRACK  FNMOC ensemble TC track forecast
+	1 node, 12+ minutes (or 3 nodes,  3+ minutes)
+
+    JFENS_TC_GENESIS FNMOC ensemble TC genesis forecast
+	1 node, 12+ minutes (or 3 nodes,  3+ minutes)
+
+    JNAVGEM_TC_TRACK  NAVGEM TC track forecast
+	1 task, 4+ minutes
+	Stopping job: /nwprod/navgem.v2.0.1/scripts/exnavgem_prdgen.sh.ecf
+                      ${USHutil}/extrkr.sh
+                      Changed as:   #${USHutil}/extrkr.sh
+	
+    JNAVGEM_TC_GENESIS  NAVGEM TC genesis forecast
+	1 task, 14+ minutes  
+
+    JEENS_TC_TRACK  ECMWF ensemble TC track forecast
+	1 node, 12+ minutes (or 3 nodes,  3+ minutes)
+
+    JEENS_TC_GENESIS ECMWF ensemble TC genesis forecast
+	1 node, 12+ minutes (or 3 nodes,  3+ minutes)
+
+    JECMWF_TC_TRACK  ECMWF deterministic TC track forecast
+	1 task, 4+ minutes
+	Stopping job: /nwprod/ecmwf.v1.0.0/jobs/JECMWF_HIGHRES_GEMPAK
+                      sh ${utilscript}/extrkr.sh
+                      Changed as:  # sh ${utilscript}/extrkr.sh
+	
+    JECMWF_TC_GENESIS ECMWF deterministic TC genesis forecast
+	1 task, 14+ minutes 
+
+    JEENS_GRIB  Conversion from ECMWF ensemble GRIB1 data to NCEP GRIB1 data
+	1 node, 10+ minutes
+	Stopping job: nwprod/ecmwfens.v3.0.0/jobs/JWSR_ECMWFENS
+	
+4.0 Preimplementation testing requirements
+    Checkout  svn tags:
+	https://svnemc.ncep.noaa.gov/projects/ens_tracker/tags/ens_tracker.v1.1.0
+    Make sure the following modules are available:
+	prod_util.v1.0.1
+	grib_util.v1.0.1
+
+5.0 Dissemination information:
+    The data will be sent to  NCEP server http://www.ftp.ncep.noaa.gov/data/nccf/com/ or
+                                           ftp://ftp.ncep.noaa.gov/pub/data/nccf/com/
+    and NWS server:
+            ftp://tgftp.nws.noaa.gov/SL.us008001/ST.opnl/.
+    The users include NCEP service centers (such as NHC), WFOs, (same as production) among others (JTWC etc.).
+    Directories to be transferred from PROD WCOSS to DEV WCOSS include TC track and genesis for all ensembles.
+
+6.0 The following data should be archived to HPSS for 2 years retention:
+      track and genesis for all ensembles
+
