@@ -21,4 +21,10 @@ export cray_pals_ver=1.0.17
 
 export gfs_ver=v16.3
 export gefs_ver=v12.3.1
+export ukmet_ver=v2.2
 
+export SENDDBN=NO
+
+export COMPATH=/lfs/h1/ops/prod/com/ens_tracker:/lfs/h1/ops/prod/com/gfs:/lfs/h1/ops/prod/com/gefs
+
+export MAILTO="justin.cooke@noaa.gov"

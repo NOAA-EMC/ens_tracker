@@ -1,0 +1,21 @@
+  suite prod
+  family primary
+  family 12
+  family ens_tracker
+  family v1.3
+  family fens
+    task jnavgem_tc_track
+      trigger :TIME>= 2000 or :TIME<=0630
+    task jnavgem_tc_genesis
+      trigger :TIME>= 2000 or :TIME<=0658
+    task jfens_tc_track
+      trigger :TIME>= 2030 or :TIME<=0645
+    task jfens_tc_genesis
+      trigger :TIME>= 2030 or :TIME<=0614
+  endfamily
+  endfamily
+  endfamily
+  endfamily
+  endfamily
+  endsuite
+
