@@ -1217,7 +1217,7 @@ then
         echo "rcc= $rcc      EXITING.... "
         echo " "
         set -x
-        err_exit "FAILED ${jobid} -vint_g1.x-  for GPH AT LINE $LINENO - ABNORMAL EXIT"
+        err_exit "FAILED ${jobid} -vint_g1.x-  for GPH AT LINE $LINENO - ABNORMAL EXIT, Geopotential Height is missing from the input UKMet data, which is essential for interpolating height data"
       fi
 
 #     ----------------------------------------------------
@@ -1247,7 +1247,7 @@ then
         echo "rcc= $rcc      EXITING.... "
         echo " "
         set -x
-        err_exit "FAILED ${jobid} -vint_g1.x-  for T AT LINE $LINENO - ABNORMAL EXIT"
+        err_exit "FAILED ${jobid} -vint_g1.x-  for T AT LINE $LINENO - ABNORMAL EXIT, temperature is missing from the input UKMet data, which is essential for interpolating temp data"
       fi
 
 #     ----------------------------------------------------

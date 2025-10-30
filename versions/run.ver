@@ -21,4 +21,5 @@ export cray_pals_ver=1.0.17
 
 export gfs_ver=v16.3
 export gefs_ver=v12.3.1
+export ukmet_ver=v2.2
 

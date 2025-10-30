@@ -1,0 +1,31 @@
+extern /prod_clone/primary/00/ukmet/v2.2/jukmet_17km
+extern /prod_clone/primary/12/ukmet/v2.2/jukmet_17km
+
+suite para
+ family primary
+  family 00
+   family ens_tracker
+    family v1.3
+     family ukmet
+       task jukmet_tc_track
+        trigger /prod_clone/primary/00/ukmet/v2.2/jukmet_17km == complete
+       task jukmet_tc_genesis
+        trigger /prod_clone/primary/00/ukmet/v2.2/jukmet_17km == complete
+     endfamily
+    endfamily
+   endfamily
+  endfamily
+   family 12 
+    family ens_tracker
+     family v1.3
+       family ukmet
+         task jukmet_tc_track
+          trigger /prod_clone/primary/12/ukmet/v2.2/jukmet_17km == complete
+         task jukmet_tc_genesis
+          trigger /prod_clone/primary/12/ukmet/v2.2/jukmet_17km == complete
+       endfamily
+     endfamily
+    endfamily
+   endfamily 
+  endfamily 
+endsuite
