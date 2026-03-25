@@ -1,5 +1,5 @@
 #!/bin/bash
-#PBS -N ens_tracker_ahgefs_tc_%CYC%
+#PBS -N ens_tracker_hgefs_tc_track_%CYC%
 #PBS -j oe
 #PBS -A %PROJ%-%PROJENVIR%
 #PBS -q %QUEUE%
@@ -40,7 +40,7 @@ module load prod_util/$prod_util_ver
 module list
 
 # CALL executable job script here
-${PACKAGEHOME}/jobs/JAHGEFS_TC_TRACK
+${HOMEens_tracker}/jobs/JHGEFS_TC_TRACK
 
 %include <tail.h>
 %manual

@@ -1,10 +1,10 @@
 #!/bin/bash
-#PBS -N ens_tracker_aigfs_tc_%CYC%
+#PBS -N ens_tracker_aigfs_tc_track_%CYC%
 #PBS -j oe
 #PBS -A %PROJ%-%PROJENVIR%
 #PBS -q %QUEUE%
 #PBS -S /bin/bash
-#PBS -l select=1:ncpus=1:mem=4GB
+#PBS -l select=1:ncpus=1:mem=8GB
 #PBS -l walltime=00:10:00
 #PBS -l debug=true
 
@@ -40,7 +40,7 @@ module list
 
 
 # CALL executable job script here
-${PACKAGEHOME}/jobs/JAIGFS_TC_TRACK
+${HOMEens_tracker}/jobs/JAIGFS_TC_TRACK
 
 %include <tail.h> 
 %manual

@@ -20,7 +20,7 @@ export cycle=t${cyc}z
 # Specify NET and RUN Name and model
 ####################################
 export NET=${NET:-ens_tracker}
-export RUN=${RUN:-gefs}
+export RUN=${RUN:-gfs}
 
 ####################################
 # Determine Job Output Name on System

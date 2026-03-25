@@ -80,7 +80,7 @@ case ${cmodel} in
         amodel="aimn"                                          ;
         achar="a"                                              ;;
 
-  ahgefs) set +x; echo " "                                      ;
+  hgefs) set +x; echo " "                                      ;
         echo " ++ Input cmodel parameter = ${cmodel}...."      ;
         echo " ++ ML ensemble tracks will be averaged...."  ;
         echo " "; set -x                                       ;
@@ -137,7 +137,7 @@ echo "TIMING: Time before any of the track-averaging stuff is `date`"
 >trak.allperts.atcfunix.${amodel}.${ymdh}
 
 
-if [ ${cmodel} = 'ahgefs' ]; then
+if [ ${cmodel} = 'hgefs' ]; then
   set +f
   for dir in "${COMINgefs}" "${COMINaigefs}"; do
     for prefix in a ap ac mp mc; do

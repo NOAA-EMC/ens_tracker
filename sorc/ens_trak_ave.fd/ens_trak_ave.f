@@ -892,7 +892,7 @@ cJ.Peng-04-15-2013
       select case (cmodel)
         case ('ens');  maxmem = ncmaxmem; fcsthrs(:) = ncfcsthrs(:)
         case ('aigefs'); maxmem = aimaxmem; fcsthrs(:) = aifcsthrs(:)
-        case ('ahgefs'); maxmem = ahmaxmem; fcsthrs(:) = ahfcsthrs(:)
+        case ('hgefs'); maxmem = ahmaxmem; fcsthrs(:) = ahfcsthrs(:)
         case ('ref');  maxmem = nrmaxmem; fcsthrs(:) = nrfcsthrs(:)
 
         case ('ensb');  maxmem = n0maxmem; fcsthrs(:) = n0fcsthrs(:)
@@ -982,7 +982,7 @@ cJ.Peng-04-15-2013
                        catcf    = 'AIMN'  
                        catcf_lc = 'aimn'
 
-        case ('ahgefs'); perts(:) = ahperts(:)
+        case ('hgefs'); perts(:) = ahperts(:)
                        minmem   = ahminmem  
                        catcf    = 'AHMN'  
                        catcf_lc = 'ahmn' 

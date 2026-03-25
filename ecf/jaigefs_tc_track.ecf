@@ -1,10 +1,10 @@
 #!/bin/bash
-#PBS -N ens_tracker_aigefs_tc_%CYC%
+#PBS -N ens_tracker_aigefs_tc_track_%CYC%
 #PBS -j oe
 #PBS -A %PROJ%-%PROJENVIR%
 #PBS -q %QUEUE%
 #PBS -S /bin/bash
-#PBS -l place=vscatter,select=3:ncpus=31:mpiprocs=31:mem=100GB
+#PBS -l place=vscatter,select=3:ncpus=31:mpiprocs=31:mem=150GB
 #PBS -l walltime=00:25:00
 #PBS -l debug=true
 
@@ -40,7 +40,7 @@ module load prod_util/$prod_util_ver
 module list
 
 # CALL executable job script here
-${PACKAGEHOME}/jobs/JAIGEFS_TC_TRACK
+${HOMEens_tracker}/jobs/JAIGEFS_TC_TRACK
 
 %include <tail.h>
 %manual
