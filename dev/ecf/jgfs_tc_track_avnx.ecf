@@ -1,22 +1,34 @@
 #!/bin/bash
-#PBS -N ens_tracker_gfs_tc_track_avnx_%CYC%
+#PBS -N ens_tracker_gfs_tc_track_avnx_00
 #PBS -j oe
-#PBS -A %PROJ%-%PROJENVIR%
-#PBS -q %QUEUE%
+#PBS -A ENSTRACK-DEV
+#PBS -q dev
 #PBS -S /bin/bash
-#PBS -l select=1:ncpus=1:mem=4GB
-#PBS -l walltime=00:10:00
+#PBS -l place=vscatter,select=3:ncpus=31:mpiprocs=31:mem=100GB
+#PBS -l walltime=00:45:00
 #PBS -l debug=true
 
-export model=ens_tracker
-%include <head.h>
-%include <envir-p1.h>
+#export model=ens_tracker
+#%include <head.h>
+#%include <envir-p1.h>
 #
-export cyc=%CYC%
+#export cyc=%CYC%
+
+module reset
+export target=wcoss2
+source /lfs/h2/emc/ens/noscrub/hananeh.jafary/ens_tracker.v1.3.9/versions/run.ver
+#module use /lfs/h2/emc/ens/noscrub/hananeh.jafary/ens_package_08042025/modulefiles
+#module load ${target}.lua
+module list
 
 module load PrgEnv-intel/$PrgEnv_intel_ver
 module load intel/$intel_ver
 module load craype/$craype_ver
+
+module load cray-mpich/$cray_mpich_ver
+module load cray-pals/$cray_pals_ver
+
+module load prod_util/$prod_util_ver
 
 module load hdf5/$hdf5_ver
 module load netcdf/$netcdf_ver
@@ -35,12 +47,20 @@ module load wgrib2/$wgrib2_ver
 
 module list
 
+export model=ens_tracker
+export cyc=12
+export envir=prod
+export job=gfs_avnx_${cyc}
+export COMROOT=/lfs/h2/emc/ptmp/hananeh.jafary/com
+export DATAROOT=/lfs/h2/emc/ptmp/hananeh.jafary
+export KEEPDATA=YES
+
+export PACKAGEHOME=/lfs/h2/emc/ens/noscrub/hananeh.jafary/ens_tracker.v1.3.9
 # CALL executable job script here
-${HOMEens_tracker}/jobs/JGFS_TC_TRACK_AVNX
+${PACKAGEHOME}/dev/jobs/JGFS_TC_TRACK_AVNX
 
-
-%include <tail.h> 
-%manual
+#%include <tail.h> 
+#%manual
 ######################################################################
 #PURPOSE:  Executes the job that creates GFS TC track forecasts
 ######################################################################
@@ -52,4 +72,4 @@ ${HOMEens_tracker}/jobs/JGFS_TC_TRACK_AVNX
 ######################################################################
 
 # include manual page below
-%end
+#%end

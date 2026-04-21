@@ -49,9 +49,9 @@ export SCRIPTens_tracker=${SCRIPTens_tracker:-$HOMEens_tracker/scripts}
 ##############################
 # Run setpdy and initialize PDY variables
 ##############################
-setpdy.sh
-. ./PDY
-
+#setpdy.sh
+#. ./PDY
+export PDY=20260420
 ##############################################
 # Define COM directories
 ##############################################
@@ -60,10 +60,19 @@ export COMINgfs=${COMINgfs:-$(compath.py $envir/com/gfs/${gfs_ver})/gfs.${PDY}}
 export COMINsyn=${COMINsyn:-$(compath.py $envir/com/gfs/${gfs_ver})/syndat}
 
 export COMIN=${COMIN:-$(compath.py -o $NET/${ens_tracker_ver})/${RUN}.${PDY}/${cyc}/genesis}
-export COMINgenvit=${COMINgenvit:-$(compath.py -o ${NET}/${ens_tracker_ver})/genesis_vital_${JYYYY}}
+export COMINgenvit=${COMINgenvit:-$(compath.py ${NET}/${ens_tracker_ver})/genesis_vital_${JYYYY}}
 
-export COMOUT=${COMOUT:-$(compath.py -o ${NET}/${ens_tracker_ver})/${RUN}.${PDY}/${cyc}/genesis}
-export COMOUTgenvit=${COMOUTgenvit:-$(compath.py -o ${NET}/${ens_tracker_ver})/genesis_vital_${JYYYY}}
+export COMOUT=/lfs/h2/emc/ptmp/hananeh.jafary/genesis
+export COMOUTgenvit=/lfs/h2/emc/ptmp/hananeh.jafary/genesis/genesis_vital_${JYYYY}
+
+#export COMINgfs=${COMINgfs:-$(compath.py $envir/com/gfs/${gfs_ver})/gfs.${PDY}}
+#export COMINsyn=${COMINsyn:-$(compath.py $envir/com/gfs/${gfs_ver})/syndat}
+
+#export COMIN=${COMIN:-$(compath.py -o $NET/${ens_tracker_ver})/${RUN}.${PDY}/${cyc}/genesis}
+#export COMINgenvit=${COMINgenvit:-$(compath.py -o ${NET}/${ens_tracker_ver})/genesis_vital_${JYYYY}}
+
+#export COMOUT=${COMOUT:-$(compath.py -o ${NET}/${ens_tracker_ver})/${RUN}.${PDY}/${cyc}/genesis}
+#export COMOUTgenvit=${COMOUTgenvit:-$(compath.py -o ${NET}/${ens_tracker_ver})/genesis_vital_${JYYYY}}
 mkdir -m 775 -p $COMOUT $COMOUTgenvit
 
 msg="HAS BEGUN on `hostname`"
