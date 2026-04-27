@@ -1,3 +1,8 @@
+Release Note:  ens_tracker.v1.3.9 (2026/04/27)
+This release corrects an issue introduced in version 1.3.8. In the previous release, the RUN parameter was mistakenly defined as “gfs” instead of “gefs” in the jobs for GFS genesis and GFS track AVNX. The RUN value should be set to “gefs,” as GFS genesis and track are treated as members of the GEFS run. This update restores the configuration to its original, correct state.
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+
 Release Note:  ens_tracker.v1.3.8 (2025/11/25)
 Updated the enstrack.v1.3.8 package to include the new AIGFS v1.0, AIGEFS v1.0, and HGEFS models. The package can now generate track and mean ensemble data for both AIGFS and AIGEFS. Thehybrid ensemble mean is produced using the HGEFS run script, which must wait for the AIGEFS and GEFS runs to finish before it can execute. The package now includes three ecf scripts andthree jjobs to run each of the models. Two separate data_check and extrkr scripts have been added to process the AI models independently. The sorc codes have also been updated to incorporate all of these changes. An additional development directory has been added to support more efficient future testing.
 
