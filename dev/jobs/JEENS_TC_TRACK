@@ -48,19 +48,24 @@ export USHens_tracker=${USHens_tracker:-$HOMEens_tracker/ush}
 ##############################
 # Run setpdy and initialize PDY variables
 ##############################
-setpdy.sh
-. ./PDY
-
+#setpdy.sh
+#. ./PDY
+export PDY=20260316
 ##############################################
 # Define COM directories
 ##############################################
-export COMIN=${COMIN:-$(compath.py -o $NET/${ens_tracker_ver})/${RUN}.${PDY}/${cyc}/pgrba}
-export COMINgfs=${COMINgfs:-$(compath.py $envir/com/gfs/${gfs_ver})/gfs.${PDY}}
-export COMINsyn=${COMINsyn:-$(compath.py $envir/com/gfs/${gfs_ver})/syndat}
+#export COMIN=${COMIN:-$(compath.py -o $NET/${ens_tracker_ver})/${RUN}.${PDY}/${cyc}/pgrba}
+export COMIN=/lfs/h2/emc/ptmp/hananeh.jafary/pgrba
+export COMINgfs=/lfs/h1/ops/prod/com/gfs/v16.3/gfs.${PDY}
+export COMINsyn=/lfs/h1/ops/prod/com/gfs/v16.3/syndat
 
-export COMOUT=${COMOUT:-$(compath.py -o ${NET}/${ens_tracker_ver})/${RUN}.${PDY}/${cyc}/tctrack}
-export COMOUThur=${COMOUThur:-$(compath.py -o ${NET}/${ens_tracker_ver})/global}
-export COMOUTatcf=${COMOUTatcf:-$(compath.py -o ${NET}/${ens_tracker_ver})/atcf}
+#export COMOUT=${COMOUT:-$(compath.py -o ${NET}/${ens_tracker_ver})/${RUN}.${PDY}/${cyc}/tctrack}
+#export COMOUThur=${COMOUThur:-$(compath.py -o ${NET}/${ens_tracker_ver})/global}
+#export COMOUTatcf=${COMOUTatcf:-$(compath.py -o ${NET}/${ens_tracker_ver})/atcf}
+export COMOUT=/lfs/h2/emc/ptmp/hananeh.jafary/tctrack
+export COMOUThur=/lfs/h2/emc/ptmp/hananeh.jafary/global
+export COMOUTatcf=/lfs/h2/emc/ptmp/hananeh.jafary/atcf
+
 mkdir -m 775 -p $COMOUT $COMOUThur $COMOUTatcf
 
 msg="HAS BEGUN on `hostname`"
@@ -83,7 +88,8 @@ pertstring="p01 p02 p03 p04 p05 p06 p07 p08 p09 p10
             p21 p22 p23 p24 p25
             n01 n02 n03 n04 n05 n06 n07 n08 n09 n10
             n11 n12 n13 n14 n15 n16 n17 n18 n19 n20
-            n21 n22 n23 n24 n25 c00"
+            n21 n22 n23 n24 n25"
+
 
 >trkr.cmdfile
 for pert in ${pertstring}; do
@@ -93,12 +99,16 @@ for pert in ${pertstring}; do
   echo "${USHens_tracker}/extrkr_g1.sh ${ymdh} ${cmodel} ${pert} ${pertdir} 2>&1 >${outfile}" >>trkr.cmdfile
 done
 
+
+
 chmod u+x trkr.cmdfile
 export MP_PGMMODEL=mpmd
 export MP_CMDFILE=${DATA}/${cmodel}/trkr.cmdfile
 
 mpiexec --cpu-bind core --configfile ${MP_CMDFILE}
 export err=$?; err_chk
+
+
 
 #if [ ${SENDCOM} = 'NO' ]; then
 #  for pert in ${pertstring}; do

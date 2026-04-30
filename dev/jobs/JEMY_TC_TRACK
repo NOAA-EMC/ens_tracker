@@ -14,7 +14,6 @@ export cycle=t${cyc}z
 ####################################
 # File To Log Msgs
 ####################################
-
 export ECMWF_FILE_EXT=${ECMWF_FILE_EXT:-1}
 ####################################
 # Specify NET and RUN Name and model
@@ -48,20 +47,27 @@ export USHens_tracker=${USHens_tracker:-$HOMEens_tracker/ush}
 ##############################
 # Run setpdy and initialize PDY variables
 ##############################
-setpdy.sh
-. ./PDY
-
+#setpdy.sh
+#. ./PDY
+export PDY=20260316
 ##############################################
 # Define COM directories
 ##############################################
-export DCOM=${DCOM:-/lfs/h1/ops/prod/dcom/${PDY}/wgrbbul/ecmwf}
-export COMINgfs=${COMINgfs:-$(compath.py $envir/com/gfs/${gfs_ver})/gfs.${PDY}}
-export COMINsyn=${COMINsyn:-$(compath.py $envir/com/gfs/${gfs_ver})/syndat}
+#export DCOM=${DCOM:-/lfs/h1/ops/prod/dcom/${PDY}/wgrbbul/ecmwf}
+#export COMINgfs=${COMINgfs:-$(compath.py $envir/com/gfs/${gfs_ver})/gfs.${PDY}}
+#export COMINsyn=${COMINsyn:-$(compath.py $envir/com/gfs/${gfs_ver})/syndat}
+export DCOM=${DCOM:-/lfs/h2/emc/ens/noscrub/hananeh.jafary/ecmwf_50r1_03242026/20260316/ecmwf}
+export COMINgfs=/lfs/h1/ops/prod/com/gfs/v16.3/gfs.${PDY}
+export COMINsyn=/lfs/h1/ops/prod/com/gfs/v16.3/syndat
 
+#export COMOUT=${COMOUT:-$(compath.py -o ${NET}/${ens_tracker_ver})/${RUN}.${PDY}/${cyc}/tctrack}
+#export COMOUThur=${COMOUThur:-$(compath.py -o ${NET}/${ens_tracker_ver})/global}
+#export COMOUTatcf=${COMOUTatcf:-$(compath.py -o ${NET}/${ens_tracker_ver})/atcf}
 
-export COMOUT=${COMOUT:-$(compath.py -o ${NET}/${ens_tracker_ver})/${RUN}.${PDY}/${cyc}/tctrack}
-export COMOUThur=${COMOUThur:-$(compath.py -o ${NET}/${ens_tracker_ver})/global}
-export COMOUTatcf=${COMOUTatcf:-$(compath.py -o ${NET}/${ens_tracker_ver})/atcf}
+export COMOUT=/lfs/h2/emc/ptmp/hananeh.jafary/tctrack
+export COMOUThur=/lfs/h2/emc/ptmp/hananeh.jafary/global
+export COMOUTatcf=/lfs/h2/emc/ptmp/hananeh.jafary/atcf
+
 mkdir -m 775 -p $COMOUT $COMOUThur $COMOUTatcf
 
 msg="HAS BEGUN on `hostname`"

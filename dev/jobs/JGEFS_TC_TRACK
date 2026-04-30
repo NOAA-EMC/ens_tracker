@@ -50,7 +50,7 @@ export USHens_tracker=${USHens_tracker:-$HOMEens_tracker/ush}
 ##############################
 setpdy.sh
 . ./PDY
-export PDY=20251124
+
 ##############################################
 # Define COM directories
 ##############################################
@@ -59,12 +59,9 @@ export COMINgfs=${COMINgfs:-$(compath.py $envir/com/gfs/${gfs_ver})/gfs.${PDY}}
 export COMINsyn=${COMINsyn:-$(compath.py $envir/com/gfs/${gfs_ver})/syndat}
 export COMINgefs=${COMINgefs:-$(compath.py $envir/com/gefs/${gefs_ver})/gefs.${PDY}/${cyc}}
 
-#export COMOUT=${COMOUT:-$(compath.py -o ${NET}/${ens_tracker_ver})/${RUN}.${PDY}/${cyc}/tctrack}
-#export COMOUThur=${COMOUThur:-$(compath.py -o ${NET}/${ens_tracker_ver})/global}
-#export COMOUTatcf=${COMOUTatcf:-$(compath.py -o ${NET}/${ens_tracker_ver})/atcf}
-export COMOUT=/lfs/h2/emc/ptmp/hananeh.jafary/${RUN}/tctrack
-export COMOUThur=/lfs/h2/emc/ptmp/hananeh.jafary/${RUN}/global
-export COMOUTatcf=/lfs/h2/emc/ptmp/hananeh.jafary/${RUN}/atcf
+export COMOUT=${COMOUT:-$(compath.py -o ${NET}/${ens_tracker_ver})/${RUN}.${PDY}/${cyc}/tctrack}
+export COMOUThur=${COMOUThur:-$(compath.py -o ${NET}/${ens_tracker_ver})/global}
+export COMOUTatcf=${COMOUTatcf:-$(compath.py -o ${NET}/${ens_tracker_ver})/atcf}
 mkdir -m 775 -p $COMOUT $COMOUThur $COMOUTatcf
 
 msg="HAS BEGUN on `hostname`"

@@ -1,19 +1,24 @@
 #!/bin/bash
-#PBS -N ens_tracker_eens_tc_track_%CYC%
+#PBS -N ens_tracker_eens_tc_track
 #PBS -j oe
-#PBS -A %PROJ%-%PROJENVIR%
-#PBS -q %QUEUE%
+#PBS -A ENSTRACK-DEV
+#PBS -q dev
 #PBS -S /bin/bash
-#PBS -l place=vscatter,select=3:ncpus=51:mpiprocs=51:mem=4GB
-#PBS -l walltime=00:10:00
+#PBS -l place=vscatter,select=3:ncpus=51:mpiprocs=51:mem=8GB
+#PBS -l walltime=00:20:00
 #PBS -l debug=true
 
-export model=ens_tracker
-%include <head.h>
-%include <envir-p1.h>
+#export model=ens_tracker
+#%include <head.h>
+#%include <envir-p1.h>
 #
-export cyc=%CYC%
+#export cyc=%CYC%
 
+module reset
+export target=wcoss2
+module use /lfs/h2/emc/ens/noscrub/hananeh.jafary/ens_package_08042025/modulefiles
+module load ${target}.lua
+module list
 
 module load PrgEnv-intel/$PrgEnv_intel_ver
 module load intel/$intel_ver
@@ -37,8 +42,18 @@ module load wgrib2/$wgrib2_ver
 module load cray-pals/$cray_pals_ver
 module list
 
+export model=ens_tracker
+export cyc=00
+export envir=prod
+export job=eens_track_${cyc}
+export COMROOT=/lfs/h2/emc/ptmp/hananeh.jafary/com
+export DATAROOT=/lfs/h2/emc/ptmp/hananeh.jafary
+export KEEPDATA=YES
+
+export PACKAGEHOME=/lfs/h2/emc/ens/noscrub/hananeh.jafary/ens_tracker.v1.4.0
+
 # CALL executable job script here
-${HOMEens_tracker}/jobs/JEENS_TC_TRACK
+${PACKAGEHOME}/dev/jobs/JEENS_TC_TRACK
 
 %include <tail.h>
 %manual
