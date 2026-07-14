@@ -2374,7 +2374,7 @@ export FORT14=${TRKDATA}/genvitals.upd.${cmodel}.${atcfout}.${PDY}${cyc}
 export FORT15=${FIXens_tracker}/${cmodel}.tracker_leadtimes
 
 #if [ $FHOUT_CYCLONE -eq 3 ]; then export FORT15=${FIXens_tracker}/${cmodel}.tracker_leadtimes_3hr ; fi
-if [ $FHMAX_CYCLONE -eq 180 ]; then export FORT15=${FIXens_tracker}/${cmodel}.tracker_leadtimes_180 ; fi
+if [ "$FHMAX_CYCLONE" -eq 180 ]; then export FORT15=${FIXens_tracker}/${cmodel}.tracker_leadtimes_180 ; fi
 if [ $vit_incr -eq 3 ]; then export FORT15=${FIXens_tracker}/${cmodel}.tracker_leadtimes_3hr ; fi
 export FORT31=${ixfile}
 
