@@ -56,7 +56,7 @@ setpdy.sh
 ##############################################
 # Define COM directories
 ##############################################
-export DCOM=${DCOM:-/lfs/h1/ops/prod/dcom/${PDY}/wgrbbul/ecmwf}
+export DCOM=${DCOM:-${DCOMROOT}/${PDY}/wgrbbul/ecmwf}
 export COMOUT=${COMOUT:-$(compath.py -o ${NET}/${ens_tracker_ver})/${RUN}.${PDY}/${cyc}/pgrba}
 mkdir -m 775 -p $COMOUT
 

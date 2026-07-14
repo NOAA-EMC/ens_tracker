@@ -23,5 +23,12 @@ export gfs_ver=v17
 export gefs_ver=v12.3.1
 export ukmet_ver=v2.2
 
-export aigfs_ver=v1.0
+export aigfs_ver=v1.1
 export aigefs_ver=v1.0
+
+export DBNLOG=YES
+export SENDDBN=YES
+export NODBNFCHK=YES
+export KEEPDATA=NO
+
+export COMPATH=/lfs/h1/ops/prod/com/ens_tracker:/lfs/h1/ops/prod/com/gfs:/lfs/h1/ops/prod/com/gefs:/lfs/h1/ops/para/com/aigfs:/lfs/h1/ops/prod/com/aigefs:/lfs/h1/ops/prod/com/ukmet
