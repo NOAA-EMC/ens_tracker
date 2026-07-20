@@ -54,7 +54,7 @@ setpdy.sh
 ##############################################
 # Define COM directories
 ##############################################
-export DCOM=${DCOM:-/lfs/h1/ops/prod/dcom/${PDY}/wgrbbul/ecmwf}
+export DCOM=${DCOM:-${DCOMROOT}/${PDY}/wgrbbul/ecmwf}
 export COMINgfs=${COMINgfs:-$(compath.py $envir/com/gfs/${gfs_ver})/gfs.${PDY}}
 export COMINsyn=${COMINsyn:-$(compath.py $envir/com/gfs/${gfs_ver})/syndat}
 
