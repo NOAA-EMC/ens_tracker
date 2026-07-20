@@ -1,4 +1,15 @@
-Release Note:  ens_tracker.v1.4.0 (2026/04/30)
+Release Note:  ens_tracker.v1.3.11 (2026/07/20)
+Update for AIGFS upgrade to v1.1.
+
+The update is included in the following files:
+
+1. versions/run.ver - Change aigfs_ver from 1.0 to 1.1
+2. ecf/jaigfs_tc_track.ecf - Increase memory
+3. ush/extrkr_ai.sh - Minor fix to eliminate unnecessary syntax errors
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Release Note:  ens_tracker.v1.4.0 (2026/04/30)   (Implemented as v1.3.10 2026/05/12)
 This update is to prepare the package for the new ECMWF data. Previously, ECMWF ensemble member runs used DCE files that included both perturbed and control members. In the updated dataset, control members are no longer included. As a result, any references to the control member (C00) have been removed from the EENS workflow. Control member runs are now handled separately within the ECMWF deterministic runs.
 
 The update is included in the following files:
