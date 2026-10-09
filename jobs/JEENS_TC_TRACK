@@ -14,7 +14,7 @@ export cycle=t${cyc}z
 ####################################
 # File To Log Msgs
 ####################################
-#export jlogfile=${jlogfile:-${DATA}/jlogfile.${jobid}}
+export jlogfile=${jlogfile:-${DATA}/jlogfile.${jobid}}
 
 ####################################
 # Specify NET and RUN Name and model
