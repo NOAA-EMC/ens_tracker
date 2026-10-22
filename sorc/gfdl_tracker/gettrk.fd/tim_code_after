@@ -1,0 +1,226 @@
+890c890
+<  
+---
+> 
+897c897
+<         endif    
+---
+>         endif
+4336d4335
+< c
+4341c4340
+< 
+---
+> c
+4347,4348c4346,4349
+<       character(len=255) :: fnameg, fnamei, fnameo
+< c      character fnameg*7,fnamei*7,fnameo*7
+---
+>       character fnameg*255,fnamei*255,fnameo*255
+>       character enameb*16,enamei*16,enameo*16
+>       character lugb_c*16,lugi_c*16,lout_c*16
+>       character fname_mask_g*7,fname_mask_i*7
+4352,4353c4353,4355
+<       character(2) :: lugb_str, lugi_str, lout_str
+<       integer igoret,iioret,iooret,lugb,lugi,lout,iret,nlen1,nlen2
+---
+>       integer  igoret,iioret,iooret,lugb,lugi,lout,iret,nlen1,nlen2
+> 
+>       iret=0
+4355d4356
+<       iret = 0
+4360,4363d4360
+<       write(lugb_str,'(I2.2)') lugb
+<       write(lugi_str,'(I2.2)') lugi
+<       write(lout_str,'(I2.2)') lout
+< 
+4365,4373d4361
+<         ! Use environment variables like FORT11, FORT31, FORT51
+<         call get_environment_variable("FORT"//lugb_str, fnameg)
+<         if (len_trim(fnameg) == 0) then
+<           write(fnameg,'(A,I2.2)') 'fort.', lugb
+<           inquire(file=fnameg, exist=file_open4)
+<           if (.not. file_open4) then
+<             write(fnameg,'(A,I2.2)') 'FORT', lugb
+<           endif
+<         endif
+4375,4381c4363,4376
+<         call get_environment_variable("FORT"//lugi_str, fnamei)
+<         if (len_trim(fnamei) == 0) then
+<           write(fnamei,'(A,I2.2)') 'fort.', lugi
+<           inquire(file=fnamei, exist=file_open5)
+<           if (.not. file_open5) then
+<             write(fnamei,'(A,I2.2)') 'FORT', lugi
+<           endif
+---
+>         write(lugb_c,'(I2.2)')lugb
+>         write(lugi_c,'(I2.2)')lugi
+>         enameb='FORT'//lugb_c
+>         enamei='FORT'//lugi_c
+>         call get_environment_variable(trim(enameb), fnameg
+>      &          , status=igoret)
+>         call get_environment_variable(trim(enamei), fnamei
+>      &          , status=iioret)
+> 
+>         if (igoret /= 0 .or. iioret /= 0) then
+>           fnameg(1:5) = "fort."
+>           fnamei(1:5) = "fort."
+>           write(fnameg(6:7),'(I2)') lugb
+>           write(fnamei(6:7),'(I2)') lugi
+4387,4391d4381
+<         print *, 'fnameg = ', fnameg
+<         print *, 'fnamei = ', fnamei
+<         print *, 'igoret = ', igoret
+<         print *, 'iioret = ', iioret
+< 
+4393,4399c4383,4393
+<           call get_environment_variable("FORT"//lout_str, fnameo)
+<           if (len_trim(fnameo) == 0) then
+<             write(fnameo,'(A,I2.2)') 'fort.', lout
+<             inquire(file=fnameo, exist=file_open4)
+<             if (.not. file_open4) then
+<               write(fnameo,'(A,I2.2)') 'FORT', lout
+<             endif
+---
+>           ! If this is a regular call to open_grib_files (i.e., not
+>           ! for opening the land-sea mask file), then open the 
+>           ! output grib file unit.
+>           write(lout_c,'(I2.2)')lout
+>           enameo='FORT'//lout_c
+>           call get_environment_variable(trim(enameo), fnameo
+>      &            , status=iooret)
+>           if (iooret /= 0) then
+>             fnameo(1:5) = "fort."
+>             write(fnameo(6:7),'(I2)') lout
+>             call baopenw (lout,fnameo,iooret)
+4401d4394
+<           call baopenw (lout,fnameo,iooret)
+4409c4402
+<           print *,'!!! which means that we are trying to open up an'
+---
+>           print *,'!!! which means that we are trying to open up an' 
+4414c4407,4409
+<           print *,'!!! be used for onebig file applications.'
+---
+>           print *,'!!! be used for onebig file applications.  As an'
+>           print *,'!!! alternative, you can include a land-sea mask'
+>           print *,'!!! record within each individual file.'
+4429a4425,4431
+> c        write (6,81) gopen_g_file,gopen_i_file
+> c   81   format (1x,'tpm gopen_g_file= ...',a<nlen1>
+> c     &         ,'...  gopen_i_file= ...',a<nlen2>,'...')
+> 
+>         print *,'gopen_g_file= ',gopen_g_file,'....'
+>         print *,'gopen_i_file= ',gopen_i_file,'....'
+> 
+4433,4441c4435,4439
+<         if (.not. output_file_open) then
+<           call get_environment_variable("FORT"//lout_str, fnameo)
+<           if (len_trim(fnameo) == 0) then
+<             write(fnameo,'(A,I2.2)') 'fort.', lout
+<             inquire(file=fnameo, exist=file_open4)
+<             if (.not. file_open4) then
+<               write(fnameo,'(A,I2.2)') 'FORT', lout
+<             endif
+<           endif
+---
+>         if (output_file_open) then
+>           iooret = 0
+>         else
+>           fnameo(1:5) = "fort."
+>           write(fnameo(6:7),'(I2)') lout
+4449c4447
+<      &        ,' is OPEN'
+---
+>      &         ,' is OPEN'
+4469c4467
+<         print *,'TEST gname open_grib_files, gfile= '
+---
+>         print *,'TEST gname  open_grib_files, gfile= '
+4475c4473
+<       print *,'TEST iname  open_grib_files, ifile= '
+---
+>         print *,'TEST iname  open_grib_files, ifile= '
+4478c4476
+<         print *,'TEST iname open_grib_files, ifile= '
+---
+>         print *,'TEST iname  open_grib_files, ifile= '
+4488a4487
+> 
+4490a4490
+> 
+4499c4499
+<             print *,'!!! or grib index file for most variables i.e.,'
+---
+>             print *,'!!! or grib index file for most variables (i.e.,'
+4502c4502
+<             print *,'!!! grib file return code = igoret = ',igoret
+---
+>             print *,'!!! grib  file return code = igoret = ',igoret
+4509a4510
+> 
+4513c4514,4515
+<       end 
+---
+>       end
+> c
+11447,11451c11449,11453
+<         case ('P','p');  basinid = 'SH' 
+<         case ('Q','q');  basinid = 'SL' 
+<         case ('S','s');  basinid = 'SH' 
+<         case ('W','w');  basinid = 'WP' 
+<         case default;    basinid = 'HC' 
+---
+>         case ('P','p');  basinid = 'SH'
+>         case ('Q','q');  basinid = 'SL'
+>         case ('S','s');  basinid = 'SH'
+>         case ('W','w');  basinid = 'WP'
+>         case default;    basinid = 'HC'
+12393,12397c12395,12399
+<         case ('A','a');  basinid = 'IO' 
+<         case ('B','b');  basinid = 'IO' 
+<         case ('C','c');  basinid = 'CP' 
+<         case ('E','e');  basinid = 'EP' 
+<         case ('L','l');  basinid = 'AL' 
+---
+>         case ('A','a');  basinid = 'IO'
+>         case ('B','b');  basinid = 'IO'
+>         case ('C','c');  basinid = 'CP'
+>         case ('E','e');  basinid = 'EP'
+>         case ('L','l');  basinid = 'AL'
+12986c12988
+<      &       ,', ',i11,3(', ',i4)) 
+---
+>      &       ,', ',i11,3(', ',i4))
+13555c13557
+<         call baopenw (77,"FORT77",igoret)
+---
+>         call baopenw (77,"fort.77",igoret)
+22631d22632
+< 
+22718a22720
+> 
+22971c22973
+<           else         
+---
+>           else
+23337c23339
+<               else                     
+---
+>               else
+28982c28984
+<             print *,'         glonmax (modified)=         ',glonmax+360
+---
+>             print *,'         glonmax (modified)=         ',glonmax+360.
+34427c34429
+<           case ('E','e');  basinid = 'EP'            
+---
+>           case ('E','e');  basinid = 'EP'
+34430c34432
+<           case ('Q','q');  basinid = 'SL' 
+---
+>           case ('Q','q');  basinid = 'SL'
+34433c34435
+<           case default;    basinid = 'HC
+---
+>           case default;    basinid = 'HC'

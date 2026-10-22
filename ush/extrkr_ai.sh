@@ -268,7 +268,7 @@ case ${cmodel} in
        aigefs=aigefs.t${cyc}z                              ;
        
        vit_incr=${FHOUT_CYCLONE:-6}                        ;
-       fcstlen=${FHMAX_CYCLONE:-240}                       ;
+       fcstlen=${FHMAX_CYCLONE:-66}                       ;
        fcsthrs=$(seq -f%03g -s' ' 0 $vit_incr $fcstlen)    ;
 
        model=10                                             ;
@@ -865,7 +865,7 @@ then
   msg="$pgm start for $atcfout at ${cyc}z"
   postmsg "$jlogfile" "$msg"
 
-  ${EXECens_tracker}/supvit_g2 <${TRKDATA}/suv_input.${atcfout}.${PDY}${cyc}
+  ${EXECens_tracker}/supvit.x <${TRKDATA}/suv_input.${atcfout}.${PDY}${cyc}
   suvrcc=$?
 
   if [ ${suvrcc} -eq 0 ]
@@ -1092,7 +1092,7 @@ then
   msg="$pgm start for $atcfout at ${cyc}z"
   postmsg "$jlogfile" "$msg"
 
-  ${EXECens_tracker}/supvit_gen <${TRKDATA}/sgv_input.${atcfout}.${PDY}${cyc}
+  ${EXECens_tracker}/supvit.x <${TRKDATA}/sgv_input.${atcfout}.${PDY}${cyc}
   sgvrcc=$?
 
   if [ ${sgvrcc} -eq 0 ]
@@ -1225,7 +1225,7 @@ then
       # Output file
       export FORT51=${TRKDATA}/${cmodel}.tave.${PDY}${cyc}.f${fhour}
 
-      ${EXECens_tracker}/tave_g2.x <${namelist}
+      ${EXECens_tracker}/tave.x <${namelist}
       rcc=$?
 
       if [ $rcc -ne 0 ]; then
@@ -1352,7 +1352,7 @@ then
       # Output file
       export FORT51=${TRKDATA}/${cmodel}.tave.${PDY}${cyc}.f${fhour}
 
-      ${EXECens_tracker}/tave_g2.x <${namelist}
+      ${EXECens_tracker}/tave.x <${namelist}
       rcc=$?
 
       if [ $rcc -ne 0 ]; then
@@ -1467,7 +1467,7 @@ then
       # Output file
         export FORT51=${TRKDATA}/${cmodel}_m${pert}.tave.${PDY}${cyc}.f${fhour}
 
-        ${EXECens_tracker}/tave_g2.x <${namelist}
+        ${EXECens_tracker}/tave.x <${namelist}
         rcc=$?
 
         if [ $rcc -ne 0 ]; then
@@ -1578,7 +1578,7 @@ if [ ${model} -eq 15 ]; then
       # Output file
       export FORT51=${TRKDATA}/${cmodel}.${PDY}${cyc}.z.f${fhour}
 
-      ${EXECens_tracker}/vint_g2.x <${namelist}
+      ${EXECens_tracker}/vint.x <${namelist}
       rcc=$?
 
       if [ $rcc -ne 0 ]; then
@@ -1612,7 +1612,7 @@ if [ ${model} -eq 15 ]; then
       # Output file
       export FORT51=${TRKDATA}/${cmodel}.${PDY}${cyc}.t.f${fhour}
 
-      ${EXECens_tracker}/vint_g2.x <${namelist}
+      ${EXECens_tracker}/vint.x <${namelist}
       rcc=$?
 
       if [ $rcc -ne 0 ]; then
@@ -1650,7 +1650,7 @@ if [ ${model} -eq 15 ]; then
       # Output file
       export FORT51=${TRKDATA}/${cmodel}_tave.${PDY}${cyc}.f${fhour}
 
-      ${EXECens_tracker}/tave_g2.x <${namelist}
+      ${EXECens_tracker}/tave.x <${namelist}
       rcc=$?
 
       if [ $rcc -ne 0 ]; then
@@ -1756,7 +1756,7 @@ if [ ${model} -eq 16 ]; then
       # Output file
         export FORT51=${TRKDATA}/${cmodel}.${pert}.${PDY}${cyc}.z.f${fhour}
 
-        ${EXECens_tracker}/vint_g2.x <${namelist}
+        ${EXECens_tracker}/vint.x <${namelist}
         rcc=$?
 
         if [ $rcc -ne 0 ]; then
@@ -1788,7 +1788,7 @@ if [ ${model} -eq 16 ]; then
 
         # Output file
         export FORT51=${TRKDATA}/${cmodel}.${pert}.${PDY}${cyc}.t.f${fhour}
-        ${EXECens_tracker}/vint_g2.x <${namelist}
+        ${EXECens_tracker}/vint.x <${namelist}
         rcc=$?
         
         if [ $rcc -ne 0 ]; then
@@ -1824,7 +1824,7 @@ if [ ${model} -eq 16 ]; then
 
         # Output file
         export FORT51=${TRKDATA}/${cmodel}_tave.${pert}.${PDY}${cyc}.f${fhour}
-        ${EXECens_tracker}/tave_g2.x <${namelist}
+        ${EXECens_tracker}/tave.x <${namelist}
         rcc=$?
 
         if [ $rcc -ne 0 ]; then
@@ -1940,7 +1940,7 @@ if [ ${model} -eq 22 ]; then
       # Output file
       export FORT51=${TRKDATA}/${cmodel}.${pert}.${PDY}${cyc}.z.f${fhour}
 
-      ${EXECens_tracker}/vint_g2.x <${namelist}
+      ${EXECens_tracker}/vint.x <${namelist}
       rcc=$?
 
       if [ $rcc -ne 0 ]; then
@@ -1972,7 +1972,7 @@ if [ ${model} -eq 22 ]; then
 
       # Output file
       export FORT51=${TRKDATA}/${cmodel}.${pert}.${PDY}${cyc}.t.f${fhour}
-      ${EXECens_tracker}/vint_g2.x <${namelist}
+      ${EXECens_tracker}/vint.x <${namelist}
       rcc=$?
 
       if [ $rcc -ne 0 ]; then
@@ -2007,7 +2007,7 @@ if [ ${model} -eq 22 ]; then
 
       # Output file
       export FORT51=${TRKDATA}/${cmodel}_tave.${pert}.${PDY}${cyc}.f${fhour}
-      ${EXECens_tracker}/tave_g2.x <${namelist}
+      ${EXECens_tracker}/tave.x <${namelist}
       rcc=$?
 
       if [ $rcc -ne 0 ]; then
@@ -2115,7 +2115,7 @@ if [ ${model} -eq 7 ]; then
       # Output file
       export FORT51=${TRKDATA}/${cmodel}.${PDY}${cyc}.z.f${fhour}
 
-      ${EXECens_tracker}/vint_g2.x <${namelist}
+      ${EXECens_tracker}/vint.x <${namelist}
       rcc=$?
 
       if [ $rcc -ne 0 ]; then
@@ -2148,7 +2148,7 @@ if [ ${model} -eq 7 ]; then
       # Output file
       export FORT51=${TRKDATA}/${cmodel}.${PDY}${cyc}.t.f${fhour}
 
-      ${EXECens_tracker}/vint_g2.x <${namelist}
+      ${EXECens_tracker}/vint.x <${namelist}
       rcc=$?
 
       if [ $rcc -ne 0 ]; then
@@ -2186,7 +2186,7 @@ if [ ${model} -eq 7 ]; then
       # Output file
       export FORT51=${TRKDATA}/${cmodel}_tave.${PDY}${cyc}.f${fhour}
 
-      ${EXECens_tracker}/tave_g2.x <${namelist}
+      ${EXECens_tracker}/tave.x <${namelist}
       rcc=$?
 
       if [ $rcc -ne 0 ]; then
@@ -2257,9 +2257,53 @@ else
   export atcfymdh=${scc}${syy}${smm}${sdd}${shh}
 fi
 
-#contour_interval=100.0
-#write_vit=n
-#want_oci=.TRUE.
+if [ ${loopnum} -eq 8 -a ${cmodel} = 'gfs' ]; then
+  # set it artificially high to effectively turn off the check and 
+  # ensure it won't be triggered
+  max_mslp_850=4000.0
+else
+  max_mslp_850=400.0
+fi
+#export use_land_mask=${use_land_mask:-n}
+contour_interval=100.0
+radii_pctile=95.0
+radii_free_pass_pctile=67.0
+radii_width_thresh=15.0
+write_vit=n
+want_oci=.TRUE.
+use_backup_mslp_grad_check=${use_backup_mslp_grad_check:-y}
+use_backup_850_vt_check=${use_backup_850_vt_check:-y}
+
+user_wants_to_track_zeta850=y
+user_wants_to_track_zeta700=y
+user_wants_to_track_wcirc850=y
+user_wants_to_track_wcirc700=y
+user_wants_to_track_gph850=y
+user_wants_to_track_gph700=y
+user_wants_to_track_mslp=y
+user_wants_to_track_wcircsfc=y
+user_wants_to_track_zetasfc=y
+user_wants_to_track_thick500850=n
+user_wants_to_track_thick200500=n
+user_wants_to_track_thick200850=n
+
+set +x
+echo " "
+echo "After set perts ${pert}, user_wants_to_track_zeta850= ${user_wants_to_track_zeta850}"
+echo "After set perts ${pert}, user_wants_to_track_zeta700= ${user_wants_to_track_zeta700}"
+echo "After set perts ${pert}, user_wants_to_track_wcirc850= ${user_wants_to_track_wcirc850}"
+echo "After set perts ${pert}, user_wants_to_track_wcirc700= ${user_wants_to_track_wcirc700}"
+echo "After set perts ${pert}, user_wants_to_track_gph850= ${user_wants_to_track_gph850}"
+echo "After set perts ${pert}, user_wants_to_track_gph700= ${user_wants_to_track_gph700}"
+echo "After set perts ${pert}, user_wants_to_track_mslp= ${user_wants_to_track_mslp}"
+echo "After set perts ${pert}, user_wants_to_track_wcircsfc= ${user_wants_to_track_wcircsfc}"
+echo "After set perts ${pert}, user_wants_to_track_zetasfc= ${user_wants_to_track_zetasfc}"
+echo "After set perts ${pert}, user_wants_to_track_thick500850= ${user_wants_to_track_thick500850}"
+echo "After set perts ${pert}, user_wants_to_track_thick200500= ${user_wants_to_track_thick200500}"
+echo "After set perts ${pert}, user_wants_to_track_thick200850= ${user_wants_to_track_thick200850}"
+echo " "
+set -x
+
 
 echo "&datein inp%bcc=${scc},inp%byy=${syy},inp%bmm=${smm},"      >${namelist}
 echo "        inp%bdd=${sdd},inp%bhh=${shh},inp%model=${model}," >>${namelist}
@@ -2278,15 +2322,20 @@ echo "      trkrinfo%southbd=${trkrsbd},"                        >>${namelist}
 echo "      trkrinfo%type='${trkrtype}',"                        >>${namelist}
 echo "      trkrinfo%mslpthresh=${mslpthresh},"                  >>${namelist}
 echo "      trkrinfo%use_backup_mslp_grad_check='${use_backup_mslp_grad_check}',"  >>${namelist}
+
 echo "      trkrinfo%max_mslp_850=${max_mslp_850},"              >>${namelist}
 echo "      trkrinfo%v850thresh=${v850thresh},"                  >>${namelist}
+echo "      trkrinfo%v850_qwc_thresh=${v850_qwc_thresh},"        >>${namelist}
 echo "      trkrinfo%use_backup_850_vt_check='${use_backup_850_vt_check}',"  >>${namelist}
+
 echo "      trkrinfo%gridtype='${modtyp}',"                      >>${namelist}
 echo "      trkrinfo%enable_timing=1,"                           >>${namelist}
 echo "      trkrinfo%contint=${contour_interval},"               >>${namelist}
 echo "      trkrinfo%want_oci=${want_oci},"                      >>${namelist}
 echo "      trkrinfo%out_vit='${write_vit}',"                    >>${namelist}
 echo "      trkrinfo%use_land_mask='${use_land_mask}',"          >>${namelist}
+echo "      trkrinfo%read_separate_land_mask_file='${read_separate_land_mask_file}',"          >>${namelist}
+
 echo "      trkrinfo%inp_data_type='${inp_data_type}',"          >>${namelist}
 echo "      trkrinfo%gribver=${gribver},"                        >>${namelist}
 echo "      trkrinfo%g2_jpdtn=${g2_jpdtn},"                      >>${namelist}
@@ -2300,12 +2349,14 @@ echo "           phasescheme='${PHASE_SCHEME}',"                 >>${namelist}
 echo "           wcore_depth=${WCORE_DEPTH}/"                    >>${namelist}
 
 echo "&structinfo structflag='${STRUCTFLAG}',"                   >>${namelist}
-echo "            ikeflag='${IKEFLAG}'/"                         >>${namelist}
-
+echo "            ikeflag='${IKEFLAG}',"                         >>${namelist}
+echo "            radii_pctile=${radii_pctile},"                 >>${namelist}
+echo "            radii_free_pass_pctile=${radii_free_pass_pctile},"  >>${namelist}
+echo "            radii_width_thresh=${radii_width_thresh}/"     >>${namelist}
 echo "&fnameinfo  gmodname='${atcfname}',"                       >>${namelist}
 echo "            rundescr='${rundescr}',"                       >>${namelist}
 echo "            atcfdescr='${atcfdescr}'/"                     >>${namelist}
-
+echo "&cintinfo contint_grid_bound_check=${contint_grid_bound_check}/" >>${namelist}
 echo "&waitinfo use_waitfor='n',"                                >>${namelist}
 echo "          wait_min_age=10,"                                >>${namelist}
 echo "          wait_min_size=100,"                              >>${namelist}
@@ -2363,19 +2414,57 @@ echo "      user_wants_to_track_thick500850='${user_wants_to_track_thick500850}'
 echo "      user_wants_to_track_thick200500='${user_wants_to_track_thick200500}'," >>${namelist}
 echo "      user_wants_to_track_thick200850='${user_wants_to_track_thick200850}'/" >>${namelist}
 
-echo "&verbose verb=3,verb_g2=0/"                                >>${namelist}
+echo "&verbose verb=3,verb_g2=1/"                                >>${namelist}
+echo "&sheardiaginfo shearflag='${shear_calc_flag}'/"                  >>${namelist}
+echo "&sstdiaginfo sstflag='${sstflag}'/"                              >>${namelist}
+echo "&gendiaginfo genflag='${genflag}',"                              >>${namelist}
+echo "             gen_read_rh_fields='${gen_read_rh_fields}',"        >>${namelist}
+echo "             need_to_compute_rh_from_q='${need_to_compute_rh_from_q}',"  >>${namelist}
+echo "             smoothe_mslp_for_gen_scan='${smoothe_mslp_for_gen_scan}',"  >>${namelist}
+echo "             depth_of_mslp_for_gen_scan=${depth_of_mslp_for_gen_scan}/"  >>${namelist}
+echo "&vortextiltinfo vortex_tilt_flag='${vortex_tilt_flag}',"                 >>${namelist}
+echo "                vortex_tilt_parm='${vortex_tilt_parm}',"                 >>${namelist}
+echo "                vortex_tilt_allow_thresh=${vortex_tilt_allow_thresh}/"   >>${namelist}
 
 export pgm=gettrk_gfs
 . prep_step
 
-export FORT11=${gribfile}
+cp ${namelist} namelist.gettrk
+export FORT555=namelist.gettrk
+
+#export FORT11=${gribfile}
+
+if [ ${inp_data_type} = 'grib' ]; then
+  export FORT11=${gribfile}
+else
+  export FORT11=${netcdffile}
+  if [ ${read_separate_land_mask_file} = 'y' ]; then
+    FORT17=${ncdf_ls_mask_filename}
+  fi
+fi
+
+if [ -s ${TRKDATA}/vitals.upd.${atcfout}.${PDY}${cyc} ]; then
+  cp ${TRKDATA}/vitals.upd.${atcfout}.${PDY}${cyc} \
+     ${TRKDATA}/tcvit_rsmc_storms.txt
+else
+  >${TRKDATA}/tcvit_rsmc_storms.txt
+fi
+
+if [ -s ${TRKDATA}/genvitals.upd.${atcfout}.${PDY}${cyc} ]; then
+  cp ${TRKDATA}/genvitals.upd.${atcfout}.${PDY}${cyc} \
+     ${TRKDATA}/tcvit_genesis_storms.txt
+else
+  >${TRKDATA}/tcvit_genesis_storms.txt
+fi
+
 export FORT12=${TRKDATA}/vitals.upd.${atcfout}.${PDY}${shh}
 export FORT14=${TRKDATA}/genvitals.upd.${cmodel}.${atcfout}.${PDY}${cyc}
 export FORT15=${FIXens_tracker}/${cmodel}.tracker_leadtimes
 
 #if [ $FHOUT_CYCLONE -eq 3 ]; then export FORT15=${FIXens_tracker}/${cmodel}.tracker_leadtimes_3hr ; fi
-if [ "$FHMAX_CYCLONE" -eq 180 ]; then export FORT15=${FIXens_tracker}/${cmodel}.tracker_leadtimes_180 ; fi
+if [ $FHMAX_CYCLONE -eq 180 ]; then export FORT15=${FIXens_tracker}/${cmodel}.tracker_leadtimes_180 ; fi
 if [ $vit_incr -eq 3 ]; then export FORT15=${FIXens_tracker}/${cmodel}.tracker_leadtimes_3hr ; fi
+if [ ${vortex_tilt_flag} = 'y' ]; then export FORT18=${FIXens_tracker}/gfs_vortex_tilt_levs_${vortex_tilt_parm} export FORT33==${FIXens_tracker}/gfs_vortex_tilt_levs_${vortex_tilt_parm} ; fi
 export FORT31=${ixfile}
 
 #if [ -s ${TRKDATA}/vitals.upd.${atcfout}.${PDY}${shh} ]; then
@@ -2472,7 +2561,7 @@ echo "TIMING: Before call to gettrk at `date`"
 echo " "
 set -x
 
-${EXECens_tracker}/gettrk_gfs <${namelist}
+${EXECens_tracker}/gettrk.x <${namelist}
 
 gettrk_rcc=$?
 if [ ${gettrk_rcc} -ne 0 ]; then
@@ -2611,7 +2700,7 @@ then
       if [ ${cmodel} = 'agfs' ]; then
         cat atcfunix_file.$mct | sed s:agfs:AGFS:g > agfs_atcfunix_file.$mct
         cat agfs_atcfunix_file.$mct >>$COMOUTatcf/${at}${NO}${syyyy}/ncep_a${at}${NO}${syyyy}.dat
-
+        
         cat atcfunix_file.$mct >>$COMOUTatcf/${at}${NO}${syyyy}/a${at}${NO}${syyyy}.dat
         cat agfs_atcfunix_file.$mct >>$COMOUTatcf/${at}${NO}${syyyy}/a${at}${NO}${syyyy}.dat
       fi

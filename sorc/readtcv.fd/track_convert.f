@@ -77,22 +77,16 @@ c---------------------------------------------------------------------
 	  tc_tail='W'
         elseif(inprec%atx_basin == 'CP') then
 	  tc_tail='C'
-        elseif(inprec%atx_basin == 'SC') then
-          tc_tail='O'
-        elseif(inprec%atx_basin == 'EC') then
-	  tc_tail='T'
-        elseif(inprec%atx_basin == 'AU') then
-          tc_tail='U'
-        elseif(inprec%atx_basin == 'SP') then
+        elseif(inprec%atx_basin == 'SH') then
 	  tc_tail='P'
-        elseif(inprec%atx_basin == 'SI') then
+        elseif(inprec%atx_basin == 'SH') then
 	  tc_tail='S'
-        elseif(inprec%atx_basin == 'BB') then
+        elseif(inprec%atx_basin == 'IO') then
 	  tc_tail='B'
-        elseif(inprec%atx_basin == 'NA') then
+        elseif(inprec%atx_basin == 'IO') then
 	  tc_tail='A'
         else
-	  tc_tail='X'
+	  tc_tail='HC'
         endif
        
 	storm_num=inprec%atx_storm_num//tc_tail

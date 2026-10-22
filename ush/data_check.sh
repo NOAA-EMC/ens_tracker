@@ -13,13 +13,21 @@ SLEEP_LOOP_MAX=`expr $SLEEP_TIME / $SLEEP_INT`
 
 if [ ${cmodel} = 'gfs' ]; then
   datdir=${gfsdir}
-  leadhour=240
-  datfile=gfs.t${cyc}z.pgrb2.0p25.f${leadhour}       
+  vit_incr=${FHOUT_CYCLONE:-6}
+  fcstlen=${FHMAX_CYCLONE:-240}
+  fcsthrs=$(seq -f%03g -s' ' 0 $vit_incr $fcstlen)
+  for fhour in ${fcsthrs}; do
+    datfile=gfs.t${cyc}z.pgrb2.0p25.f${fhour}
+  done
 
 elif [ ${cmodel} = "ens" ]; then
   datdir=$ensdira
-  leadhour=192
-  datfile=gep20.t${cyc}z.pgrb2a.0p50.f${leadhour} 
+  vit_incr=${FHOUT_CYCLONE:-6}
+  fcstlen=${FHMAX_CYCLONE:-192}
+  fcsthrs=$(seq -f%03g -s' ' 0 $vit_incr $fcstlen)
+  for fhour in ${fcsthrs}; do
+    datfile=gep14.t${cyc}z.pgrb2a.0p50.f${fhour}
+  done
 
 elif [ ${cmodel} = "cmc" ]; then
   datdir=$DCOM

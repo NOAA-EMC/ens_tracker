@@ -1,4 +1,4 @@
 To build codes:
   cd /XXXX/sorc
-  ./build.sh
+  ./build_all_cmake.sh
 

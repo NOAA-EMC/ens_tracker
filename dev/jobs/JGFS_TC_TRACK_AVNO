@@ -6,7 +6,7 @@ set -x
 ####################################
 # obtain unique process id (pid) and make temp directory
 ####################################
-#export jobid=${jobid:-$job.o$$}
+export jobid=${jobid:-$job.o$$}
 export DATA=${DATA:-${DATAROOT:?}/${jobid}}
 mkdir -p $DATA
 cd $DATA
@@ -15,7 +15,7 @@ export cycle=t${cyc}z
 ####################################
 # File To Log Msgs
 ####################################
-#export jlogfile=${jlogfile:-${DATA}/jlogfile.${jobid}}
+export jlogfile=${jlogfile:-${DATA}/jlogfile.${jobid}}
 
 ####################################
 # Specify NET and RUN Name and model
@@ -49,17 +49,24 @@ export USHens_tracker=${USHens_tracker:-$HOMEens_tracker/ush}
 ##############################
 # Run setpdy and initialize PDY variables
 ##############################
-setpdy.sh
-. ./PDY
+#setpdy.sh
+export PDY=20260511
+
 ##############################################
 # Define COM directories
 ##############################################
-export COMINgfs=${COMINgfs:-$(compath.py $envir/com/gfs/${gfs_ver})/gfs.${PDY}}
-export COMINsyn=${COMINsyn:-$(compath.py $envir/com/gfs/${gfs_ver})/syndat}
+#export COMINgfs=${COMINgfs:-$(compath.py $envir/com/gfs/${gfs_ver})/gfs.${PDY}}
+#export COMINsyn=${COMINsyn:-$(compath.py $envir/com/gfs/${gfs_ver})/syndat}
 
-export COMOUT=${COMOUT:-$(compath.py -o ${NET}/${ens_tracker_ver})/${RUN}.${PDY}/${cyc}/tctrack}
-export COMOUThur=${COMOUThur:-$(compath.py -o ${NET}/${ens_tracker_ver})/global}
-export COMOUTatcf=${COMOUTatcf:-$(compath.py -o ${NET}/${ens_tracker_ver})/atcf}
+export COMINgfs=/lfs/h1/ops/prod/com/gfs/v16.3/gfs.${PDY}
+export COMINsyn=/lfs/h1/ops/prod/com/gfs/v16.3/syndat
+
+#export COMOUT=${COMOUT:-$(compath.py -o ${NET}/${ens_tracker_ver})/${RUN}.${PDY}/${cyc}/tctrack}
+#export COMOUThur=${COMOUThur:-$(compath.py -o ${NET}/${ens_tracker_ver})/global}
+#export COMOUTatcf=${COMOUTatcf:-$(compath.py -o ${NET}/${ens_tracker_ver})/atcf}
+export COMOUT=${COMOUT:-${COMROOT:?}/gfs.${PDY}/00/products/atmos/cyclone/tracks}
+export COMOUThur=${COMOUThur:-${COMROOT:?}/${NET}/${ens_tracker_ver}/global}
+export COMOUTatcf=${COMOUTatcf:-${COMROOT:?}/${NET}/${ens_tracker_ver}/atcf}
 mkdir -m 775 -p $COMOUT $COMOUThur $COMOUTatcf
 
 msg="HAS BEGUN on `hostname`"
@@ -73,6 +80,8 @@ export cmodel=gfs
 export loopnum=1
 export ymdh=${PDY}${cyc}
 
+#export gribvar=${USHens_tracker}/gribvars.sh
+#export namelist=${USHens_tracker}/namelist.sh
 export gfsdir=${COMINgfs}/${cyc}/atmos
 
 export pert="p01"
@@ -90,10 +99,10 @@ ${USHens_tracker}/extrkr_gfs.sh ${loopnum} ${cmodel} ${ymdh} ${pert} ${pertdir} 
 export err=$?; err_chk
 
 if [ "$SENDCOM" = 'YES' ]; then
-  if [ -s ${pertdir}/trak.avno.atcfunix.${PDY}${cyc} ]; then
-    cp ${pertdir}/trak.avno.atcfunix.${PDY}${cyc} ${COMOUT}/avn.t${cyc}z.cyclone.trackatcfunix
+  if [ -s ${pertdir}/trak.avnt.atcfunix.${PDY}${cyc} ]; then
+    cp ${pertdir}/trak.avnt.atcfunix.${PDY}${cyc} ${COMOUT}/avnt.t${cyc}z.cyclone.trackatcfunix
 
-    cat ${pertdir}/trak.avno.atcfunix.${PDY}${cyc} | \
+    cat ${pertdir}/trak.avnt.atcfunix.${PDY}${cyc} | \
       sed s:AVNO:GFSO:g \
     > ${COMOUT}/gfso.t${cyc}z.cyclone.trackatcfunix
   fi

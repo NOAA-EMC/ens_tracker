@@ -9,13 +9,6 @@ export ukmetdir=${COMINukmet}
 
 #---- first run to get UKMET genesis vital at time=00 06 12 18Z -----------
 
-export trkrtype=tcgen
-export trkrebd=350.0
-export trkrwbd=105.0
-export trkrnbd=30.0
-export trkrsbd=5.0
-export mslpthresh=0.0015
-export v850thresh=1.5000
 export regtype=altg
 
 export pert=p01
@@ -73,8 +66,8 @@ cpreq ${COMOUT}/$FORT41 .
 export FORT42=storms.ukx.atcf_gen.${ymdh}
 export FORT43=trak.ukx.atcfunix.${ymdh}
 
-${EXECens_tracker}/filter_gen_ukmet
-export err=$?; err_chk
+#${EXECens_tracker}/filter_gen_ukmet
+#export err=$?; err_chk
 
 if [ "$SENDCOM" = YES ]; then
   cp $FORT42 $FORT43 ${COMOUT}/

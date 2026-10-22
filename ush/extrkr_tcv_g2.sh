@@ -73,8 +73,8 @@ qid=$$
 #export cyc=${cyc:-$2}
 #export cmodel=${cmodel:-$3}
 export jobid=${jobid:-testjob}
-export SENDCOM=${SENDCOM:-NO}
-export PHASEFLAG=y
+export SENDCOM=${SENDCOM:-YES}
+export PHASEFLAG=n
 export WCORE_DEPTH=1.0
 #export PHASE_SCHEME=vtt
 #export PHASE_SCHEME=cps
@@ -169,22 +169,32 @@ case ${cmodel} in
        gfsdir=${gfsdir:-${COMINgfs:?}/${cyc}/atmos}                     ;
        gfsgfile=gfs.t${cyc}z.pgrb2.0p25.f                  ;
        vit_incr=6
-       fcstlen=6                                           ;
+       fcstlen=126                                         ;
        fcsthrs=$(seq -f%03g -s' ' 0 $vit_incr $fcstlen)    ;
        atcfnum=15                                          ;
+#       if [ ${loopnum} -eq 8 ]; then
+#         atcfname="gfsr"
+#	 atcfout="gfsr"
+#       else
+#         atcfname="avnt"
+#	 atcfout="avnt"
+#       fi                                                  ;
        atcfname="gfso"                                     ;
        atcfout="gfso"                                      ;
+       regtype=altg                                        ; 
        atcffreq=600                                        ;
-
        rundescr="xxxx"                                     ;
        atcfdescr="xxxx"                                    ;
-
-       mslpthresh=0.0015                                   ;
-       v850thresh=1.5000                                   ;
+       export inp_data_type='grib'                         ;
+       export gribver=2                                    ;
        modtyp='global'                                     ;
-
+       nest_type='fixed'                                   ;
        file_sequence="onebig"                              ;
        lead_time_units='hours'                             ;
+       g2_mslp_parm_id=192                                 ;
+       g1_mslp_parm_id=130                                 ;
+       g1_sfcwind_lev_typ=105                              ;
+       g1_sfcwind_lev_val=10                               ;
        g2_jpdtn=0                                          ;
        model=1                                             ;;
 
@@ -249,7 +259,8 @@ if [ ${PHASEFLAG} = 'y' ]; then
 
 #J.Peng----2014-10-28---------
   if [ ${cmodel} = "gfs" ]; then
-    wgrib_parmlist="UGRD:850 UGRD:700 UGRD:500 UGRD:200 VGRD:850 VGRD:700 VGRD:500 VGRD:200 SurfaceU SurfaceV ABSV:850 ABSV:700 MSLET HGT:900 HGT:850 HGT:800 HGT:750 HGT:700 HGT:650 HGT:600 HGT:550 HGT:500 HGT:450 HGT:400 HGT:350 HGT:300 TMP:500 TMP:450 TMP:400 TMP:350 TMP:300 RH:500"
+    wgrib_parmlist=" HGT:850 HGT:700 UGRD:850 UGRD:800 UGRD:750 UGRD:700 UGRD:650 UGRD:600 UGRD:550 UGRD:500 UGRD:450 UGRD:400 UGRD:350 UGRD:300 UGRD:250 UGRD:200 VGRD:850 VGRD:800 VGRD:750 VGRD:700 VGRD:650 VGRD:600 VGRD:550 VGRD:500 VGRD:450 VGRD:400 VGRD:350 VGRD:300 VGRD:250 VGRD:200 SurfaceU SurfaceV ABSV:850 ABSV:700 PRMSL MSLET LAND:surface :TMP:surface"
+
   elif [ ${cmodel} = "ngps" ]; then
     wgrib_parmlist="UGRD:850 UGRD:700 UGRD:500 UGRD:200 VGRD:850 VGRD:700 VGRD:500 VGRD:200 SurfaceU SurfaceV PRMSL HGT:925 HGT:850 HGT:700 HGT:500 HGT:400 HGT:300 TMP:500 TMP:400 TMP:300 RH:500"
   elif [ ${cmodel} = "cmc" ]; then
@@ -259,9 +270,9 @@ if [ ${PHASEFLAG} = 'y' ]; then
   wgrib_ec_hires_parmlist=" GH:850 GH:700 U:850 U:700 U:500 U:200 V:850 V:700 V:500 V:200 10U:sfc 10V:sfc MSL:sfc GH:300 GH:400 GH:500 GH:925 T:300 T:400 T:500 R:500"
 else
 
-  wgrib_parmlist=" HGT:850 HGT:700 UGRD:850 UGRD:700 UGRD:500 VGRD:850 VGRD:700 VGRD:500 SurfaceU SurfaceV ABSV:850 ABSV:700 MSLET "
-  wgrib_ec_hires_parmlist=" GH:850 GH:700 U:850 U:700 U:500 V:850 V:700 V:500 10U:sfc 10V:sfc MSL:sfc"
+  wgrib_parmlist="HGT:850 HGT:700 UGRD:850 UGRD:700 UGRD:500 UGRD:200 VGRD:850 VGRD:700 VGRD:500 VGRD:200 SurfaceU SurfaceV ABSV:850 ABSV:700 PRMSL MSLET LAND:surface :TMP:surface"
 
+  wgrib_ec_hires_parmlist="GH:850 GH:700 U:850 U:700 U:500 V:850 V:700 V:500 10U:sfc 10V:sfc MSL:sfc"
 fi
 
 #---------------------------------------------------------------#
@@ -304,17 +315,23 @@ future_str="${future_ymd} ${future_hh}00"
 
 if [ ${modtyp} = 'global' ]
 then
+#  synvitdir=${COMROOT}/gfs/prod/gfs.${PDY}
   synvitdir=${COMINgfs:?}/${cyc}/atmos
   synvitfile=gfs.t${cyc}z.syndata.tcvitals.tm00
-  synvitold_dir=${synvitdir%.*}.${old_4ymd}/${old_hh}/atmos
+#  synvitold_dir=${COMROOT}/gfs/prod/gfs.${old_4ymd}
+  synvitold_dir=${synvitdir%.*}.${old_4ymd}/${old_hh}/atmo
   synvitold_file=gfs.t${old_hh}z.syndata.tcvitals.tm00
+#  synvitfuture_dir=${COMROOT}/gfs/prod/gfs.${future_4ymd}
   synvitfuture_dir=${synvitdir%.*}.${future_4ymd}/${future_hh}/atmos
   synvitfuture_file=gfs.t${future_hh}z.syndata.tcvitals.tm00
 else
+#  synvitdir=${COMROOT}/nam/prod/nam.${PDY}
   synvitdir=${COMINnam:?}
   synvitfile=nam.t${cyc}z.syndata.tcvitals.tm00
+#  synvitold_dir=${COMROOT}/nam/prod/nam.${old_4ymd}
   synvitold_dir=${synvitdir%.*}.${old_4ymd}
   synvitold_file=nam.t${old_hh}z.syndata.tcvitals.tm00
+#  synvitfuture_dir=${COMROOT}/nam/prod/nam.${future_4ymd}
   synvitfuture_dir=${synvitdir%.*}.${future_4ymd}
   synvitfuture_file=nam.t${future_hh}z.syndata.tcvitals.tm00
 fi
@@ -478,43 +495,40 @@ fi
 
 # For tcgen cases, filter to use only vitals from the ocean 
 # basin of interest....
-#J.Peng----2012-04-13-------------------------------------
-#if [ ${trkrtype} = 'tcgen' ]
-#  then
+if [ ${trkrtype} = 'tcgen' ]
+  then
 
-#  if [ ${numvitrecs} -gt 0 ]
-#  then
+  if [ ${numvitrecs} -gt 0 ]
+  then
     
-#    fullvitfile=${TRKDATA}/vitals.${atcfout}.${PDY}${cyc}
-#    cp $fullvitfile ${TRKDATA}/vitals.all_basins.${atcfout}.${PDY}${cyc}
-#    basin=` echo $regtype | cut -c1-2`
+    fullvitfile=${TRKDATA}/vitals.${atcfout}.${PDY}${cyc}
+    cp $fullvitfile ${TRKDATA}/vitals.all_basins.${atcfout}.${PDY}${cyc}
+    basin=` echo $regtype | cut -c1-2`
 
-#    if [ ${basin} = 'al' ]; then
-#      cat $fullvitfile | awk '{if (substr($0,8,1) == "L") print $0}' |
-#               >${TRKDATA}/vitals.tcgen_al_only.${atcfout}.${PDY}${cyc}
-#      cp ${TRKDATA}/vitals.tcgen_al_only.${atcfout}.${PDY}${cyc} \
-#         ${TRKDATA}/vitals.${atcfout}.${PDY}${cyc}
-#    fi
-#    if [ ${basin} = 'ep' ]; then
-#      cat $fullvitfile | awk '{if (substr($0,8,1) == "E") print $0}' |
-#               >${TRKDATA}/vitals.tcgen_ep_only.${atcfout}.${PDY}${cyc}
-#      cp ${TRKDATA}/vitals.tcgen_ep_only.${atcfout}.${PDY}${cyc} \
-#         ${TRKDATA}/vitals.${atcfout}.${PDY}${cyc}
-#    fi
-#    if [ ${basin} = 'wp' ]; then
-#      cat $fullvitfile | awk '{if (substr($0,8,1) == "W") print $0}' |
-#               >${TRKDATA}/vitals.tcgen_wp_only.${atcfout}.${PDY}${cyc}
-#      cp ${TRKDATA}/vitals.tcgen_wp_only.${atcfout}.${PDY}${cyc} \
-#         ${TRKDATA}/vitals.${atcfout}.${PDY}${cyc}
-#    fi
+    if [ ${basin} = 'al' ]; then
+      cat $fullvitfile | awk '{if (substr($0,8,1) == "L") print $0}' |
+               >${TRKDATA}/vitals.tcgen_al_only.${atcfout}.${PDY}${cyc}
+      cp ${TRKDATA}/vitals.tcgen_al_only.${atcfout}.${PDY}${cyc} \
+         ${TRKDATA}/vitals.${atcfout}.${PDY}${cyc}
+    fi
+    if [ ${basin} = 'ep' ]; then
+      cat $fullvitfile | awk '{if (substr($0,8,1) == "E") print $0}' |
+               >${TRKDATA}/vitals.tcgen_ep_only.${atcfout}.${PDY}${cyc}
+      cp ${TRKDATA}/vitals.tcgen_ep_only.${atcfout}.${PDY}${cyc} \
+         ${TRKDATA}/vitals.${atcfout}.${PDY}${cyc}
+    fi
+    if [ ${basin} = 'wp' ]; then
+      cat $fullvitfile | awk '{if (substr($0,8,1) == "W") print $0}' |
+               >${TRKDATA}/vitals.tcgen_wp_only.${atcfout}.${PDY}${cyc}
+      cp ${TRKDATA}/vitals.tcgen_wp_only.${atcfout}.${PDY}${cyc} \
+         ${TRKDATA}/vitals.${atcfout}.${PDY}${cyc}
+    fi
 
-#    cat ${TRKDATA}/vitals.${atcfout}.${PDY}${cyc}
+    cat ${TRKDATA}/vitals.${atcfout}.${PDY}${cyc}
 
-#  fi
+  fi
     
-#fi
-#J.Peng----2012-04-13-------------------------------------
-
+fi
 # - - - - - - - - - - - - -
 # Before running the program to read, sort and update the vitals,
 # first run the vitals through some awk logic, the purpose of 
@@ -562,7 +576,7 @@ numvitrecs=`cat ${TRKDATA}/vitals.${atcfout}.${PDY}${cyc} | wc -l`
 if [ ${numvitrecs} -gt 0 ]
 then
 
-  export pgm=supvit_g2
+  export pgm=supvit
   . prep_step
 
   # Input file
@@ -574,7 +588,7 @@ then
   msg="$pgm start for $atcfout at ${cyc}z"
   postmsg "$jlogfile" "$msg"
 
-  ${EXECens_tracker}/supvit_g2 <${TRKDATA}/suv_input.${atcfout}.${PDY}${cyc}
+  ${EXECens_tracker}/supvit.x <${TRKDATA}/suv_input.${atcfout}.${PDY}${cyc}
   suvrcc=$?
 
   if [ ${suvrcc} -eq 0 ]
@@ -590,7 +604,7 @@ then
     echo "!!! model= ${atcfout}, forecast initial time = ${PDY}${cyc}"
     echo " "
     set -x
-    err_exit "FAILED ${jobid} - ERROR RUNNING supvit_g2 IN TRACKER SCRIPT- ABNORMAL EXIT"
+    err_exit "FAILED ${jobid} - ERROR RUNNING supvit IN TRACKER SCRIPT- ABNORMAL EXIT"
   fi
 
 else
@@ -751,6 +765,11 @@ if [ -f $genvitfile ]; then
   d6ahead_hh=`  echo ${d6ahead_ymdh} | cut -c9-10`
   d6ahead_str="${d6ahead_ymd} ${d6ahead_hh}00"
   
+  syyyym6=` echo ${d6ago_ymdh} | cut -c1-4`
+  smmm6=`   echo ${d6ago_ymdh} | cut -c5-6`
+  sddm6=`   echo ${d6ago_ymdh} | cut -c7-8`
+  shhm6=`   echo ${d6ago_ymdh} | cut -c9-10`
+
   set +x
   echo " "
   echo " d6ago_str=    --->${d6ago_str}<---"
@@ -785,7 +804,8 @@ echo "&date6aheadin  d6ahead%yy=${syyyyp6}, d6ahead%mm=${smmp6}," >>${TRKDATA}/s
 echo "               d6ahead%dd=${sddp6}, d6ahead%hh=${shhp6}/"  >>${TRKDATA}/sgv_input.${atcfout}.${PDY}${cyc}
 
 #J.Peng----2012-05-04--- need this for TC vitals------------------
-num_gen_vits=0
+#num_gen_vits=0
+num_gen_vits=`cat ${TRKDATA}/genvitals.${cmodel}.${atcfout}.${PDY}${CYL} | wc -l`
 
 if [ ${num_gen_vits} -gt 0 ]
 then
@@ -801,7 +821,7 @@ then
   msg="$pgm start for $atcfout at ${cyc}z"
   postmsg "$jlogfile" "$msg"
 
-  ${EXECens_tracker}/supvit_gen <${TRKDATA}/sgv_input.${atcfout}.${PDY}${cyc}
+  ${EXECens_tracker}/supvit.x <${TRKDATA}/sgv_input.${atcfout}.${PDY}${cyc}
   sgvrcc=$?
 
   if [ ${sgvrcc} -eq 0 ]
@@ -884,7 +904,12 @@ then
   
     for fhour in ${fcsthrs}
     do
-  
+
+      if [ ${fhour} -eq 99 ]
+      then
+        continue
+       fi
+
       if [ ! -s ${gfsdir}/${gfsgfile}${fhour} ]
       then
         set +x
@@ -905,23 +930,23 @@ then
         case ${parm} in
 	  "SurfaceU")
 	   grep "UGRD:10 m " gfs.ix | ${WGRIB2:?} -i $gfile -append -grib \
-	     ${TRKDATA}/master.gfsgribfile.${PDY}${cyc}.f${fhour} ;;
+         	           ${TRKDATA}/master.gfsgribfile.${PDY}${cyc}.f${fhour} ;;
 	  "SurfaceV")
 	   grep "VGRD:10 m " gfs.ix | ${WGRIB2:?} -i $gfile -append -grib \
-	     ${TRKDATA}/master.gfsgribfile.${PDY}${cyc}.f${fhour} ;;
-	       *)
+	                   ${TRKDATA}/master.gfsgribfile.${PDY}${cyc}.f${fhour} ;;
+	          *)
 	   grep "${parm}" gfs.ix | ${WGRIB2:?} -i $gfile -append -grib \
-	     ${TRKDATA}/master.gfsgribfile.${PDY}${cyc}.f${fhour} ;;
+	                  ${TRKDATA}/master.gfsgribfile.${PDY}${cyc}.f${fhour} ;;
 	 esac
       done
 
       gfs_master_file=${TRKDATA}/master.gfsgribfile.${PDY}${cyc}.f${fhour}
       gfs_cat_file=${TRKDATA}/gfsgribfile.${PDY}${cyc}
-      ${GRB2INDEX:?} ${gfs_master_file} ${gfs_master_file}.ix
-      export err=$?; err_chk
+#      ${GRB2INDEX:?} ${gfs_master_file} ${gfs_master_file}.ix
+#      export err=$?; err_chk
 
-      g1=${gfs_master_file}
-      x1=${gfs_master_file}.ix
+#      g1=${gfs_master_file}
+#      x1=${gfs_master_file}.ix
       cat ${gfs_master_file} >>${gfs_cat_file}
     done
 
@@ -986,7 +1011,7 @@ then
       gparm=11
 #      ffile=${TRKDATA}/${cmodel}.${PDY}${cyc}.t.f${fhour}
       ffile=${gfile}
-      tavefile=${TRKDATA}/${cmodel}.tave.${PDY}${cyc}.f${fhour}
+      tavefile=${TRKDATA}/${cmodel}_tave.${PDY}${cyc}.f${fhour}
 
       . prep_step
 
@@ -995,28 +1020,30 @@ then
       echo "&timein ifcsthour=${fhour},"       >${namelist}
       echo "        iparm=${gparm},"          >>${namelist}
       echo "        gribver=${gribver},"      >>${namelist}
-      echo "        g2_jpdtn=${g2_jpdtn},"    >>${namelist}
-      echo "        g2_model=${model}/"       >>${namelist}
+      echo "        g2_jpdtn=${g2_jpdtn}/"    >>${namelist}
+#      echo "        g2_model=${model}/"       >>${namelist}
       export FORT11=${ffile}
       export FORT31=${ifile}
       
       # Output file
-      export FORT51=${tavefile}
+      export FORT51=${TRKDATA}/${cmodel}.tave.${PDY}${cyc}.f${fhour}
+#      export FORT51=${tavefile}
 #      export FORT92=${TRKDATA}/${cmodel}.tave92.${PDY}${cyc}.f${fhour}
 
-      ${EXECens_tracker}/tave_g2.x <${namelist}
+      ${EXECens_tracker}/tave.x <${namelist}
       rcc=$?
 
       if [ $rcc -ne 0 ]; then
         set +x
         echo " "
-        echo "FATAL ERROR in call to tave_g2.x at fhour= $fhour"
+        echo "FATAL ERROR in call to tave.x at fhour= $fhour"
         echo "rcc= $rcc      EXITING.... "
         echo " "
         set -x
-        err_exit "FAILED ${jobid} -tave_g2.x-  AT LINE $LINENO - ABNORMAL EXIT"
+        err_exit "FAILED ${jobid} -tave.x-  AT LINE $LINENO - ABNORMAL EXIT"
       fi
-
+    
+      tavefile=${TRKDATA}/${cmodel}.tave.${PDY}${cyc}.f${fhour}
 #      zfile=${TRKDATA}/${cmodel}.${PDY}${cyc}.z.f${fhour}
 #      cat ${zfile} ${tavefile} >>${catfile}
       cat ${tavefile} >>${catfile}
@@ -1032,8 +1059,8 @@ then
       echo "&timein ifcsthour=${fhour},"       >${namelist}
       echo "        iparm=${gparm},"          >>${namelist}
       echo "        gribver=${gribver},"      >>${namelist}
-      echo "        g2_jpdtn=${g2_jpdtn},"    >>${namelist}
-      echo "        g2_model=${model}/"       >>${namelist}
+      echo "        g2_jpdtn=${g2_jpdtn}/"    >>${namelist}
+#      echo "        g2_model=${model}/"       >>${namelist}
       export FORT11=${ffile}
       export FORT31=${ifile}
 
@@ -1178,17 +1205,17 @@ then
       # Output file
       export FORT51=${TRKDATA}/${cmodel}.${PDY}${cyc}.z.f${fhour}
 
-      ${EXECens_tracker}/vint_g2.x <${namelist}
+      ${EXECens_tracker}/vint.x <${namelist}
       rcc=$?
 
       if [ $rcc -ne 0 ]; then
         set +x
         echo " "
-        echo "FATAL ERROR in call to vint_g2.x for GPH at fhour= $fhour"
+        echo "FATAL ERROR in call to vint.x for GPH at fhour= $fhour"
         echo "rcc= $rcc      EXITING.... "
         echo " "
         set -x
-        err_exit "FAILED ${jobid} -vint_g2.x-  for GPH AT LINE $LINENO - ABNORMAL EXIT"
+        err_exit "FAILED ${jobid} -vint.x-  for GPH AT LINE $LINENO - ABNORMAL EXIT"
       fi
 
 #     ----------------------------------------------------
@@ -1212,17 +1239,17 @@ then
 
       # Output file
       export FORT51=${TRKDATA}/${cmodel}.${PDY}${cyc}.t.f${fhour}
-      ${EXECens_tracker}/vint_g2.x <${namelist}
+      ${EXECens_tracker}/vint.x <${namelist}
       rcc=$?
 
       if [ $rcc -ne 0 ]; then
         set +x
         echo " "
-        echo "FATAL ERROR in call to vint_g2.x for T at fhour= $fhour"
+        echo "FATAL ERROR in call to vint.x for T at fhour= $fhour"
         echo "rcc= $rcc      EXITING.... "
         echo " "
         set -x
-        err_exit "FAILED ${jobid} -vint_g2.x-  for T AT LINE $LINENO - ABNORMAL EXIT"
+        err_exit "FAILED ${jobid} -vint.x-  for T AT LINE $LINENO - ABNORMAL EXIT"
       fi
 
 #     ----------------------------------------------------
@@ -1252,17 +1279,17 @@ then
       # Output file
       export FORT51=${TRKDATA}/${cmodel}_tave.${PDY}${cyc}.f${fhour}
 
-      ${EXECens_tracker}/tave_g2.x <${namelist}
+      ${EXECens_tracker}/tave.x <${namelist}
       rcc=$?
 
       if [ $rcc -ne 0 ]; then
         set +x
         echo " "
-        echo "FATAL ERROR in call to tave_g2.x at fhour= $fhour"
+        echo "FATAL ERROR in call to tave.x at fhour= $fhour"
         echo "rcc= $rcc      EXITING.... "
         echo " "
         set -x
-        err_exit "FAILED ${jobid} -tave_g2.x-  AT LINE $LINENO - ABNORMAL EXIT"
+        err_exit "FAILED ${jobid} -tave.x-  AT LINE $LINENO - ABNORMAL EXIT"
       fi
 
       cat ${zfile} ${tavefile} >>${catfile}
@@ -1423,17 +1450,17 @@ then
       # Output file
       export FORT51=${TRKDATA}/${cmodel}.${PDY}${cyc}.z.f${fhour}
 
-      ${EXECens_tracker}/vint_g2.x <${namelist}
+      ${EXECens_tracker}/vint.x <${namelist}
       rcc=$?
 
       if [ $rcc -ne 0 ]; then
         set +x
         echo " "
-        echo "FATAL ERROR in call to vint_g2.x for GPH at fhour= $fhour"
+        echo "FATAL ERROR in call to vint.x for GPH at fhour= $fhour"
         echo "rcc= $rcc      EXITING.... "
         echo " "
         set -x
-        err_exit "FAILED ${jobid} -vint_g2.x-  for GPH AT LINE $LINENO - ABNORMAL EXIT"
+        err_exit "FAILED ${jobid} -vint.x-  for GPH AT LINE $LINENO - ABNORMAL EXIT"
       fi
 
 #     ----------------------------------------------------
@@ -1457,17 +1484,17 @@ then
 
       # Output file
       export FORT51=${TRKDATA}/${cmodel}.${PDY}${cyc}.t.f${fhour}
-      ${EXECens_tracker}/vint_g2.x <${namelist}
+      ${EXECens_tracker}/vint.x <${namelist}
       rcc=$?
 
       if [ $rcc -ne 0 ]; then
         set +x
         echo " "
-        echo "FATAL ERROR in call to vint_g2.x for T at fhour= $fhour"
+        echo "FATAL ERROR in call to vint.x for T at fhour= $fhour"
         echo "rcc= $rcc      EXITING.... "
         echo " "
         set -x
-        err_exit "FAILED ${jobid} -vint_g2.x-  for T AT LINE $LINENO - ABNORMAL EXIT"
+        err_exit "FAILED ${jobid} -vint.x-  for T AT LINE $LINENO - ABNORMAL EXIT"
       fi
 
 #     ----------------------------------------------------
@@ -1497,17 +1524,17 @@ then
       # Output file
       export FORT51=${TRKDATA}/${cmodel}_tave.${PDY}${cyc}.f${fhour}
 
-      ${EXECens_tracker}/tave_g2.x <${namelist}
+      ${EXECens_tracker}/tave.x <${namelist}
       rcc=$?
 
       if [ $rcc -ne 0 ]; then
         set +x
         echo " "
-        echo "FATAL ERROR in call to tave_g2.x at fhour= $fhour"
+        echo "FATAL ERROR in call to tave.x at fhour= $fhour"
         echo "rcc= $rcc      EXITING.... "
         echo " "
         set -x
-        err_exit "FAILED ${jobid} -tave_g2.x-  AT LINE $LINENO - ABNORMAL EXIT"
+        err_exit "FAILED ${jobid} -tave.x-  AT LINE $LINENO - ABNORMAL EXIT"
       fi
 
       cat ${zfile} ${tavefile} >>${catfile}
@@ -1639,58 +1666,62 @@ then
   echo ${last_fcst_hour} >${TRKDATA}/last_fcst_hour.${atcfout}.${PDY}${cyc}
 fi
 
+#-----------------------------------------namelist definition-----------------------#
+source ${USHens_tracker}/gribvar.sh
 namelist=${TRKDATA}/input.${atcfout}.${PDY}${cyc}
 ATCFNAME=` echo "${atcfname}" | tr '[a-z]' '[A-Z]'`
+#-----------------------------------------------------------------------------------#
 
 export atcfymdh=${scc}${syy}${smm}${sdd}${shh}
 
-contour_interval=100.0
-write_vit=y
-want_oci=.TRUE.
+if [ ${cmodel} = 'sref' ]; then
+  export atcfymdh=` $NDATE -3 ${scc}${syy}${smm}${sdd}${shh}`
+else
+  export atcfymdh=${scc}${syy}${smm}${sdd}${shh}
+fi
 
-echo "&datein inp%bcc=${scc},inp%byy=${syy},inp%bmm=${smm},"      >${namelist}
-echo "        inp%bdd=${sdd},inp%bhh=${shh},inp%model=${model}," >>${namelist}
-echo "        inp%modtyp='${modtyp}',"                           >>${namelist}
-echo "        inp%lt_units='${lead_time_units}',"                >>${namelist}
-echo "        inp%file_seq='${file_sequence}',"                  >>${namelist}
-echo "        inp%nesttyp='${nest_type}'/"                       >>${namelist}
-echo "&atcfinfo atcfnum=${atcfnum},atcfname='${ATCFNAME}',"      >>${namelist}
-echo "          atcfymdh=${atcfymdh},atcffreq=${atcffreq}/"      >>${namelist}
-echo "&trackerinfo trkrinfo%westbd=${trkrwbd},"                  >>${namelist}
-echo "      trkrinfo%eastbd=${trkrebd},"                         >>${namelist}
-echo "      trkrinfo%northbd=${trkrnbd},"                        >>${namelist}
-echo "      trkrinfo%southbd=${trkrsbd},"                        >>${namelist}
-echo "      trkrinfo%type='${trkrtype}',"                        >>${namelist}
-echo "      trkrinfo%mslpthresh=${mslpthresh},"                  >>${namelist}
-echo "      trkrinfo%v850thresh=${v850thresh},"                  >>${namelist}
-echo "      trkrinfo%gridtype='${modtyp}',"                      >>${namelist}
-echo "      trkrinfo%contint=${contour_interval},"               >>${namelist}
-echo "      trkrinfo%want_oci=${want_oci},"                      >>${namelist}
-echo "      trkrinfo%out_vit='${write_vit}',"                    >>${namelist}
-echo "      trkrinfo%gribver=${gribver},"                        >>${namelist}
-echo "      trkrinfo%g2_jpdtn=${g2_jpdtn}/"                      >>${namelist}
-echo "&phaseinfo phaseflag='${PHASEFLAG}',"                      >>${namelist}
-echo "           phasescheme='${PHASE_SCHEME}',"                 >>${namelist}
-echo "           wcore_depth=${WCORE_DEPTH}/"                    >>${namelist}
-echo "&structinfo structflag='${STRUCTFLAG}',"                   >>${namelist}
-echo "            ikeflag='${IKEFLAG}'/"                         >>${namelist}
-echo "&fnameinfo  gmodname='${atcfname}',"                       >>${namelist}
-echo "            rundescr='${rundescr}',"                       >>${namelist}
-echo "            atcfdescr='${atcfdescr}'/"                     >>${namelist}
-echo "&verbose verb=3/"                                          >>${namelist}
-echo "&waitinfo use_waitfor='n',"                                >>${namelist}
-echo "          wait_min_age=10,"                                >>${namelist}
-echo "          wait_min_size=100,"                              >>${namelist}
-echo "          wait_max_wait=1800,"                             >>${namelist}
-echo "          wait_sleeptime=5,"                               >>${namelist}
-echo "          per_fcst_command=''/"                            >>${namelist}
+if [ ${loopnum} -eq 8 -a ${cmodel} = 'gfs' ]; then
+  # set it artificially high to effectively turn off the check and 
+  # ensure it won't be triggered
+  max_mslp_850=4000.0
+else
+  max_mslp_850=400.0
+fi
+	  
+source ${USHens_tracker}/namelist_var.sh
 
-export pgm=gettrk_gen_g2
+export pgm=gettrk
 . prep_step
 
-export FORT11=${gribfile}
-export FORT12=${TRKDATA}/vitals.upd.${atcfout}.${PDY}${shh}
-export FORT14=${TRKDATA}/genvitals.upd.${cmodel}.${atcfout}.${PDY}${cyc}
+cp ${namelist} namelist.gettrk
+export FORT555=namelist.gettrk
+#export FORT11=${gribfile}
+#export FORT12=${TRKDATA}/vitals.upd.${atcfout}.${PDY}${shh}
+#export FORT14=${TRKDATA}/genvitals.upd.${cmodel}.${atcfout}.${PDY}${cyc}
+
+if [ ${inp_data_type} = 'grib' ]; then
+  export FORT11=${gribfile}
+else
+  export FORT11=${netcdffile}
+  if [ ${read_separate_land_mask_file} = 'y' ]; then
+    FORT17=${ncdf_ls_mask_filename}
+  fi
+fi
+
+if [ -s ${TRKDATA}/vitals.upd.${atcfout}.${PDY}${cyc} ]; then
+  cp ${TRKDATA}/vitals.upd.${atcfout}.${PDY}${cyc} \
+     ${TRKDATA}/tcvit_rsmc_storms.txt
+else
+  >${TRKDATA}/tcvit_rsmc_storms.txt
+fi
+
+if [ -s ${TRKDATA}/genvitals.upd.${atcfout}.${PDY}${cyc} ]; then
+  cp ${TRKDATA}/genvitals.upd.${atcfout}.${PDY}${cyc} \
+     ${TRKDATA}/tcvit_genesis_storms.txt
+else
+  >${TRKDATA}/tcvit_genesis_storms.txt
+fi
+
 export FORT15=${FIXens_tracker}/${cmodel}.genesis_leadtimes
 export FORT31=${ixfile}
 
@@ -1704,6 +1735,7 @@ if [ ${trkrtype} = 'tracker' ]; then
     export FORT66=${TRKDATA}/trak.${atcfout}.atcf_gen.${stormenv}.${PDY}${cyc}
     export FORT68=${TRKDATA}/trak.${atcfout}.atcf_sink.${stormenv}.${PDY}${cyc}
     export FORT69=${TRKDATA}/trak.${atcfout}.atcf_hfip.${stormenv}.${PDY}${cyc}
+    export FORT81=${TRKDATA}/trak.${atcfout}.parmfix.${PDY}${CYL}
   else
     export FORT61=${TRKDATA}/trak.${atcfout}.all.${PDY}${cyc}
     export FORT62=${TRKDATA}/trak.${atcfout}.atcf.${PDY}${cyc}
@@ -1712,6 +1744,7 @@ if [ ${trkrtype} = 'tracker' ]; then
     export FORT66=${TRKDATA}/trak.${atcfout}.atcf_gen.${PDY}${cyc}
     export FORT68=${TRKDATA}/trak.${atcfout}.atcf_sink.${PDY}${cyc}
     export FORT69=${TRKDATA}/trak.${atcfout}.atcf_hfip.${PDY}${cyc}
+    export FORT81=${TRKDATA}/trak.${atcfout}.parmfix.${PDY}${CYL}
   fi
 else
   export FORT61=${TRKDATA}/trak.${atcfout}.all.${regtype}.${PDY}${cyc}
@@ -1721,6 +1754,7 @@ else
   export FORT66=${TRKDATA}/trak.${atcfout}.atcf_gen.${regtype}.${PDY}${cyc}
   export FORT68=${TRKDATA}/trak.${atcfout}.atcf_sink.${regtype}.${PDY}${cyc}
   export FORT69=${TRKDATA}/trak.${atcfout}.atcf_hfip.${regtype}.${PDY}${cyc}
+  export FORT81=${TRKDATA}/trak.${atcfout}.parmfix.${PDY}${CYL}
 fi
 
 if [ ${atcfname} = 'aear' ]
@@ -1777,7 +1811,7 @@ set -x
 
 ulimit -c unlimited
 
-${EXECens_tracker}/gettrk_gen_g2 <${namelist}
+${EXECens_tracker}/gettrk.x <${namelist}
 gettrk_rcc=$?
 
 set +x
@@ -1810,11 +1844,11 @@ if [ ${gettrk_rcc} -eq 0 ]; then
 else
   set +x
   echo " "
-  echo "FATAL ERROR:  An error occurred while running gettrk_gen_g2, "
+  echo "FATAL ERROR:  An error occurred while running gettrk, "
   echo "!!! which is the program that actually gets the track."
-  echo "!!! Return code from gettrk_gen_g2 = ${gettrk_rcc}"
+  echo "!!! Return code from gettrk = ${gettrk_rcc}"
   echo "!!! model= ${atcfout}, forecast initial time = ${PDY}${cyc}"
   echo " "
   set -x
-  err_exit "FAILED ${jobid} - ERROR RUNNING gettrk_gen_g2 IN TRACKER SCRIPT- ABNORMAL EXIT"
+  err_exit "FAILED ${jobid} - ERROR RUNNING gettrk IN TRACKER SCRIPT- ABNORMAL EXIT"
 fi

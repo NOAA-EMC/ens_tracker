@@ -4,21 +4,35 @@
 #PBS -A ENSTRACK-DEV
 #PBS -q dev
 #PBS -S /bin/bash
-#PBS -l place=vscatter,select=3:ncpus=51:mpiprocs=51:mem=8GB
-#PBS -l walltime=00:20:00
+#PBS -l place=vscatter,select=1:ncpus=51:mpiprocs=51:mem=100GB
+#PBS -l walltime=00:30:00
 #PBS -l debug=true
 
 #export model=ens_tracker
 #%include <head.h>
 #%include <envir-p1.h>
 #
+#export PACKAGEHOME=%PACKAGEHOME%
 #export cyc=%CYC%
 
 module reset
 export target=wcoss2
-module use /lfs/h2/emc/ens/noscrub/hananeh.jafary/ens_package_08042025/modulefiles
+module use /lfs/h2/emc/ens/noscrub/hananeh.jafary/ens_package_20260512/modulefiles
 module load ${target}.lua
 module list
+
+export JASPER_PATH=/apps/spack/jasper/2.0.25/intel/19.1.3.304/sjib74krrorkyczqpqah4tvewmlnqdx4/lib64
+export NETCDF_PATH=/apps/prod/hpc-stack/intel-19.1.3.304/netcdf/4.7.4/lib
+export HDF5_PATH=/apps/prod/hpc-stack/intel-19.1.3.304/hdf5/1.10.6/lib
+export LD_LIBRARY_PATH=${JASPER_PATH}:${NETCDF_PATH}:${HDF5_PATH}:${LD_LIBRARY_PATH}
+
+export model=ens_tracker
+export cyc=00
+export envir=prod
+export job=eens_track_${cyc}
+export COMROOT=/lfs/h2/emc/ptmp/hananeh.jafary/com
+export DATAROOT=/lfs/h2/emc/ptmp/hananeh.jafary
+export KEEPDATA=YES
 
 module load PrgEnv-intel/$PrgEnv_intel_ver
 module load intel/$intel_ver
@@ -42,21 +56,13 @@ module load wgrib2/$wgrib2_ver
 module load cray-pals/$cray_pals_ver
 module list
 
-export model=ens_tracker
-export cyc=00
-export envir=prod
-export job=eens_track_${cyc}
-export COMROOT=/lfs/h2/emc/ptmp/hananeh.jafary/com
-export DATAROOT=/lfs/h2/emc/ptmp/hananeh.jafary
-export KEEPDATA=YES
-
-export PACKAGEHOME=/lfs/h2/emc/ens/noscrub/hananeh.jafary/ens_tracker.v1.4.0
+export PACKAGEHOME=/lfs/h2/emc/ens/noscrub/hananeh.jafary/ens_package_20260512
 
 # CALL executable job script here
 ${PACKAGEHOME}/dev/jobs/JEENS_TC_TRACK
 
-%include <tail.h>
-%manual
+#%include <tail.h>
+#%manual
 ######################################################################
 #PURPOSE:  Executes the job that creates EENS TC TRACK forecast 
 ######################################################################

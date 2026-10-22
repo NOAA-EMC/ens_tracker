@@ -19,8 +19,8 @@ export regtype=altg
 mkdir ${DATA}/${cmodel}
 cd ${DATA}/${cmodel}
 
-pertstring=' c00 p01 p02 p03 p04 p05 p06 p07 p08 p09 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20' >trkr.cmdfile
-
+pertstring=' c00 p01 p02 p03 p04 p05 p06 p07 p08 p09 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20'
+>trkr.cmdfile
 for pert in ${pertstring}; do
   export pertdir=${DATA}/${cmodel}/${pert}
   mkdir -p $pertdir
@@ -50,22 +50,14 @@ done
 cd ${DATA}
 #rm -rf ${DATA}/${cmodel}
 if [ -s "missing_fens.txt" ]; then
+   mail.py -s "Missing FNMOC data in $job" --html <<ENDMSG
+One or more Fleet Numerical Meteorology and Oceanography Center files are missing, including
+<ul>
+$(sort -u missing_fens.txt | awk '$0="<li>"$0"</li>"')
+</ul>
 
-echo "One or more Fleet Numerical Meteorology and Oceanography Center files are missing, including:" > $DATA/missing_file
-#sort -u missing_fens.txt | awk '$0="<li>"$0"</li>"' > $DATA/missing_files
-sort -u missing_fens.txt  > $DATA/missing_files
-echo "" >> $DATA/missing_files
-echo "$0 could not process all expected data." >> $DATA/missing_files
-cat $DATA/missing_file $DATA/missing_files > $DATA/mail_message
-cat $DATA/mail_message | mail.py -s "Missing FNMOC data in $job" $MAILTO -v
-
-#old
-##   mail.py -s "Missing FNMOC data in $job" <<ENDMSG
-##One or more Fleet Numerical Meteorology and Oceanography Center files are missing, including
-##$(sort -u missing_fens.txt | awk '$0="<li>"$0"</li>"')
-##$0 could not process all expected data.
-##ENDMSG
-
+$0 could not process all expected data.
+ENDMSG
 fi
 
 #---filtering weak storms -----------------------------

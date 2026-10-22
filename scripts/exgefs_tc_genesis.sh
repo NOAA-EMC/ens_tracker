@@ -51,12 +51,12 @@ for pert in ${pertstring}; do
 #  cp ${TRKDATA}/storms.a*.atcf_gen.altg.${ymdh} ${COMOUT}/
 done
 
-cd ${DATA}
+#cd ${DATA}
 #rm -rf ${DATA}/${cmodel}
 
 #---filter weak storms ----------------------------
 for pert in ${pertstring}; do
-  . prep_step
+#  . prep_step
 
   # Input file
   export FORT41=storms.a${pert}.atcf_gen.altg.${ymdh}
@@ -75,47 +75,48 @@ for pert in ${pertstring}; do
 done
 
 ##### ensemble mean calculation and plot probability ##########
-${USHens_tracker}/ens_trak_ave_2d.sh 
+#${USHens_tracker}/ens_trak_ave_2d.sh 
+#${USHens_tracker}/ens_trak_ave.sh
 #cp ${DATA}/trak.aemn.* ${COMOUT}/
 #cp ${DATA}/aemn.trkprob.* ${COMOUT}/
 
-hurrlist="AL90 AL91 AL92 AL93 AL94 AL95 AL96 AL97 AL98 AL99 \
-          EP90 EP91 EP92 EP93 EP94 EP95 EP96 EP97 EP98 EP99 \
-          WP90 WP91 WP92 WP93 WP94 WP95 WP96 WP97 WP98 WP99 \
-          HC01 HC02 HC03 HC04 HC05 HC06 HC07 HC08 HC09 HC10"
-namelist=input.${ymdh}.nlist
-namelist1=input.${ymdh}.nlist1
+#hurrlist="AL90 AL91 AL92 AL93 AL94 AL95 AL96 AL97 AL98 AL99 \
+#          EP90 EP91 EP92 EP93 EP94 EP95 EP96 EP97 EP98 EP99 \
+#          WP90 WP91 WP92 WP93 WP94 WP95 WP96 WP97 WP98 WP99 \
+#          HC01 HC02 HC03 HC04 HC05 HC06 HC07 HC08 HC09 HC10"
+#namelist=input.${ymdh}.nlist
+#namelist1=input.${ymdh}.nlist1
 
-for hurr in $hurrlist; do
-  if [ -s ${COMOUT}/aemn.trkprob.${hurr}.65nm.${ymdh}.indiv.ieee ]; then
-    cpreq ${COMOUT}/aemn.trkprob.${hurr}.65nm.${ymdh}.indiv.ieee .
-    cpreq ${COMOUT}/trak.aemn.atcfunix.${ymdh} .
-    pert_basin=`    echo "${hurr}" | cut -c1-2`
-    pert_num=`    echo "${hurr}" | cut -c3-4`
-    grep "${pert_basin}, ${pert_num}" trak.aemn.atcfunix.${ymdh} > trak.aemn.atcfunix.${ymdh}.${hurr}
+#for hurr in $hurrlist; do
+#  if [ -s ${COMOUT}/aemn.trkprob.${hurr}.65nm.${ymdh}.indiv.ieee ]; then
+#    cpreq ${COMOUT}/aemn.trkprob.${hurr}.65nm.${ymdh}.indiv.ieee .
+#    cpreq ${COMOUT}/trak.aemn.atcfunix.${ymdh} .
+#    pert_basin=`    echo "${hurr}" | cut -c1-2`
+#    pert_num=`    echo "${hurr}" | cut -c3-4`
+#    grep "${pert_basin}, ${pert_num}" trak.aemn.atcfunix.${ymdh} > trak.aemn.atcfunix.${ymdh}.${hurr}
 
-    . prep_step
-    echo "&datain0 kymdh0='aemn.trkprob.${hurr}.65nm.${ymdh}.indiv.ieee'/" >${namelist}
-    echo "&datain1 kymdh1='aemn.trkprob.${hurr}.65nm.${ymdh}.indiv.data'/" >>${namelist}
-    ${EXECens_tracker}/readprob <${namelist}
-    export err=$?; err_chk
+#    . prep_step
+#    echo "&datain0 kymdh0='aemn.trkprob.${hurr}.65nm.${ymdh}.indiv.ieee'/" >${namelist}
+#    echo "&datain1 kymdh1='aemn.trkprob.${hurr}.65nm.${ymdh}.indiv.data'/" >>${namelist}
+#    ${EXECens_tracker}/readprob <${namelist}
+#    export err=$?; err_chk
 
-    echo "&datain0 kymdh0='aemn.trkprob.${hurr}.65nm.${ymdh}.indiv.ieee'/" >${namelist1}
-    echo "&datain1 kymdh1='aemn.trkprob.${hurr}.65nm.${ymdh}.indiv.gene'/" >>${namelist1}
-    echo "&datain2 kymdh2='trak.aemn.atcfunix.${ymdh}.${hurr}'/" >>${namelist1}
-    ${EXECens_tracker}/readprobLL <${namelist1}
-    export err=$?; err_chk
+#    echo "&datain0 kymdh0='aemn.trkprob.${hurr}.65nm.${ymdh}.indiv.ieee'/" >${namelist1}
+#    echo "&datain1 kymdh1='aemn.trkprob.${hurr}.65nm.${ymdh}.indiv.gene'/" >>${namelist1}
+#    echo "&datain2 kymdh2='trak.aemn.atcfunix.${ymdh}.${hurr}'/" >>${namelist1}
+#    ${EXECens_tracker}/readprobLL <${namelist1}
+#    export err=$?; err_chk
 
-    if [ "$SENDCOM" = YES ]; then
-      cp aemn.trkprob.${hurr}.65nm.${ymdh}.indiv.data ${COMOUT}/
-      cp aemn.trkprob.${hurr}.65nm.${ymdh}.indiv.gene ${COMOUT}/
+#    if [ "$SENDCOM" = YES ]; then
+#      cp aemn.trkprob.${hurr}.65nm.${ymdh}.indiv.data ${COMOUT}/
+#      cp aemn.trkprob.${hurr}.65nm.${ymdh}.indiv.gene ${COMOUT}/
 
-      if [ "$SENDDBN" = 'YES' ]; then
+#      if [ "$SENDDBN" = 'YES' ]; then
         # JY $DBNROOT/bin/dbn_alert MODEL ENS_GENESIS $job ${COMOUT}/aemn.trkprob.${hurr}.65nm.${ymdh}.indiv.data
-        $DBNROOT/bin/dbn_alert MODEL ENS_GENESIS $job ${COMOUT}/aemn.trkprob.${hurr}.65nm.${ymdh}.indiv.gene
-      fi
-    fi
-    rm $namelist $namelist1
-  fi
-done
+#        $DBNROOT/bin/dbn_alert MODEL ENS_GENESIS $job ${COMOUT}/aemn.trkprob.${hurr}.65nm.${ymdh}.indiv.gene
+#      fi
+#    fi
+#    rm $namelist $namelist1
+#  fi
+#done
 

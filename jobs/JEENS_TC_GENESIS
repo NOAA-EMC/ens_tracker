@@ -14,13 +14,14 @@ export cycle=t${cyc}z
 ####################################
 # File To Log Msgs
 ####################################
-#export jlogfile=${jlogfile:-${DATA}/jlogfile.${jobid}}
+export jlogfile=${jlogfile:-${DATA}/jlogfile.${jobid}}
 
 ####################################
 # Specify NET and RUN Name and model
 ####################################
 export NET=${NET:-ens_tracker}
 export RUN=${RUN:-ecme}
+export model_id=${model_id:-ecme}
 
 ####################################
 # Determine Job Output Name on System
@@ -69,8 +70,50 @@ postmsg "$jlogfile" "$msg"
 
 env
 
-${SCRIPTens_tracker}/exeens_tc_genesis.sh
+#############################################################
+# Execute the script
+
+export cmodel=eens
+export loopnum=1
+
+export ecedir=${COMIN}
+export trkrtype='tcgen'
+export regtype=altg
+
+ymdh=${PDY}${cyc}
+
+mkdir ${DATA}/${cmodel}
+cd ${DATA}/${cmodel}
+
+pertstring="p01 p02 p03 p04 p05 p06 p07 p08 p09 p10\
+            p11 p12 p13 p14 p15 p16 p17 p18 p19 p20\
+            p21 p22 p23 p24 p25 \
+            n01 n02 n03 n04 n05 n06 n07 n08 n09 n10\
+            n11 n12 n13 n14 n15 n16 n17 n18 n19 n20\
+            n21 n22 n23 n24 n25"
+
+>trkr.cmdfile
+for pert in ${pertstring}; do
+  export pertdir=${DATA}/${cmodel}/${pert}
+  mkdir -p $pertdir
+
+  outfile=${pertdir}/trkr.${regtype}.${cmodel}.${pert}.${ymdh}.out
+  echo "${USHens_tracker}/extrkr_gen_g1.sh ${loopnum} ${cmodel} ${pert} ${pertdir} &>${outfile}" >>trkr.cmdfile
+done
+
+chmod u+x trkr.cmdfile
+export MP_PGMMODEL=mpmd
+export MP_CMDFILE=${DATA}/${cmodel}/trkr.cmdfile
+
+mpiexec --cpu-bind core --configfile ${MP_CMDFILE}
 export err=$?; err_chk
+
+exit
+for model in ${pertstring}; do
+    export model_id="e${model}"
+    ${SCRIPTens_tracker}/run_atcf_gen_filter_from_datelist_min24h_3bas.sh ${model_id}
+    export err=$?; err_chk
+done
 
 msg="JOB COMPLETED NORMALLY"
 postmsg "$jlogfile" "$msg"

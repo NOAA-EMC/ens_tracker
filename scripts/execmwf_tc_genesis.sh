@@ -11,9 +11,9 @@ export ecmwfdir=${DCOM}
 
 export trkrtype=tcgen
 export trkrebd=350.0
-export trkrwbd=105.0
-export trkrnbd=30.0
-export trkrsbd=5.0
+export trkrwbd=260.0
+export trkrnbd=40.0
+export trkrsbd=1.0
 export mslpthresh=0.0015
 export v850thresh=1.5000
 export regtype=altg
@@ -72,8 +72,8 @@ cpreq ${COMOUT}/$FORT41 .
 export FORT42=storms.emx.atcf_gen.${ymdh}
 export FORT43=trak.emx.atcfunix.${ymdh}
 
-${EXECens_tracker}/filter_gen_ecmwf
-export err=$?; err_chk
+#${EXECens_tracker}/filter_gen_ecmwf
+#export err=$?; err_chk
 
 if [ "$SENDCOM" = YES ]; then
   cp $FORT42 $FORT43 ${COMOUT}/

@@ -343,7 +343,8 @@ else
   if [ ${cmodel} = "gfs" ]; then
     wgrib_parmlist=" HGT:850 HGT:700 UGRD:850 UGRD:700 UGRD:500 VGRD:850 VGRD:700 VGRD:500 SurfaceU SurfaceV ABSV:850 ABSV:700 MSLET"
   elif [ ${cmodel} = "ens" ]; then
-    wgrib_parmlist=" HGT:850 HGT:700 UGRD:850 UGRD:700 UGRD:500 VGRD:850 VGRD:700 VGRD:500 SurfaceU SurfaceV ABSV:850 ABSV:700 MSLET"
+    wgrib_parmlist="HGT:850 HGT:700 UGRD:850 UGRD:700 UGRD:500 VGRD:850 VGRD:700 VGRD:500 SurfaceU SurfaceV ABSV:850 ABSV:700 MSLET"
+#    wgrib_parmlist=" HGT:850 HGT:700 UGRD:850 UGRD:700 UGRD:500 VGRD:850 VGRD:700 VGRD:500 SurfaceU SurfaceV ABSV:850 ABSV:700 MSLET"
   else
     wgrib_parmlist=" HGT:850 HGT:700 UGRD:850 UGRD:700 UGRD:500 VGRD:850 VGRD:700 VGRD:500 SurfaceU SurfaceV ABSV:850 ABSV:700 PRMSL"
   fi  
@@ -386,17 +387,23 @@ future_str="${future_ymd} ${future_hh}00"
 
 if [ ${modtyp} = 'global' ]
 then
+#  synvitdir=${COMROOT}/gfs/prod/gfs.${PDY}
   synvitdir=${COMINgfs:?}/${cyc}/atmos
   synvitfile=gfs.t${cyc}z.syndata.tcvitals.tm00
-  synvitold_dir=${synvitdir%.*}.${old_4ymd}/${old_hh}/atmos
+#  synvitold_dir=${COMROOT}/gfs/prod/gfs.${old_4ymd}
+  synvitold_dir=${synvitdir%.*}.${old_4ymd}/${old_hh}
   synvitold_file=gfs.t${old_hh}z.syndata.tcvitals.tm00
-  synvitfuture_dir=${synvitdir%.*}.${future_4ymd}/${future_hh}/atmos
+#  synvitfuture_dir=${COMROOT}/gfs/prod/gfs.${future_4ymd}
+  synvitfuture_dir=${synvitdir%.*}.${future_4ymd}/${future_hh}
   synvitfuture_file=gfs.t${future_hh}z.syndata.tcvitals.tm00
 else
+#  synvitdir=${COMROOT}/nam/prod/nam.${PDY}
   synvitdir=${COMINnam:?}
   synvitfile=nam.t${cyc}z.syndata.tcvitals.tm00
+#  synvitold_dir=${COMROOT}/nam/prod/nam.${old_4ymd}
   synvitold_dir=${synvitdir%.*}.${old_4ymd}
   synvitold_file=nam.t${old_hh}z.syndata.tcvitals.tm00
+#  synvitfuture_dir=${COMROOT}/nam/prod/nam.${future_4ymd}
   synvitfuture_dir=${synvitdir%.*}.${future_4ymd}
   synvitfuture_file=nam.t${future_hh}z.syndata.tcvitals.tm00
 fi
@@ -598,7 +605,7 @@ mv ${TRKDATA}/vitals.${atcfout}.${PDY}${cyc}.y4 ${TRKDATA}/vitals.${atcfout}.${P
 if [ ${numvitrecs} -gt 0 ]
 then
 
-  export pgm=supvit_g2
+  export pgm=supvit
   . prep_step
 
   export FORT31=${TRKDATA}/vitals.${atcfout}.${PDY}${cyc}
@@ -607,7 +614,7 @@ then
   msg="$pgm start for $atcfout at ${cyc}z"
   postmsg "$jlogfile" "$msg"
 
-  ${EXECens_tracker}/supvit_g2 <${TRKDATA}/suv_input.${atcfout}.${PDY}${cyc}
+  ${EXECens_tracker}/supvit <${TRKDATA}/suv_input.${atcfout}.${PDY}${cyc}
   suvrcc=$?
 
   if [ ${suvrcc} -eq 0 ]
@@ -623,7 +630,7 @@ then
     echo "!!! model= ${atcfout}, forecast initial time = ${PDY}${cyc}"
     echo " "
     set -x
-    err_exit "FAILED ${jobid} - ERROR RUNNING supvit_g2 IN TRACKER SCRIPT- ABNORMAL EXIT"
+    err_exit "FAILED ${jobid} - ERROR RUNNING supvit IN TRACKER SCRIPT- ABNORMAL EXIT"
   fi
 
 else
@@ -1318,17 +1325,17 @@ if [ ${model} -eq 15 ]; then
       # Output file
       export FORT51=${TRKDATA}/${cmodel}.${PDY}${cyc}.z.f${fhour}
 
-      ${EXECens_tracker}/vint_g2.x <${namelist}
+      ${EXECens_tracker}/vint.x <${namelist}
       rcc=$?
 
       if [ $rcc -ne 0 ]; then
         set +x
         echo " "
-        echo "FATAL ERROR in call to vint_g2.x for GPH at fhour= $fhour"
+        echo "FATAL ERROR in call to vint.x for GPH at fhour= $fhour"
         echo "rcc= $rcc      EXITING.... "
         echo " "
         set -x
-        err_exit "vint_g2.x- ERROR for GPH AT extrkr_g2.sh LINE $LINENO"
+        err_exit "vint.x- ERROR for GPH AT extrkr_g2.sh LINE $LINENO"
       fi
 
 #     ----------------------------------------------------
@@ -1352,17 +1359,17 @@ if [ ${model} -eq 15 ]; then
       # Output file
       export FORT51=${TRKDATA}/${cmodel}.${PDY}${cyc}.t.f${fhour}
 
-      ${EXECens_tracker}/vint_g2.x <${namelist}
+      ${EXECens_tracker}/vint.x <${namelist}
       rcc=$?
 
       if [ $rcc -ne 0 ]; then
         set +x
         echo " "
-        echo "FATAL ERROR in call to vint_g2.x for T at fhour= $fhour"
+        echo "FATAL ERROR in call to vint.x for T at fhour= $fhour"
         echo "rcc= $rcc      EXITING.... "
         echo " "
         set -x
-        err_exit "vint_g2.x- ERROR for T AT extrkr_g2.sh LINE $LINENO"
+        err_exit "vint.x- ERROR for T AT extrkr_g2.sh LINE $LINENO"
       fi
 
 #     ----------------------------------------------------
@@ -1390,17 +1397,17 @@ if [ ${model} -eq 15 ]; then
       # Output file
       export FORT51=${TRKDATA}/${cmodel}_tave.${PDY}${cyc}.f${fhour}
 
-      ${EXECens_tracker}/tave_g2.x <${namelist}
+      ${EXECens_tracker}/tave.x <${namelist}
       rcc=$?
 
       if [ $rcc -ne 0 ]; then
         set +x
         echo " "
-        echo "FATAL ERROR in call to tave_g2.x at fhour= $fhour"
+        echo "FATAL ERROR in call to tave.x at fhour= $fhour"
         echo "rcc= $rcc      EXITING.... "
         echo " "
         set -x
-        err_exit "tave_g2.x- ERROR AT extrkr_g2.sh LINE $LINENO"
+        err_exit "tave.x- ERROR AT extrkr_g2.sh LINE $LINENO"
       fi
 
       tavefile=${TRKDATA}/${cmodel}_tave.${PDY}${cyc}.f${fhour}
@@ -2045,7 +2052,7 @@ echo "          wait_max_wait=1800,"                             >>${namelist}
 echo "          wait_sleeptime=5,"                               >>${namelist}
 echo "          per_fcst_command=''/"                            >>${namelist}
 
-export pgm=gettrk_g2
+export pgm=gettrk
 . prep_step
 
 export FORT11=${gribfile}
@@ -2141,7 +2148,7 @@ echo "TIMING: Before call to gettrk at `date`"
 echo " "
 set -x
 
-${EXECens_tracker}/gettrk_g2 <${namelist}
+${EXECens_tracker}/gettrk <${namelist}
 gettrk_rcc=$?
 if [ ${gettrk_rcc} -ne 0 ]; then
   set +x
@@ -2152,7 +2159,7 @@ if [ ${gettrk_rcc} -ne 0 ]; then
   echo "!!! model= ${atcfout}, forecast initial time = ${PDY}${cyc}"
   echo " "
   set -x
-  err_exit "FAILED ${jobid} - ERROR RUNNING gettrk_g2 IN TRACKER SCRIPT- ABNORMAL EXIT"
+  err_exit "FAILED ${jobid} - ERROR RUNNING gettrk IN TRACKER SCRIPT- ABNORMAL EXIT"
 fi
 
 set +x
@@ -2274,14 +2281,6 @@ then
       echo "+++ Adding records to  TPC ATCFUNIX directory: $COMOUTatcf/${at}${NO}${syyyy}/ncep_${at}${NO}${syyyy}"
       echo " "
       set -x
-    if [ "$SENDDBN" = 'YES' ]
-    then
-	 if [ "$pert" = 'p01' ]
-	 then
-	   #sleep 60 
-           $DBNROOT/bin/dbn_alert MODEL NHC_ATCF_ENS_TRACKER $job $COMOUTatcf/${at}${NO}${syyyy}/ncep_a${at}${NO}${syyyy}.dat
-         fi
-    fi
     done
   fi
 fi

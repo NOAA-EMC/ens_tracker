@@ -10,15 +10,15 @@ export gfsdir=${COMINgfs}/${cyc}/atmos
 #---- first run to get GFS genesis vital at time=00 06 12 18Z -----------
 
 export trkrtype=tcgen
-export trkrebd=350.0
-export trkrwbd=105.0
-export trkrnbd=30.0
-export trkrsbd=5.0
-export mslpthresh=0.0015
-export v850thresh=1.5000
+#export trkrebd=350.0
+#export trkrwbd=260.0
+#export trkrnbd=40.0
+#export trkrsbd=1.0
+#export mslpthresh=0.0015
+#export v850thresh=1.5000
 export regtype=altg
 
-export pert=p01
+export pert=p25
 export pertdir=${DATA}/${cmodel}/${pert}
 mkdir -p $pertdir
 
@@ -54,6 +54,7 @@ ${USHens_tracker}/extrkr_gen_g2.sh ${loopnum} ${cmodel} ${pert} ${pertdir} #2>&1
 export err=$?; err_chk
 
 export atcfout=gfso
+#export atcfout=avnt
 export TRKDATA=${DATA}/${cmodel}/${pert}
 ${USHens_tracker}/sort_tracks.gen.sh  >${TRKDATA}/sort.${regtype}.${atcfout}.${ymdh}.out
 export err=$?; err_chk
@@ -62,22 +63,22 @@ export err=$?; err_chk
 #cp ${pertdir}/storms.gfso.atcf_gen.altg.${ymdh}  ${COMOUT}/
 
 #### filtering weak storms for TC genesis #####
-. prep_step
+#. prep_step
 
 # Input file
-export FORT41=storms.gfso.atcf_gen.altg.${ymdh}
-cpreq ${COMOUT}/$FORT41 .
+#export FORT41=storms.${atcfout}.atcf_gen.altg.${ymdh}
+#cpreq ${COMOUT}/$FORT41 .
 
 # Output files
-export FORT42=storms.gfso.atcf_gen.${ymdh}
-export FORT43=trak.gfso.atcfunix.${ymdh}
+#export FORT42=storms.${atcfout}.atcf_gen.${ymdh}
+#export FORT43=trak.${atcfout}.atcfunix.${ymdh}
 
-${EXECens_tracker}/filter_gen_gfs
-export err=$?; err_chk
+#${EXECens_tracker}/filter_gen_gfs
+#export err=$?; err_chk
 
-if [ "$SENDCOM" = YES ]; then
-  cp $FORT42 $FORT43 ${COMOUT}/
-  if [ $? -ne 0 ]; then
-    echo "WARNING: Filtering did not produce any files... perhaps there were no storms to begin with."
-  fi
-fi
+#if [ "$SENDCOM" = YES ]; then
+#  cp $FORT42 $FORT43 ${COMOUT}/
+#  if [ $? -ne 0 ]; then
+#    echo "WARNING: Filtering did not produce any files... perhaps there were no storms to begin with."
+#  fi
+#fi

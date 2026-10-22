@@ -91,7 +91,8 @@ qid=$$
 #export cmodel=${cmodel:-$3}
 export jobid=${jobid:-testjob}
 export SENDCOM=${SENDCOM:-NO}
-export PHASEFLAG=y
+#export PHASEFLAG=y
+export PHASEFLAG=n
 export WCORE_DEPTH=1.0
 #export PHASE_SCHEME=vtt
 #export PHASE_SCHEME=cps
@@ -184,8 +185,10 @@ case ${cmodel} in
        echo " "; set -x                                    ;
 #       ecmwfdir=${ecmwfdir:-${DCOMbase:?}/${PDY}/wgrbbul/ecmwf};
        ecmwfdir=${ecmwfdir:-${DCOM:?}}                     ;
-       vit_incr=6
-       fcstlen=6                                           ;
+       vit_incr=6                                          ;
+       fcstlen=126                                         ;
+       regtype=altg                                        ;
+#       fcstlen=6                                           ;
        fcsthrs=$(seq -f%02g -s' ' 0 $vit_incr $fcstlen)    ;
        atcfnum=19                                          ;
        atcfname="emx "                                     ;
@@ -197,29 +200,99 @@ case ${cmodel} in
        v850thresh=1.5000                                   ;
        modtyp='global'                                     ;
        lead_time_units='hours'                             ;
+       v850_qwc_thresh=1.0000                              ;
+       cint_grid_bound_check=0.50                          ;
+       nest_type='fixed'                                   ;
+       lead_time_units='hours'                             ;
+       gribver=1                                           ;
+       export PHASEFLAG='n'                                       ;
+       export PHASE_SCHEME='both'                                 ;
+       export STRUCTFLAG='n'                                      ;
+       export IKEFLAG='n'                                         ;
+       export sstflag='y'                                         ;
+       export shear_calc_flag='y'                                 ;
+       export genflag='n'                                         ;
+       export gen_read_rh_fields='n'                              ;
+       export use_land_mask='n'                                   ;
+       export read_separate_land_mask_file='n'                    ;
+       export need_to_compute_rh_from_q='n'                       ;
+       export smoothe_mslp_for_gen_scan='n'                       ;
+       export depth_of_mslp_for_gen_scan=0.50                     ;
+       export vortex_tilt_flag='n'                                ;
+       export vortex_tilt_parm='zeta'                             ;
+       export vortex_tilt_allow_thresh=1.0                        ;
+       g2_jpdtn=0                                          ;
+       export inp_data_type='grib'                                ;
+       g2_mslp_parm_id=192                                 ;
+       g1_mslp_parm_id=151                                 ;
+       g1_sfcwind_lev_typ=1                                ;
+       g1_sfcwind_lev_val=0                                ;
        model=4                                             ;;
 
   ukmet) set +x; echo " "                                    ;
        echo " ++ operational UKMET global model chosen" ;
        echo " "; set -x                                    ;
        ukmetdir=${ukmetdir:-${COMINukmet:?}}               ;
-#       ukmetgfile=pgbf                                     ;
-#       ukmetgfileb=.ukm.${PDY}${cyc}                       ;
+       ukmetgfile=${COMINukmet}                            ;
        ukmetgfileb=${cmodel}.t${cyc}z.0p25.f               ;
-       vit_incr=6
-       fcstlen=6                                           ;
-#       fcsthrs=$(seq -f%03g -s' ' 0 $vit_incr $fcstlen)    ;
-       fcsthrs=" 000 006"                                    ;
+       vit_incr=${FHOUT_CYCLONE:-6}                        ;
+       fcstlen=${FHMAX_CYCLONE:-144}                       ;
+       fcsthrs=$(seq -f%03g -s' ' 0 $vit_incr $fcstlen)    ;
+#       fcsthrs=' 00 12 24 36 48 60 72 84 96 108 120'       ;
        atcfnum=17                                          ;
        atcfname="ukx "                                     ;
        atcfout="ukx"                                       ;
        modtyp='global'                                     ;
-       rundescr="xxxx"                                     ;
-       atcfdescr="xxxx"                                    ;
-       file_sequence="onebig"                              ;
-       mslpthresh=0.0015                                   ;
-       v850thresh=1.5000                                   ;
        lead_time_units='hours'                             ;
+       file_sequence='onebig'                              ;
+#       trkrwbd=130.0                                       ;
+#       trkrebd=230.0                                       ;
+#       trkrnbd=10.0                                        ;
+#       trkrsbd=-40.0                                         ;
+       trkrwbd=105.0                                       ;
+       trkrebd=350.0                                       ;
+       trkrnbd=30.0                                        ;
+       trkrsbd=5.0                                         ;
+       trkrtype='tcgen'                                  ;
+       mslpthresh=0.0015                                   ;
+       use_backup_mslp_grad_check='y'                      ;
+       max_mslp_850=400.0                                  ;
+       v850thresh=1.5000                                   ;
+       v850_qwc_thresh=1.0000                              ;
+       cint_grid_bound_check=0.50                          ;
+       use_backup_850_vt_check='y'                         ;
+              contour_interval=100.0                              ;
+#       want_oci=.TRUE.                                     ;
+       write_vit='n'                                       ;
+       use_land_mask='n'                                   ;
+       inp_data_type='grib'                                ;
+       gribver=1                                           ;
+       g2_jpdtn=0                                          ;
+       g1_mslp_parm_id=2                                 ;
+       g1_sfcwind_lev_typ=105                              ;
+       g1_sfcwind_lev_val=10                               ;
+
+       PHASEFLAG='n'                                      ;
+#       PHASEFLAG='y'                                      ;
+       PHASE_SCHEME='both'                                ;
+       WCORE_DEPTH=1.0                                    ;
+
+       STRUCTFLAG='n'                                     ;
+       IKEFLAG='n'                                        ;
+       rundescr='xxxx'                                     ;
+       atcfdescr='xxxx'                                     ;
+       sstflag='y'                                        ;
+       shear_calc_flag='y'                                ;
+       genflag='n'                                        ;
+       gen_read_rh_fields='n'                             ;
+       use_land_mask='n'                                  ;
+       read_separate_land_mask_file='n'                   ;
+       need_to_compute_rh_from_q='n'                      ;
+       smoothe_mslp_for_gen_scan='n'                      ;
+       depth_of_mslp_for_gen_scan=0.50                    ;
+       vortex_tilt_flag='n'                          ;
+       vortex_tilt_parm='zeta'                       ;
+       vortex_tilt_allow_thresh=1.0                ;
        model=3                                            ;;
 
   *) msg="FATAL ERROR:  Model $cmodel is not recognized."  ;
@@ -230,16 +303,16 @@ esac
 
 if [ ${PHASEFLAG} = 'y' ]; then
 
-  wgrib_parmlist="UGRD:850 UGRD:700 UGRD:500 UGRD:200 VGRD:850 VGRD:700 VGRD:500 VGRD:200 SurfaceU SurfaceV PRMSL HGT:925 HGT:850 HGT:700 HGT:500 HGT:250 TMP:500 TMP:250 RH:500"
-#wgrib_uk_hires_parmlist="UGRD:850 UGRD:700 UGRD:500 UGRD:200 VGRD:850 VGRD:700 VGRD:500 VGRD:200 UGRD:sfc VGRD:sfc PRMSL:MSL HGT:925 HGT:850 HGT:700 HGT:500 HGT:400 HGT:300 TMP:500 TMP:400 TMP:300 RH:500"
-  wgrib_uk_hires_parmlist="UGRD:850 UGRD:700 UGRD:500 UGRD:200 VGRD:850 VGRD:700 VGRD:500 VGRD:200 PRMSL:MSL HGT:925 HGT:850 HGT:700 HGT:500 HGT:400 HGT:300 TMP:500 TMP:400 TMP:300 RH:500 SurfaceU SurfaceV"
-  wgrib_ec_hires_parmlist=" GH:850 GH:700 U:850 U:700 U:500 U:200 V:850 V:700 V:500 V:200 10U:sfc 10V:sfc MSL:sfc GH:300 GH:400 GH:500 GH:925 T:300 T:400 T:500 R:500"
+wgrib_parmlist="UGRD:850 UGRD:700 UGRD:500 UGRD:200 VGRD:850 VGRD:700 VGRD:500 VGRD:200 SurfaceU SurfaceV PRMSL HGT:925 HGT:850 HGT:700 HGT:500 HGT:250 TMP:500 TMP:250 RH:500"
+wgrib_uk_hires_parmlist="UGRD:850 UGRD:700 UGRD:500 UGRD:200 VGRD:850 VGRD:700 VGRD:500 VGRD:200 UGRD:sfc VGRD:sfc PRMSL:MSL HGT:925 HGT:850 HGT:700 HGT:500 HGT:400 HGT:300 TMP:500 TMP:400 TMP:300 RH:500"
+wgrib_ec_hires_parmlist=" GH:850 GH:700 U:850 U:700 U:500 U:200 V:850 V:700 V:500 V:200 10U:sfc 10V:sfc MSL:sfc GH:300 GH:400 GH:500 GH:925 T:300 T:400 T:500 R:500"
 
 else
-  wgrib_parmlist=" HGT:850 HGT:700 UGRD:850 UGRD:700 UGRD:500 VGRD:850 VGRD:700 VGRD:500 SurfaceU SurfaceV ABSV:850 ABSV:700 PRMSL "
-  wgrib_uk_hires_parmlist=' HGT:850 HGT:700 UGRD:850 UGRD:700 UGRD:500 VGRD:850 VGRD:700 VGRD:500 UGRD:sfc VGRD:sfc ABSV:850 ABSV:700 PRMSL:MSL '
-  wgrib_ec_hires_parmlist=" GH:850 GH:700 U:850 U:700 U:500 V:850 V:700 V:500 10U:sfc 10V:sfc MSL:sfc"
+  wgrib_parmlist=" HGT:850 HGT:700 UGRD:850 UGRD:700 UGRD:500 VGRD:850 VGRD:700 VGRD:500 SurfaceU SurfaceV ABSV:850 ABSV:700 PRMSL:MSL LAND:surface :TMP:surface"
+  wgrib_uk_hires_parmlist="UGRD:850 UGRD:700 UGRD:500 UGRD:200 VGRD:850 VGRD:700 VGRD:500 VGRD:200 PRMSL:MSL HGT:925 HGT:850 HGT:700 HGT:500 HGT:400 HGT:300 TMP:500 TMP:400 TMP:300 RH:500 SurfaceU SurfaceV"
+#  wgrib_ec_hires_parmlist=" GH:850 GH:700 U:850 U:700 U:600 U:500 U:400 U:300 U:250 V:850 V:700 V:600 V:500 V:400 V:300 V:250 10U:sfc 10V:sfc MSL:sfc GH:300 GH:400 GH:500 GH:600 GH:925 T:300 T:400 T:500 R:600 R:700 R:825 W:500 SSTK:sfc U:200 V:200"
 
+  wgrib_ec_hires_parmlist=" GH:850 GH:700 U:850 U:700 U:500 U:200 V:850 V:700 V:500 V:200 10U:sfc 10V:sfc MSL:sfc GH:300 GH:400 GH:500 GH:925 T:300 T:400 T:500 R:500"
 fi
 
 #---------------------------------------------------------------#
@@ -282,17 +355,23 @@ future_str="${future_ymd} ${future_hh}00"
 
 if [ ${modtyp} = 'global' ]
 then
+#  synvitdir=${COMROOT}/gfs/prod/gfs.${PDY}
   synvitdir=${COMINgfs:?}/${cyc}/atmos
   synvitfile=gfs.t${cyc}z.syndata.tcvitals.tm00
+#  synvitold_dir=${COMROOT}/gfs/prod/gfs.${old_4ymd}
   synvitold_dir=${synvitdir%.*}.${old_4ymd}/${old_hh}/atmos
   synvitold_file=gfs.t${old_hh}z.syndata.tcvitals.tm00
+#  synvitfuture_dir=${COMROOT}/gfs/prod/gfs.${future_4ymd}
   synvitfuture_dir=${synvitdir%.*}.${future_4ymd}/${future_hh}/atmos
   synvitfuture_file=gfs.t${future_hh}z.syndata.tcvitals.tm00
 else
+#  synvitdir=${COMROOT}/nam/prod/nam.${PDY}
   synvitdir=${COMINnam:?}
   synvitfile=nam.t${cyc}z.syndata.tcvitals.tm00
+#  synvitold_dir=${COMROOT}/nam/prod/nam.${old_4ymd}
   synvitold_dir=${synvitdir%.*}.${old_4ymd}
   synvitold_file=nam.t${old_hh}z.syndata.tcvitals.tm00
+#  synvitfuture_dir=${COMROOT}/nam/prod/nam.${future_4ymd}
   synvitfuture_dir=${synvitdir%.*}.${future_4ymd}
   synvitfuture_file=nam.t${future_hh}z.syndata.tcvitals.tm00
 fi
@@ -539,7 +618,7 @@ numvitrecs=`cat ${DATA}/vitals.${atcfout}.${PDY}${cyc} | wc -l`
 
 if [ ${numvitrecs} -gt 0 ]
 then
-  export pgm=supvit_g2
+  export pgm=supvit
   . prep_step
 
   # Input file
@@ -551,7 +630,7 @@ then
   msg="$pgm start for $atcfout at ${cyc}z"
   postmsg "$jlogfile" "$msg"
 
-  ${EXECens_tracker}/supvit_g2 <${DATA}/suv_input.${atcfout}.${PDY}${cyc}
+  ${EXECens_tracker}/supvit.x <${DATA}/suv_input.${atcfout}.${PDY}${cyc}
   suvrcc=$?
 
   if [ ${suvrcc} -eq 0 ]
@@ -567,7 +646,7 @@ then
     echo "!!! model= ${atcfout}, forecast initial time = ${PDY}${cyc}"
     echo " "
     set -x
-    err_exit "FAILED ${jobid} - ERROR RUNNING supvit_g2 IN TRACKER SCRIPT- ABNORMAL EXIT"
+    err_exit "FAILED ${jobid} - ERROR RUNNING supvit IN TRACKER SCRIPT- ABNORMAL EXIT"
   fi
 
 else
@@ -867,9 +946,9 @@ then
       fmmddhh=` ${NDATE:?} ${fhr} ${PDY}${cyc} | cut -c5- `
       #ec_hires_orig=ecens_DCD${immddhh}00${fmmddhh}001 # Original
       if [ ${fmmddhh} -eq ${immddhh} ]; then
-        ec_hires_orig=U1D${immddhh}00${fmmddhh}01${ECMWF_FILE_EXT}
+        ec_hires_orig=U1D${immddhh}00${fmmddhh}011
       else
-        ec_hires_orig=U1D${immddhh}00${fmmddhh}00${ECMWF_FILE_EXT}
+        ec_hires_orig=U1D${immddhh}00${fmmddhh}001
       fi
       ecfile=${ecmwfdir}/${ec_hires_orig}
 
@@ -973,17 +1052,17 @@ then
       # Output file
       export FORT51=${DATA}/${cmodel}.${PDY}${cyc}.z.f${fhour}
 
-      ${EXECens_tracker}/vint_g1.x <${namelist}
+      ${EXECens_tracker}/vint.x <${namelist}
       rcc=$?
 
       if [ $rcc -ne 0 ]; then
         set +x
         echo " "
-        echo "FATAL ERROR in call to vint_g1.x for GPH at fhour= $fhour"
+        echo "FATAL ERROR in call to vint.x for GPH at fhour= $fhour"
         echo "rcc= $rcc      EXITING.... "
         echo " "
         set -x
-        err_exit "FAILED ${jobid} -vint_g1.x-  for GPH AT LINE $LINENO - ABNORMAL EXIT"
+        err_exit "FAILED ${jobid} -vint.x-  for GPH AT LINE $LINENO - ABNORMAL EXIT"
       fi
 
 #     ----------------------------------------------------
@@ -996,7 +1075,10 @@ then
 
       # Input files
       namelist=${DATA}/vint_input.${PDY}${cyc}
-      echo "&timein ifcsthour=${fhour}, iparm=${gparm}/"  >${namelist}
+      echo "&timein ifcsthour=${fhour},"  >${namelist}
+      echo "        iparm=${gparm},"          >>${namelist}
+      echo "        gribver=${gribver},"      >>${namelist}
+      echo "        g2_jpdtn=${g2_jpdtn}/"    >>${namelist}
       export FORT11=${gfile}
       export FORT16=${FIXens_tracker}/ecmwf_tmp_levs.txt
       export FORT31=${ifile}
@@ -1004,17 +1086,17 @@ then
       # Output file
       export FORT51=${DATA}/${cmodel}.${PDY}${cyc}.t.f${fhour}
 
-      ${EXECens_tracker}/vint_g1.x <${namelist}
+      ${EXECens_tracker}/vint.x <${namelist}
       rcc=$?
 
       if [ $rcc -ne 0 ]; then
         set +x
         echo " "
-        echo "FATAL ERROR in call to vint_g1.x for T at fhour= $fhour"
+        echo "FATAL ERROR in call to vint.x for T at fhour= $fhour"
         echo "rcc= $rcc      EXITING.... "
         echo " "
         set -x
-        err_exit "FAILED ${jobid} -vint_g1.x-  for T AT LINE $LINENO - ABNORMAL EXIT"
+        err_exit "FAILED ${jobid} -vint.x-  for T AT LINE $LINENO - ABNORMAL EXIT"
       fi
 
 #     ----------------------------------------------------
@@ -1030,24 +1112,27 @@ then
 
       # Input files
       namelist=${DATA}/tave_input.${PDY}${cyc}
-      echo "&timein ifcsthour=${fhour}, iparm=${gparm}/"  >${namelist}
+      echo "&timein ifcsthour=${fhour},"  >${namelist}
+      echo "        iparm=${gparm},"          >>${namelist}
+      echo "        gribver=${gribver},"      >>${namelist}
+      echo "        g2_jpdtn=${g2_jpdtn}/"    >>${namelist}
       export FORT11=${ffile}
       export FORT31=${ifile}
 
       # Output file
       export FORT51=${DATA}/${cmodel}_tave.${PDY}${cyc}.f${fhour}
 
-      ${EXECens_tracker}/tave_g1.x <${namelist}
+      ${EXECens_tracker}/tave.x <${namelist}
       rcc=$?
 
       if [ $rcc -ne 0 ]; then
         set +x
         echo " "
-        echo "FATAL ERROR in call to tave_g1.x at fhour= $fhour"
+        echo "FATAL ERROR in call to tave.x at fhour= $fhour"
         echo "rcc= $rcc      EXITING.... "
         echo " "
         set -x
-        err_exit "FAILED ${jobid} -tave_g1.x-  AT LINE $LINENO - ABNORMAL EXIT"
+        err_exit "FAILED ${jobid} -tave.x-  AT LINE $LINENO - ABNORMAL EXIT"
       fi
 
       tavefile=${DATA}/${cmodel}_tave.${PDY}${cyc}.f${fhour}
@@ -1090,8 +1175,7 @@ then
     for fhour in ${fcsthrs}
     do
 
-#      ukfile=${ukmetdir}/${ukmetgfile}${fhour}${ukmetgfileb}      
-      ukfile=${ukmetdir}/${ukmetgfileb}${fhour}.grib
+      ukfile=${ukmetgfile}/${ukmetgfileb}${fhour}.grib      
 
       let attempts=1
       while [ $attempts -le 30 ]; do
@@ -1112,16 +1196,16 @@ then
       for parm in ${wgrib_uk_hires_parmlist}
       do
         case ${parm} in
-          "SurfaceU")
-           grep "UGRD:10 m above" ukmet.ix | ${WGRIB:?} -s $ukfile -i -grib -append \
-                                    -o ${DATA}/ukmetgribfile.${PDY}${cyc} ;;
-           "SurfaceV")
-           grep "VGRD:10 m above" ukmet.ix | ${WGRIB:?} -s $ukfile -i -grib -append \
-                                    -o ${DATA}/ukmetgribfile.${PDY}${cyc} ;;
-                     *)
-           grep "${parm}" ukmet.ix | ${WGRIB:?} -s $ukfile -i -grib -append \
-                                    -o ${DATA}/ukmetgribfile.${PDY}${cyc} ;;
-        esac
+        "SurfaceU")
+         grep "UGRD:10 m above" ukmet.ix | ${WGRIB:?} -s $ukfile -i -grib -append \
+                                  -o ${DATA}/ukmetgribfile.${PDY}${cyc} ;;
+        "SurfaceV")
+         grep "VGRD:10 m above" ukmet.ix | ${WGRIB:?} -s $ukfile -i -grib -append \
+                                  -o ${DATA}/ukmetgribfile.${PDY}${cyc} ;;
+                    *)
+         grep "${parm}" ukmet.ix | ${WGRIB:?} -s $ukfile -i -grib -append \
+                             -o ${DATA}/ukmetgribfile.${PDY}${cyc} ;;
+      esac
       done
     done  
 
@@ -1135,13 +1219,6 @@ then
 
     ${GRBINDEX:?} ${DATA}/ukmetgribfile.${PDY}${cyc} ${DATA}/ukmetixfile.${PDY}${cyc}
     export err=$?; err_chk
-
-#    grid="255 0 360 181 -90000 0000 128 90000 359000 1000 1000 64"
-#    export gfile=ukmetgribfile.1x1degree
-#    $COPYGB -g"${grid}" -a ${DATA}/ukmetgribfile.${PDY}${cyc} ${DATA}/ukmetixfile.${PDY}${cyc} ${gfile}
-#    cp ${gfile} ${DATA}/ukmetgribfile.${PDY}${cyc}
-#    ${GRBINDEX:?} ${DATA}/ukmetgribfile.${PDY}${cyc} ${DATA}/ukmetixfile.${PDY}${cyc}
-#    export err=$?; err_chk
 
     catfile=${DATA}/${cmodel}.${PDY}${cyc}.catfile
     >${catfile}
@@ -1207,17 +1284,17 @@ then
       # Output file
       export FORT51=${DATA}/${cmodel}.${PDY}${cyc}.z.f${fhour}
 
-      ${EXECens_tracker}/vint_g1.x <${namelist}
+      ${EXECens_tracker}/vint.x <${namelist}
       rcc=$?
 
       if [ $rcc -ne 0 ]; then
         set +x
         echo " "
-        echo "FATAL ERROR in call to vint_g1.x for GPH at fhour= $fhour"
+        echo "FATAL ERROR in call to vint.x for GPH at fhour= $fhour"
         echo "rcc= $rcc      EXITING.... "
         echo " "
         set -x
-        err_exit "FAILED ${jobid} -vint_g1.x-  for GPH AT LINE $LINENO - ABNORMAL EXIT, Geopotential Height is missing from the input UKMet data, which is essential for interpolating height data"
+        err_exit "FAILED ${jobid} -vint.x-  for GPH AT LINE $LINENO - ABNORMAL EXIT"
       fi
 
 #     ----------------------------------------------------
@@ -1237,17 +1314,17 @@ then
       # Output file
       export FORT51=${DATA}/${cmodel}.${PDY}${cyc}.t.f${fhour}
 
-      ${EXECens_tracker}/vint_g1.x <${namelist}
+      ${EXECens_tracker}/vint.x <${namelist}
       rcc=$?
 
       if [ $rcc -ne 0 ]; then
         set +x
         echo " "
-        echo "FATAL ERROR in call to vint_g1.x for T at fhour= $fhour"
+        echo "FATAL ERROR in call to vint.x for T at fhour= $fhour"
         echo "rcc= $rcc      EXITING.... "
         echo " "
         set -x
-        err_exit "FAILED ${jobid} -vint_g1.x-  for T AT LINE $LINENO - ABNORMAL EXIT, temperature is missing from the input UKMet data, which is essential for interpolating temp data"
+        err_exit "FAILED ${jobid} -vint.x-  for T AT LINE $LINENO - ABNORMAL EXIT"
       fi
 
 #     ----------------------------------------------------
@@ -1270,17 +1347,17 @@ then
       # Output file
       export FORT51=${DATA}/${cmodel}_tave.${PDY}${cyc}.f${fhour}
 
-      ${EXECens_tracker}/tave_g1.x <${namelist}
+      ${EXECens_tracker}/tave.x <${namelist}
       rcc=$?
 
       if [ $rcc -ne 0 ]; then
         set +x
 	echo " "
-	echo "FATAL ERROR in call to tave_g1.x at fhour= $fhour"
+	echo "FATAL ERROR in call to tave.x at fhour= $fhour"
 	echo "rcc= $rcc      EXITING.... "
 	echo " "
 	set -x
-	err_exit "FAILED ${jobid} -tave_g1.x-  AT LINE $LINENO - ABNORMAL EXIT"
+	err_exit "FAILED ${jobid} -tave.x-  AT LINE $LINENO - ABNORMAL EXIT"
       fi
 
       tavefile=${DATA}/${cmodel}_tave.${PDY}${cyc}.f${fhour}
@@ -1343,8 +1420,56 @@ ATCFNAME=` echo "${atcfname}" | tr '[a-z]' '[A-Z]'`
 
 export atcfymdh=${scc}${syy}${smm}${sdd}${shh}
 
+if [ ${loopnum} -eq 8 -a ${cmodel} = 'gfs' ]; then
+  # set it artificially high to effectively turn off the check and
+  # ensure it won't be triggered
+  max_mslp_850=4000.0
+else
+  max_mslp_850=400.0
+fi
+
+export WCORE_DEPTH=1.0
+export use_land_mask=${use_land_mask:-no}
 contour_interval=100.0
-write_vit=y
+radii_pctile=95.0
+radii_free_pass_pctile=67.0
+radii_width_thresh=15.0
+write_vit=n
+want_oci=.TRUE.
+use_backup_mslp_grad_check=${use_backup_mslp_grad_check:-y}
+use_backup_850_vt_check=${use_backup_850_vt_check:-y}
+
+# Define which parameters to track:
+
+user_wants_to_track_zeta850=y
+user_wants_to_track_zeta700=y
+user_wants_to_track_wcirc850=y
+user_wants_to_track_wcirc700=y
+user_wants_to_track_gph850=y
+user_wants_to_track_gph700=y
+user_wants_to_track_mslp=y
+user_wants_to_track_wcircsfc=y
+user_wants_to_track_zetasfc=y
+user_wants_to_track_thick500850=n
+user_wants_to_track_thick200500=n
+user_wants_to_track_thick200850=n
+
+set +x
+echo " "
+echo "After set perts ${pert}, user_wants_to_track_zeta850= ${user_wants_to_track_zeta850}"
+echo "After set perts ${pert}, user_wants_to_track_zeta700= ${user_wants_to_track_zeta700}"
+echo "After set perts ${pert}, user_wants_to_track_wcirc850= ${user_wants_to_track_wcirc850}"
+echo "After set perts ${pert}, user_wants_to_track_wcirc700= ${user_wants_to_track_wcirc700}"
+echo "After set perts ${pert}, user_wants_to_track_gph850= ${user_wants_to_track_gph850}"
+echo "After set perts ${pert}, user_wants_to_track_gph700= ${user_wants_to_track_gph700}"
+echo "After set perts ${pert}, user_wants_to_track_mslp= ${user_wants_to_track_mslp}"
+echo "After set perts ${pert}, user_wants_to_track_wcircsfc= ${user_wants_to_track_wcircsfc}"
+echo "After set perts ${pert}, user_wants_to_track_zetasfc= ${user_wants_to_track_zetasfc}"
+echo "After set perts ${pert}, user_wants_to_track_thick500850= ${user_wants_to_track_thick500850}"
+echo "After set perts ${pert}, user_wants_to_track_thick200500= ${user_wants_to_track_thick200500}"
+echo "After set perts ${pert}, user_wants_to_track_thick200850= ${user_wants_to_track_thick200850}"
+echo " "
+set -x
 
 echo "&datein inp%bcc=${scc},inp%byy=${syy},inp%bmm=${smm},"      >${namelist}
 echo "        inp%bdd=${sdd},inp%bhh=${shh},inp%model=${model}," >>${namelist}
@@ -1353,37 +1478,178 @@ echo "        inp%lt_units='${lead_time_units}',"                >>${namelist}
 echo "        inp%file_seq='${file_sequence}',"                  >>${namelist}
 echo "        inp%nesttyp='${nest_type}'/"                       >>${namelist}
 echo "&atcfinfo atcfnum=${atcfnum},atcfname='${ATCFNAME}',"      >>${namelist}
-echo "          atcfymdh=${atcfymdh}/"                           >>${namelist}
+echo "          atcfymdh=${atcfymdh},atcffreq=${atcffreq}/"      >>${namelist}
 echo "&trackerinfo trkrinfo%westbd=${trkrwbd},"                  >>${namelist}
 echo "      trkrinfo%eastbd=${trkrebd},"                         >>${namelist}
 echo "      trkrinfo%northbd=${trkrnbd},"                        >>${namelist}
 echo "      trkrinfo%southbd=${trkrsbd},"                        >>${namelist}
 echo "      trkrinfo%type='${trkrtype}',"                        >>${namelist}
 echo "      trkrinfo%mslpthresh=${mslpthresh},"                  >>${namelist}
+echo "      trkrinfo%use_backup_mslp_grad_check='${use_backup_mslp_grad_check}',"  >>${namelist}
+echo "      trkrinfo%max_mslp_850=${max_mslp_850},"              >>${namelist}
 echo "      trkrinfo%v850thresh=${v850thresh},"                  >>${namelist}
+echo "      trkrinfo%v850_qwc_thresh=${v850_qwc_thresh},"        >>${namelist}
+echo "      trkrinfo%use_backup_850_vt_check='${use_backup_850_vt_check}',"  >>${namelist}
 echo "      trkrinfo%gridtype='${modtyp}',"                      >>${namelist}
+echo "      trkrinfo%enable_timing=1,"                           >>${namelist}
 echo "      trkrinfo%contint=${contour_interval},"               >>${namelist}
-echo "      trkrinfo%out_vit='${write_vit}'/"                    >>${namelist}
+echo "      trkrinfo%want_oci=${want_oci},"                      >>${namelist}
+echo "      trkrinfo%out_vit='${write_vit}',"                    >>${namelist}
+echo "      trkrinfo%out_vit='${write_vit}',"                    >>${namelist}
+echo "      trkrinfo%use_land_mask='${use_land_mask}',"          >>${namelist}
+echo "      trkrinfo%read_separate_land_mask_file='${read_separate_land_mask_file}',"   >>${namelist}
+echo "      trkrinfo%inp_data_type='${inp_data_type}',"          >>${namelist}
+echo "      trkrinfo%gribver=${gribver},"                        >>${namelist}
+echo "      trkrinfo%g2_jpdtn=${g2_jpdtn},"                      >>${namelist}
+echo "      trkrinfo%g1_mslp_parm_id=${g1_mslp_parm_id},"        >>${namelist}
+echo "      trkrinfo%g1_sfcwind_lev_typ=${g1_sfcwind_lev_typ},"  >>${namelist}
+echo "      trkrinfo%g1_sfcwind_lev_val=${g1_sfcwind_lev_val}/"  >>${namelist}
 echo "&phaseinfo phaseflag='${PHASEFLAG}',"                      >>${namelist}
 echo "           phasescheme='${PHASE_SCHEME}',"                 >>${namelist}
 echo "           wcore_depth=${WCORE_DEPTH}/"                    >>${namelist}
 echo "&structinfo structflag='${STRUCTFLAG}',"                   >>${namelist}
-echo "            ikeflag='${IKEFLAG}'/"                         >>${namelist}
+echo "            ikeflag='${IKEFLAG}',"                         >>${namelist}
+echo "            radii_pctile=${radii_pctile},"                 >>${namelist}
+echo "            radii_free_pass_pctile=${radii_free_pass_pctile},"  >>${namelist}
+echo "            radii_width_thresh=${radii_width_thresh}/"     >>${namelist}
 echo "&fnameinfo  gmodname='${atcfname}',"                       >>${namelist}
 echo "            rundescr='${rundescr}',"                       >>${namelist}
 echo "            atcfdescr='${atcfdescr}'/"                     >>${namelist}
-echo "&verbose verb=3/"                                          >>${namelist}
+echo "&cintinfo contint_grid_bound_check=${contint_grid_bound_check}/" >>${namelist}
 echo "&waitinfo use_waitfor='n',"                                >>${namelist}
 echo "          wait_min_age=10,"                                >>${namelist}
 echo "          wait_min_size=100,"                              >>${namelist}
 echo "          wait_max_wait=1800,"                             >>${namelist}
 echo "          wait_sleeptime=5,"                               >>${namelist}
 echo "          per_fcst_command=''/"                            >>${namelist}
+echo "&netcdflist netcdfinfo%num_netcdf_vars=${ncdf_num_netcdf_vars}," >>${namelist}
+echo "      netcdfinfo%netcdf_filename='${netcdffile}',"           >>${namelist}
+echo "      netcdfinfo%netcdf_lsmask_filename='${ncdf_ls_mask_filename}'," >>${namelist}
+echo "      netcdfinfo%rv850name='${ncdf_rv850name}',"             >>${namelist}
+echo "      netcdfinfo%rv700name='${ncdf_rv700name}',"             >>${namelist}
+echo "      netcdfinfo%u850name='${ncdf_u850name}',"               >>${namelist}
+echo "      netcdfinfo%v850name='${ncdf_v850name}',"               >>${namelist}
+echo "      netcdfinfo%u700name='${ncdf_u700name}',"               >>${namelist}
+echo "      netcdfinfo%v700name='${ncdf_v700name}',"               >>${namelist}
+echo "      netcdfinfo%z850name='${ncdf_z850name}',"               >>${namelist}
+echo "      netcdfinfo%z700name='${ncdf_z700name}',"               >>${namelist}
+echo "      netcdfinfo%mslpname='${ncdf_mslpname}',"               >>${namelist}
+echo "      netcdfinfo%usfcname='${ncdf_usfcname}',"               >>${namelist}
+echo "      netcdfinfo%vsfcname='${ncdf_vsfcname}',"               >>${namelist}
+echo "      netcdfinfo%u500name='${ncdf_u500name}',"               >>${namelist}
+echo "      netcdfinfo%v500name='${ncdf_v500name}',"               >>${namelist}
+echo "      netcdfinfo%u200name='${ncdf_u200name}',"               >>${namelist}
+echo "      netcdfinfo%v200name='${ncdf_v200name}',"               >>${namelist}
+echo "      netcdfinfo%tmean_300_500_name='${ncdf_tmean_300_500_name}',"  >>${namelist}
+echo "      netcdfinfo%z500name='${ncdf_z500name}',"               >>${namelist}
+echo "      netcdfinfo%z200name='${ncdf_z200name}',"               >>${namelist}
+echo "      netcdfinfo%lmaskname='${ncdf_lmaskname}',"             >>${namelist}
+echo "      netcdfinfo%z900name='${ncdf_z900name}',"               >>${namelist}
+echo "      netcdfinfo%z850name='${ncdf_z850name}',"               >>${namelist}
+echo "      netcdfinfo%z800name='${ncdf_z800name}',"               >>${namelist}
+echo "      netcdfinfo%z750name='${ncdf_z750name}',"               >>${namelist}
+echo "      netcdfinfo%z700name='${ncdf_z700name}',"               >>${namelist}
+echo "      netcdfinfo%z650name='${ncdf_z650name}',"               >>${namelist}
+echo "      netcdfinfo%z600name='${ncdf_z600name}',"               >>${namelist}
+echo "      netcdfinfo%z550name='${ncdf_z550name}',"               >>${namelist}
+echo "      netcdfinfo%z500name='${ncdf_z500name}',"               >>${namelist}
+echo "      netcdfinfo%z450name='${ncdf_z450name}',"               >>${namelist}
+echo "      netcdfinfo%z400name='${ncdf_z400name}',"               >>${namelist}
+echo "      netcdfinfo%z350name='${ncdf_z350name}',"               >>${namelist}
+echo "      netcdfinfo%z300name='${ncdf_z300name}',"               >>${namelist}
+echo "      netcdfinfo%time_name='${ncdf_time_name}',"             >>${namelist}
+echo "      netcdfinfo%lon_name='${ncdf_lon_name}',"               >>${namelist}
+echo "      netcdfinfo%lat_name='${ncdf_lat_name}',"               >>${namelist}
+echo "      netcdfinfo%time_units='${ncdf_time_units}',"           >>${namelist}
+echo "      netcdfinfo%sstname='${ncdf_sstname}',"                 >>${namelist}
+echo "      netcdfinfo%q850name='${ncdf_q850name}',"               >>${namelist}
+echo "      netcdfinfo%rh1000name='${ncdf_rh1000name}',"           >>${namelist}
+echo "      netcdfinfo%rh925name='${ncdf_rh925name}',"             >>${namelist}
+echo "      netcdfinfo%rh800name='${ncdf_rh800name}',"             >>${namelist}
+echo "      netcdfinfo%rh750name='${ncdf_rh750name}',"             >>${namelist}
+echo "      netcdfinfo%rh700name='${ncdf_rh700name}',"             >>${namelist}
+echo "      netcdfinfo%rh650name='${ncdf_rh650name}',"             >>${namelist}
+echo "      netcdfinfo%rh600name='${ncdf_rh600name}',"             >>${namelist}
+echo "      netcdfinfo%spfh1000name='${ncdf_spfh1000name}',"       >>${namelist}
+echo "      netcdfinfo%spfh925name='${ncdf_spfh925name}',"         >>${namelist}
+echo "      netcdfinfo%spfh800name='${ncdf_spfh800name}',"         >>${namelist}
+echo "      netcdfinfo%spfh750name='${ncdf_spfh750name}',"         >>${namelist}
+echo "      netcdfinfo%spfh700name='${ncdf_spfh700name}',"         >>${namelist}
+echo "      netcdfinfo%spfh650name='${ncdf_spfh650name}',"         >>${namelist}
+echo "      netcdfinfo%spfh600name='${ncdf_spfh600name}',"         >>${namelist}
+echo "      netcdfinfo%temp1000name='${ncdf_temp1000name}',"       >>${namelist}
+echo "      netcdfinfo%temp925name='${ncdf_temp925name}',"         >>${namelist}
+echo "      netcdfinfo%temp800name='${ncdf_temp800name}',"         >>${namelist}
+echo "      netcdfinfo%temp750name='${ncdf_temp750name}',"         >>${namelist}
+echo "      netcdfinfo%temp700name='${ncdf_temp700name}',"         >>${namelist}
+echo "      netcdfinfo%temp650name='${ncdf_temp650name}',"         >>${namelist}
+echo "      netcdfinfo%temp600name='${ncdf_temp600name}',"         >>${namelist}
+echo "      netcdfinfo%omega500name='${ncdf_omega500name}'/"       >>${namelist}
+echo "&parmpreflist user_wants_to_track_zeta850='${user_wants_to_track_zeta850}'," >>${namelist}
+echo "      user_wants_to_track_zeta700='${user_wants_to_track_zeta700}',"         >>${namelist}
+echo "      user_wants_to_track_wcirc850='${user_wants_to_track_wcirc850}',"       >>${namelist}
+echo "      user_wants_to_track_wcirc700='${user_wants_to_track_wcirc700}',"       >>${namelist}
+echo "      user_wants_to_track_gph850='${user_wants_to_track_gph850}',"           >>${namelist}
+echo "      user_wants_to_track_gph700='${user_wants_to_track_gph700}',"           >>${namelist}
+echo "      user_wants_to_track_mslp='${user_wants_to_track_mslp}',"               >>${namelist}
+echo "      user_wants_to_track_wcircsfc='${user_wants_to_track_wcircsfc}',"       >>${namelist}
+echo "      user_wants_to_track_zetasfc='${user_wants_to_track_zetasfc}',"         >>${namelist}
+echo "      user_wants_to_track_thick500850='${user_wants_to_track_thick500850}'," >>${namelist}
+echo "      user_wants_to_track_thick200500='${user_wants_to_track_thick200500}'," >>${namelist}
+echo "      user_wants_to_track_thick200850='${user_wants_to_track_thick200850}'/" >>${namelist}
+echo "&verbose verb=3,verb_g2=1/"                                >>${namelist}
+echo "&sheardiaginfo shearflag='${shear_calc_flag}'/"                  >>${namelist}
+echo "&sstdiaginfo sstflag='${sstflag}'/"                              >>${namelist}
+echo "&gendiaginfo genflag='${genflag}',"                              >>${namelist}
+echo "             gen_read_rh_fields='${gen_read_rh_fields}',"        >>${namelist}
+echo "             need_to_compute_rh_from_q='${need_to_compute_rh_from_q}',"  >>${namelist}
+echo "             smoothe_mslp_for_gen_scan='${smoothe_mslp_for_gen_scan}',"  >>${namelist}
+echo "             depth_of_mslp_for_gen_scan=${depth_of_mslp_for_gen_scan}/"  >>${namelist}
+echo "&vortextiltinfo vortex_tilt_flag='${vortex_tilt_flag}',"                 >>${namelist}
+echo "                vortex_tilt_parm='${vortex_tilt_parm}',"                 >>${namelist}
+echo "                vortex_tilt_allow_thresh=${vortex_tilt_allow_thresh}/"   >>${namelist}
 
-export pgm=gettrk_gen_g1
+export pgm=gettrk
 . prep_step
 
-export FORT11=${gribfile}
+if [ ${read_separate_land_mask_file} = 'y' ]; then
+  cp ${DATA}/gfs.lsmask.0p25.grib1     ${DATA}/.
+  cp ${DATA}/gfs.lsmask.0p25.grib1.ix  ${DATA}/.
+
+  export FORT22=gfs.lsmask.0p25.grib1
+  export FPRT42=gfs.lsmask.0p25.grib1.ix
+fi
+
+export pgm=gettrk
+. prep_step
+
+cp ${namelist} namelist.gettrk
+export FORT555=namelist.gettrk
+
+if [ ${inp_data_type} = 'grib' ]; then
+  export FORT11=${gribfile}
+else
+  export FORT11=${netcdffile}
+  if [ ${read_separate_land_mask_file} = 'y' ]; then
+    FORT17=${ncdf_ls_mask_filename}
+  fi
+fi
+
+if [ -s ${DATA}/vitals.upd.${atcfout}.${PDY}${shh} ]; then
+  cp ${DATA}/vitals.upd.${atcfout}.${PDY}${shh} \
+     ${DATA}/tcvit_rsmc_storms.txt
+else
+  >${DATA}/tcvit_rsmc_storms.txt
+fi
+
+if [ -s ${DATA}/genvitals.upd.${atcfout}.${PDY}${shh} ]; then
+  cp ${DATA}/genvitals.upd.${atcfout}.${PDY}${shh} \
+     ${DATA}/tcvit_genesis_storms.txt
+else
+  >${DATA}/tcvit_genesis_storms.txt
+fi
+
+
 export FORT12=${DATA}/vitals.upd.${atcfout}.${PDY}${shh}
 #export FORT13=${DATA}/genvitals.upd.${atcfout}.${PDY}${shh}
 export FORT14=${DATA}/genvitals.upd.${cmodel}.${atcfout}.${PDY}${cyc}
@@ -1417,6 +1683,7 @@ else
   export FORT66=${DATA}/trak.${atcfout}.atcf_gen.${regtype}.${PDY}${cyc}
   export FORT68=${DATA}/trak.${atcfout}.atcf_sink.${regtype}.${PDY}${cyc}
   export FORT69=${DATA}/trak.${atcfout}.atcf_hfip.${regtype}.${PDY}${cyc}
+  export FORT81=${DATA}/trak.${atcfout}.parmfix.${regtype}.${PDY}${CYL}
 fi
 
 if [ ${atcfname} = 'aear' ]
@@ -1473,7 +1740,7 @@ set -x
 
 ulimit -c unlimited
 
-${EXECens_tracker}/gettrk_gen_g1 <${namelist}
+${EXECens_tracker}/gettrk.x <${namelist}
 gettrk_rcc=$?
 
 set +x
@@ -1506,11 +1773,11 @@ if [ ${gettrk_rcc} -eq 0 ]; then
 else
   set +x
   echo " "
-  echo "FATAL ERROR:  An error occurred while running gettrk_gen_g1, "
+  echo "FATAL ERROR:  An error occurred while running gettrk, "
   echo "!!! which is the program that actually gets the track."
-  echo "!!! Return code from gettrk_gen_g1 = ${gettrk_rcc}"
+  echo "!!! Return code from gettrk = ${gettrk_rcc}"
   echo "!!! model= ${atcfout}, forecast initial time = ${PDY}${cyc}"
   echo " "
   set -x
-  err_exit "FAILED ${jobid} - ERROR RUNNING gettrk_gen_g1 IN TRACKER SCRIPT- ABNORMAL EXIT"
+  err_exit "FAILED ${jobid} - ERROR RUNNING gettrk IN TRACKER SCRIPT- ABNORMAL EXIT"
 fi

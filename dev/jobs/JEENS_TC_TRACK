@@ -6,6 +6,7 @@ set -x
 ####################################
 # obtain unique process id (pid) and make temp directory
 ####################################
+export jobid=${jobid:-$job.o$$}
 export DATA=${DATA:-${DATAROOT:?}/${jobid}}
 mkdir -p $DATA
 cd $DATA
@@ -14,7 +15,7 @@ export cycle=t${cyc}z
 ####################################
 # File To Log Msgs
 ####################################
-#export jlogfile=${jlogfile:-${DATA}/jlogfile.${jobid}}
+export jlogfile=${jlogfile:-${DATA}/jlogfile.${jobid}}
 
 ####################################
 # Specify NET and RUN Name and model
@@ -49,12 +50,13 @@ export USHens_tracker=${USHens_tracker:-$HOMEens_tracker/ush}
 # Run setpdy and initialize PDY variables
 ##############################
 #setpdy.sh
-#. ./PDY
-export PDY=20260316
+export PDY=20260818
 ##############################################
 # Define COM directories
 ##############################################
 #export COMIN=${COMIN:-$(compath.py -o $NET/${ens_tracker_ver})/${RUN}.${PDY}/${cyc}/pgrba}
+#export COMINgfs=${COMINgfs:-$(compath.py $envir/com/gfs/${gfs_ver})/gfs.${PDY}}
+#export COMINsyn=${COMINsyn:-$(compath.py $envir/com/gfs/${gfs_ver})/syndat}
 export COMIN=/lfs/h2/emc/ptmp/hananeh.jafary/pgrba
 export COMINgfs=/lfs/h1/ops/prod/com/gfs/v16.3/gfs.${PDY}
 export COMINsyn=/lfs/h1/ops/prod/com/gfs/v16.3/syndat
@@ -62,9 +64,9 @@ export COMINsyn=/lfs/h1/ops/prod/com/gfs/v16.3/syndat
 #export COMOUT=${COMOUT:-$(compath.py -o ${NET}/${ens_tracker_ver})/${RUN}.${PDY}/${cyc}/tctrack}
 #export COMOUThur=${COMOUThur:-$(compath.py -o ${NET}/${ens_tracker_ver})/global}
 #export COMOUTatcf=${COMOUTatcf:-$(compath.py -o ${NET}/${ens_tracker_ver})/atcf}
-export COMOUT=/lfs/h2/emc/ptmp/hananeh.jafary/tctrack
-export COMOUThur=/lfs/h2/emc/ptmp/hananeh.jafary/global
-export COMOUTatcf=/lfs/h2/emc/ptmp/hananeh.jafary/atcf
+export COMOUT=${COMOUT:-${COMROOT:?}/ecmwf.${PDY}/${cyc}/products/atmos/cyclone/tracks}
+export COMOUThur=${COMOUThur:-${COMROOT:?}/${NET}/ecmwf_tracker/global}
+export COMOUTatcf=${COMOUTatcf:-${COMROOT:?}/${NET}/ecmwf_tracker/atcf}
 
 mkdir -m 775 -p $COMOUT $COMOUThur $COMOUTatcf
 
@@ -79,6 +81,7 @@ export cmodel=eens
 export ymdh=${PDY}${cyc}
 
 export ecedir=${COMIN}
+export trkrtype='tracker'
 
 mkdir ${DATA}/${cmodel}
 cd ${DATA}/${cmodel}
@@ -90,16 +93,14 @@ pertstring="p01 p02 p03 p04 p05 p06 p07 p08 p09 p10
             n11 n12 n13 n14 n15 n16 n17 n18 n19 n20
             n21 n22 n23 n24 n25"
 
-
 >trkr.cmdfile
 for pert in ${pertstring}; do
   pertdir=${DATA}/${cmodel}/${pert}
   mkdir -p $pertdir
   outfile=${pertdir}/trkr.${cmodel}.${pert}.${ymdh}.out
-  echo "${USHens_tracker}/extrkr_g1.sh ${ymdh} ${cmodel} ${pert} ${pertdir} 2>&1 >${outfile}" >>trkr.cmdfile
+#  echo "${USHens_tracker}/extrkr_g1.sh ${ymdh} ${cmodel} ${pert} ${pertdir} 2>&1 >${outfile}" >>trkr.cmdfile
+  echo "${USHens_tracker}/extrkr_g1.sh ${ymdh} ${cmodel} ${pert} ${pertdir} >${outfile} 2>&1" >> trkr.cmdfile
 done
-
-
 
 chmod u+x trkr.cmdfile
 export MP_PGMMODEL=mpmd
@@ -107,8 +108,6 @@ export MP_CMDFILE=${DATA}/${cmodel}/trkr.cmdfile
 
 mpiexec --cpu-bind core --configfile ${MP_CMDFILE}
 export err=$?; err_chk
-
-
 
 #if [ ${SENDCOM} = 'NO' ]; then
 #  for pert in ${pertstring}; do

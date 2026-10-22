@@ -6,6 +6,7 @@ set -x
 ####################################
 # obtain unique process id (pid) and make temp directory
 ####################################
+export jobid=${jobid:-$job.o$$}
 export DATA=${DATA:-${DATAROOT:?}/${jobid}}
 mkdir -p $DATA
 cd $DATA
@@ -14,15 +15,15 @@ export cycle=t${cyc}z
 ####################################
 # File To Log Msgs
 ####################################
-#export jlogfile=${jlogfile:-${DATA}/jlogfile.${jobid}}
+export jlogfile=${jlogfile:-${DATA}/jlogfile.${jobid}}
 
-export ECMWF_FILE_EXT=${ECMWF_FILE_EXT:-1}
 ####################################
 # Specify NET and RUN Name and model
 ####################################
 export NET=${NET:-ens_tracker}
 export RUN=${RUN:-gefs}
-
+export gfs_ver=${gfs_ver:-v16.3}
+export gefs_ver=${gefs_ver:-v12.3}
 ####################################
 # Determine Job Output Name on System
 ####################################
@@ -48,9 +49,8 @@ export USHens_tracker=${USHens_tracker:-$HOMEens_tracker/ush}
 
 # Run setpdy and initialize PDY variables
 ##############################
-setpdy.sh
-. ./PDY
-
+#setpdy.sh
+export PDY=20260220
 ##############################################
 # Define COM directories
 ##############################################
@@ -58,10 +58,13 @@ export JYYYY=`echo ${PDY} | cut -c1-4`
 export COMINgfs=${COMINgfs:-$(compath.py $envir/com/gfs/${gfs_ver})/gfs.${PDY}}
 export COMINsyn=${COMINsyn:-$(compath.py $envir/com/gfs/${gfs_ver})/syndat}
 export COMINgefs=${COMINgefs:-$(compath.py $envir/com/gefs/${gefs_ver})/gefs.${PDY}/${cyc}}
-
-export COMOUT=${COMOUT:-$(compath.py -o ${NET}/${ens_tracker_ver})/${RUN}.${PDY}/${cyc}/tctrack}
-export COMOUThur=${COMOUThur:-$(compath.py -o ${NET}/${ens_tracker_ver})/global}
-export COMOUTatcf=${COMOUTatcf:-$(compath.py -o ${NET}/${ens_tracker_ver})/atcf}
+#export COMINgefs=/lfs/h2/emc/ens/noscrub/hananeh.jafary/gefs.${PDY}
+#export COMOUT=${COMOUT:-$(compath.py -o ${NET}/${ens_tracker_ver})/${RUN}.${PDY}/${cyc}/tctrack}
+#export COMOUThur=${COMOUThur:-$(compath.py -o ${NET}/${ens_tracker_ver})/global}
+#export COMOUTatcf=${COMOUTatcf:-$(compath.py -o ${NET}/${ens_tracker_ver})/atcf}
+export COMOUT=/lfs/h2/emc/ptmp/hananeh.jafary/tctrack
+export COMOUThur=/lfs/h2/emc/ptmp/hananeh.jafary/global
+export COMOUTatcf=/lfs/h2/emc/ptmp/hananeh.jafary/atcf
 mkdir -m 775 -p $COMOUT $COMOUThur $COMOUTatcf
 
 msg="HAS BEGUN on `hostname`"
@@ -78,17 +81,21 @@ export ymdh=${PDY}${cyc}
 export ensdira=${COMINgefs}/atmos/pgrb2ap5
 export ensdirb=${COMINgefs}/atmos/pgrb2bp5
 
+#export ensdira=${COMINgefs}/pgrb2ap5
+#export ensdirb=${COMINgefs}/pgrb2bp5
+
 mkdir ${DATA}/${cmodel}
 cd ${DATA}/${cmodel}
 
+#pertstring="c00" 
 pertstring="c00 p01 p02 p03 p04 p05 p06 p07 p08 p09 p10
                 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20
                 p21 p22 p23 p24 p25 p26 p27 p28 p29 p30"
 
 #-----------input data checking -----------------
-${USHens_tracker}/data_check.sh
+#${USHens_tracker}/data_check.sh
 # exit code 6 = missing data of opportunity
-if [ $? -eq 6 ]; then exit; fi
+#if [ $? -eq 6 ]; then exit; fi
 #------------------------------------------------
 
 >trkr.cmdfile
@@ -96,7 +103,7 @@ for pert in ${pertstring}; do
   pertdir=${DATA}/${cmodel}/${pert}
   mkdir -p $pertdir
   outfile=${pertdir}/trkr.${cmodel}.${pert}.${ymdh}.out
-  echo "${USHens_tracker}/extrkr_g2.sh ${loopnum} ${cmodel} ${ymdh} ${pert} ${pertdir} 2>&1 >${outfile}" >>trkr.cmdfile
+  echo "${USHens_tracker}/extrkr_gfs.sh ${loopnum} ${cmodel} ${ymdh} ${pert} ${pertdir} 2>&1 >${outfile}" >>trkr.cmdfile
 done
 
 chmod u+x trkr.cmdfile
@@ -137,9 +144,9 @@ postmsg "$jlogfile" "$msg"
 ##############################
 # Remove the Temporary working directory
 ##############################
-if [[ $KEEPDATA != "YES" ]]; then
-  rm -rf $DATA
-fi
+#if [[ $KEEPDATA != "YES" ]]; then
+#  rm -rf $DATA
+#fi
 
 
 date

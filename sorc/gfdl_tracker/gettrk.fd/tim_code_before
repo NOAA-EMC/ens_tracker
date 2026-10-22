@@ -1,0 +1,573 @@
+886,891c886,897
+<         sst   = -9999.0
+<         q850  = -9999.0
+<         rh    = -9999.0 
+<         spfh  = -9999.0
+<         temperature  = -9999.0
+<         omega500  = -9999.0
+---
+> 
+>         if (sstflag == 'y' .or. sstflag == 'Y') then
+>           sst   = -9999.0
+>         endif
+> 
+>         if (genflag == 'y' .or. genflag == 'Y') then
+>           q850  = -9999.0
+>           rh    = -9999.0 
+>           spfh  = -9999.0
+>           temperature  = -9999.0
+>           omega500  = -9999.0
+>         endif
+3806,3811c3812,3813
+< c                if (inp%model == 1 .or. inp%model == 8 .or. 
+< c     &              inp%model == 22) then                
+< 
+<       if (inp%model == 1 .or. inp%model == 10 .or. inp%model == 7
+<      &  .or. inp%model == 22 .or. inp%model == 16
+<      &  .or. inp%model == 15 .or. inp%model == 8) then
+---
+>                 if (inp%model == 1 .or. inp%model == 8 .or. 
+>      &              inp%model == 22) then                
+4196,4198c4198,4200
+< c      call output_all (fixlon,fixlat,inp,maxstorm,ifhmax,ioaret)
+< c      call output_atcf (fixlon,fixlat,inp,xmaxwind,maxstorm,ifhmax
+< c     &                 ,ioaret)
+---
+>       call output_all (fixlon,fixlat,inp,maxstorm,ifhmax,ioaret)
+>       call output_atcf (fixlon,fixlat,inp,xmaxwind,maxstorm,ifhmax
+>      &                 ,ioaret)
+4334d4335
+< c
+4339c4340
+< 
+---
+> c
+4345,4346c4346,4349
+<       character(len=255) :: fnameg, fnamei, fnameo
+< c      character fnameg*7,fnamei*7,fnameo*7
+---
+>       character fnameg*255,fnamei*255,fnameo*255
+>       character enameb*16,enamei*16,enameo*16
+>       character lugb_c*16,lugi_c*16,lout_c*16
+>       character fname_mask_g*7,fname_mask_i*7
+4350,4351c4353,4355
+<       character(2) :: lugb_str, lugi_str, lout_str
+<       integer igoret,iioret,iooret,lugb,lugi,lout,iret,nlen1,nlen2
+---
+>       integer  igoret,iioret,iooret,lugb,lugi,lout,iret,nlen1,nlen2
+> 
+>       iret=0
+4353d4356
+<       iret = 0
+4358,4361d4360
+<       write(lugb_str,'(I2.2)') lugb
+<       write(lugi_str,'(I2.2)') lugi
+<       write(lout_str,'(I2.2)') lout
+< 
+4363,4371d4361
+<         ! Use environment variables like FORT11, FORT31, FORT51
+<         call get_environment_variable("FORT"//lugb_str, fnameg)
+<         if (len_trim(fnameg) == 0) then
+<           write(fnameg,'(A,I2.2)') 'fort.', lugb
+<           inquire(file=fnameg, exist=file_open4)
+<           if (.not. file_open4) then
+<             write(fnameg,'(A,I2.2)') 'FORT', lugb
+<           endif
+<         endif
+4373,4379c4363,4376
+<         call get_environment_variable("FORT"//lugi_str, fnamei)
+<         if (len_trim(fnamei) == 0) then
+<           write(fnamei,'(A,I2.2)') 'fort.', lugi
+<           inquire(file=fnamei, exist=file_open5)
+<           if (.not. file_open5) then
+<             write(fnamei,'(A,I2.2)') 'FORT', lugi
+<           endif
+---
+>         write(lugb_c,'(I2.2)')lugb
+>         write(lugi_c,'(I2.2)')lugi
+>         enameb='FORT'//lugb_c
+>         enamei='FORT'//lugi_c
+>         call get_environment_variable(trim(enameb), fnameg
+>      &          , status=igoret)
+>         call get_environment_variable(trim(enamei), fnamei
+>      &          , status=iioret)
+> 
+>         if (igoret /= 0 .or. iioret /= 0) then
+>           fnameg(1:5) = "fort."
+>           fnamei(1:5) = "fort."
+>           write(fnameg(6:7),'(I2)') lugb
+>           write(fnamei(6:7),'(I2)') lugi
+4385,4389d4381
+<         print *, 'fnameg = ', fnameg
+<         print *, 'fnamei = ', fnamei
+<         print *, 'igoret = ', igoret
+<         print *, 'iioret = ', iioret
+< 
+4391,4397c4383,4393
+<           call get_environment_variable("FORT"//lout_str, fnameo)
+<           if (len_trim(fnameo) == 0) then
+<             write(fnameo,'(A,I2.2)') 'fort.', lout
+<             inquire(file=fnameo, exist=file_open4)
+<             if (.not. file_open4) then
+<               write(fnameo,'(A,I2.2)') 'FORT', lout
+<             endif
+---
+>           ! If this is a regular call to open_grib_files (i.e., not
+>           ! for opening the land-sea mask file), then open the 
+>           ! output grib file unit.
+>           write(lout_c,'(I2.2)')lout
+>           enameo='FORT'//lout_c
+>           call get_environment_variable(trim(enameo), fnameo
+>      &            , status=iooret)
+>           if (iooret /= 0) then
+>             fnameo(1:5) = "fort."
+>             write(fnameo(6:7),'(I2)') lout
+>             call baopenw (lout,fnameo,iooret)
+4399d4394
+<           call baopenw (lout,fnameo,iooret)
+4407c4402
+<           print *,'!!! which means that we are trying to open up an'
+---
+>           print *,'!!! which means that we are trying to open up an' 
+4412c4407,4409
+<           print *,'!!! be used for onebig file applications.'
+---
+>           print *,'!!! be used for onebig file applications.  As an'
+>           print *,'!!! alternative, you can include a land-sea mask'
+>           print *,'!!! record within each individual file.'
+4427a4425,4431
+> c        write (6,81) gopen_g_file,gopen_i_file
+> c   81   format (1x,'tpm gopen_g_file= ...',a<nlen1>
+> c     &         ,'...  gopen_i_file= ...',a<nlen2>,'...')
+> 
+>         print *,'gopen_g_file= ',gopen_g_file,'....'
+>         print *,'gopen_i_file= ',gopen_i_file,'....'
+> 
+4431,4439c4435,4439
+<         if (.not. output_file_open) then
+<           call get_environment_variable("FORT"//lout_str, fnameo)
+<           if (len_trim(fnameo) == 0) then
+<             write(fnameo,'(A,I2.2)') 'fort.', lout
+<             inquire(file=fnameo, exist=file_open4)
+<             if (.not. file_open4) then
+<               write(fnameo,'(A,I2.2)') 'FORT', lout
+<             endif
+<           endif
+---
+>         if (output_file_open) then
+>           iooret = 0
+>         else
+>           fnameo(1:5) = "fort."
+>           write(fnameo(6:7),'(I2)') lout
+4447c4447
+<      &        ,' is OPEN'
+---
+>      &         ,' is OPEN'
+4467c4467
+<         print *,'TEST gname open_grib_files, gfile= '
+---
+>         print *,'TEST gname  open_grib_files, gfile= '
+4473c4473
+<       print *,'TEST iname  open_grib_files, ifile= '
+---
+>         print *,'TEST iname  open_grib_files, ifile= '
+4476c4476
+<         print *,'TEST iname open_grib_files, ifile= '
+---
+>         print *,'TEST iname  open_grib_files, ifile= '
+4486a4487
+> 
+4488a4490
+> 
+4497c4499
+<             print *,'!!! or grib index file for most variables i.e.,'
+---
+>             print *,'!!! or grib index file for most variables (i.e.,'
+4500c4502
+<             print *,'!!! grib file return code = igoret = ',igoret
+---
+>             print *,'!!! grib  file return code = igoret = ',igoret
+4507a4510
+> 
+4511c4514,4515
+<       end 
+---
+>       end
+> c
+10148,10149c10152,10153
+<         case ('L','l');  basinid = 'AL'
+<         case ('E','e');  basinid = 'EP'
+---
+>         case ('A','a');  basinid = 'IO'
+>         case ('B','b');  basinid = 'IO'
+10151,10158c10155,10157
+<         case ('W','w');  basinid = 'WP'
+<         case ('O','o');  basinid = 'SC'
+<         case ('T','t');  basinid = 'EC'
+<         case ('U','u');  basinid = 'AU'
+<         case ('P','p');  basinid = 'SP'
+<         case ('S','s');  basinid = 'SI'
+<         case ('B','b');  basinid = 'BB'
+<         case ('A','a');  basinid = 'AA'
+---
+>         case ('E','e');  basinid = 'EP'
+>         case ('L','l');  basinid = 'AL'
+>         case ('P','p');  basinid = 'SH'
+10159a10159,10160
+>         case ('S','s');  basinid = 'SH'
+>         case ('W','w');  basinid = 'WP'
+10565,10566c10566,10567
+<         case ('L','l');  basinid = 'AL'
+<         case ('E','e');  basinid = 'EP'
+---
+>         case ('A','a');  basinid = 'IO'
+>         case ('B','b');  basinid = 'IO'
+10568,10575c10569,10571
+<         case ('W','w');  basinid = 'WP'
+<         case ('O','o');  basinid = 'SC'
+<         case ('T','t');  basinid = 'EC'
+<         case ('U','u');  basinid = 'AU'
+<         case ('P','p');  basinid = 'SP'
+<         case ('S','s');  basinid = 'SI'
+<         case ('B','b');  basinid = 'BB'
+<         case ('A','a');  basinid = 'AA'
+---
+>         case ('E','e');  basinid = 'EP'
+>         case ('L','l');  basinid = 'AL'
+>         case ('P','p');  basinid = 'SH'
+10576a10573,10574
+>         case ('S','s');  basinid = 'SH'
+>         case ('W','w');  basinid = 'WP'
+11190,11191c11188,11189
+<           case ('L','l');  basinid(1:2) = 'AL'
+<           case ('E','e');  basinid(1:2) = 'EP'
+---
+>           case ('A','a');  basinid(1:2) = 'IO'
+>           case ('B','b');  basinid(1:2) = 'IO'
+11193,11200c11191,11193
+<           case ('W','w');  basinid(1:2) = 'WP'
+<           case ('O','o');  basinid(1:2) = 'SC'
+<           case ('T','t');  basinid(1:2) = 'EC'
+<           case ('U','u');  basinid(1:2) = 'AU'
+<           case ('P','p');  basinid(1:2) = 'SP'
+<           case ('S','s');  basinid(1:2) = 'SI'
+<           case ('B','b');  basinid(1:2) = 'BB'
+<           case ('A','a');  basinid(1:2) = 'AA'
+---
+>           case ('E','e');  basinid(1:2) = 'EP'
+>           case ('L','l');  basinid(1:2) = 'AL'
+>           case ('P','p');  basinid(1:2) = 'SH'
+11202c11195,11197
+<           case default;    basinid(1:2) = '**'
+---
+>           case ('S','s');  basinid(1:2) = 'SH'
+>           case ('W','w');  basinid(1:2) = 'WP'
+>           case default;    basinid(1:2) = 'HC'
+11449,11450c11444,11445
+<         case ('L','l');  basinid = 'AL'
+<         case ('E','e');  basinid = 'EP'
+---
+>         case ('A','a');  basinid = 'IO'
+>         case ('B','b');  basinid = 'IO'
+11452,11459c11447,11449
+<         case ('W','w');  basinid = 'WP'
+<         case ('O','o');  basinid = 'SC'
+<         case ('T','t');  basinid = 'EC'
+<         case ('U','u');  basinid = 'AU'
+<         case ('P','p');  basinid = 'SP'
+<         case ('S','s');  basinid = 'SI'
+<         case ('B','b');  basinid = 'BB'
+<         case ('A','a');  basinid = 'AA'
+---
+>         case ('E','e');  basinid = 'EP'
+>         case ('L','l');  basinid = 'AL'
+>         case ('P','p');  basinid = 'SH'
+11461c11451,11453
+<         case default;    basinid = '**'
+---
+>         case ('S','s');  basinid = 'SH'
+>         case ('W','w');  basinid = 'WP'
+>         case default;    basinid = 'HC'
+11670,11671c11662,11663
+<         case ('L','l');  basinid = 'AL'
+<         case ('E','e');  basinid = 'EP'
+---
+>         case ('A','a');  basinid = 'IO'
+>         case ('B','b');  basinid = 'IO'
+11673,11680c11665,11667
+<         case ('W','w');  basinid = 'WP'
+<         case ('O','o');  basinid = 'SC'
+<         case ('T','t');  basinid = 'EC'
+<         case ('U','u');  basinid = 'AU'
+<         case ('P','p');  basinid = 'SP'
+<         case ('S','s');  basinid = 'SI'
+<         case ('B','b');  basinid = 'BB'
+<         case ('A','a');  basinid = 'AA'
+---
+>         case ('E','e');  basinid = 'EP'
+>         case ('L','l');  basinid = 'AL'
+>         case ('P','p');  basinid = 'SH'
+11682c11669,11671
+<         case default;    basinid = '**'
+---
+>         case ('S','s');  basinid = 'SH'
+>         case ('W','w');  basinid = 'WP'
+>         case default;    basinid = 'HC'
+11930,11931c11919,11920
+<         case ('L','l');  basinid = 'AL'
+<         case ('E','e');  basinid = 'EP'
+---
+>         case ('A','a');  basinid = 'IO'
+>         case ('B','b');  basinid = 'IO'
+11933,11940c11922,11924
+<         case ('W','w');  basinid = 'WP'
+<         case ('O','o');  basinid = 'SC'
+<         case ('T','t');  basinid = 'EC'
+<         case ('U','u');  basinid = 'AU'
+<         case ('P','p');  basinid = 'SP'
+<         case ('S','s');  basinid = 'SI'
+<         case ('B','b');  basinid = 'BB'
+<         case ('A','a');  basinid = 'AA'
+---
+>         case ('E','e');  basinid = 'EP'
+>         case ('L','l');  basinid = 'AL'
+>         case ('P','p');  basinid = 'SH'
+11942c11926,11928
+<         case default;    basinid = '**'
+---
+>         case ('S','s');  basinid = 'SH'
+>         case ('W','w');  basinid = 'WP'
+>         case default;    basinid = 'HC'
+12253,12254c12239,12240
+<         case ('L','l');  basinid = 'AL'
+<         case ('E','e');  basinid = 'EP'
+---
+>         case ('A','a');  basinid = 'IO'
+>         case ('B','b');  basinid = 'IO'
+12256,12263c12242,12244
+<         case ('W','w');  basinid = 'WP'
+<         case ('O','o');  basinid = 'SC'
+<         case ('T','t');  basinid = 'EC'
+<         case ('U','u');  basinid = 'AU'
+<         case ('P','p');  basinid = 'SP'
+<         case ('S','s');  basinid = 'SI'
+<         case ('B','b');  basinid = 'BB'
+<         case ('A','a');  basinid = 'AA'
+---
+>         case ('E','e');  basinid = 'EP'
+>         case ('L','l');  basinid = 'AL'
+>         case ('P','p');  basinid = 'SH'
+12265c12246,12248
+<         case default;    basinid = '**'
+---
+>         case ('S','s');  basinid = 'SH'
+>         case ('W','w');  basinid = 'WP'
+>         case default;    basinid = 'HC'
+12412,12413c12395,12396
+<         case ('L','l');  basinid = 'AL'
+<         case ('E','e');  basinid = 'EP'
+---
+>         case ('A','a');  basinid = 'IO'
+>         case ('B','b');  basinid = 'IO'
+12415,12422c12398,12400
+<         case ('W','w');  basinid = 'WP'
+<         case ('O','o');  basinid = 'SC'
+<         case ('T','t');  basinid = 'EC'
+<         case ('U','u');  basinid = 'AU'
+<         case ('P','p');  basinid = 'SP'
+<         case ('S','s');  basinid = 'SI'
+<         case ('B','b');  basinid = 'BB'
+<         case ('A','a');  basinid = 'AA'
+---
+>         case ('E','e');  basinid = 'EP'
+>         case ('L','l');  basinid = 'AL'
+>         case ('P','p');  basinid = 'SH'
+12424c12402,12404
+<         case default;    basinid = '**'
+---
+>         case ('S','s');  basinid = 'SH'
+>         case ('W','w');  basinid = 'WP'
+>         case default;    basinid = 'HC'
+12877,12878c12857,12858
+<         case ('L','l');  basinid = 'AL'
+<         case ('E','e');  basinid = 'EP'
+---
+>         case ('A','a');  basinid = 'IO'
+>         case ('B','b');  basinid = 'IO'
+12880,12887c12860,12862
+<         case ('W','w');  basinid = 'WP'
+<         case ('O','o');  basinid = 'SC'
+<         case ('T','t');  basinid = 'EC'
+<         case ('U','u');  basinid = 'AU'
+<         case ('P','p');  basinid = 'SP'
+<         case ('S','s');  basinid = 'SI'
+<         case ('B','b');  basinid = 'BB'
+<         case ('A','a');  basinid = 'AA'
+---
+>         case ('E','e');  basinid = 'EP'
+>         case ('L','l');  basinid = 'AL'
+>         case ('P','p');  basinid = 'SH'
+12888a12864,12865
+>         case ('S','s');  basinid = 'SH'
+>         case ('W','w');  basinid = 'WP'
+13010,13011c12987,12988
+<      &       ,', SHR82, ',i4,', ',i3,', ',i5,3(', ',i4),2(', ',i9)
+<      &       ,3(', ',i4))
+---
+>      &       ,', SHR82, ',i4,', ',i3,', ',i5,3(', ',i4),', ',i9
+>      &       ,', ',i11,3(', ',i4))
+13205,13206c13182,13183
+<         case ('L','l');  basinid = 'AL'
+<         case ('E','e');  basinid = 'EP'
+---
+>         case ('A','a');  basinid = 'IO'
+>         case ('B','b');  basinid = 'IO'
+13208,13215c13185,13187
+<         case ('W','w');  basinid = 'WP'
+<         case ('O','o');  basinid = 'SC'
+<         case ('T','t');  basinid = 'EC'
+<         case ('U','u');  basinid = 'AU'
+<         case ('P','p');  basinid = 'SP'
+<         case ('S','s');  basinid = 'SI'
+<         case ('B','b');  basinid = 'BB'
+<         case ('A','a');  basinid = 'AA'
+---
+>         case ('E','e');  basinid = 'EP'
+>         case ('L','l');  basinid = 'AL'
+>         case ('P','p');  basinid = 'SH'
+13216a13189,13190
+>         case ('S','s');  basinid = 'SH'
+>         case ('W','w');  basinid = 'WP'
+13583c13557
+<         call baopenw (77,"FORT77",igoret)
+---
+>         call baopenw (77,"fort.77",igoret)
+20901a20876,20877
+>         ilonfix = -9999
+>         jlatfix = -9999
+22654c22630
+<       type (gribfield) :: gfld,prevfld,holdgfld
+---
+>       type (gribfield) :: gfld
+22657,22659d22632
+< c      integer, parameter :: nreadparms=20
+< c      integer, parameter :: nreadgenparms=23
+< 
+22686,22688d22658
+<       integer   ig2_lev_11_cmc(nreadparms)
+<       integer   ig2_lev_val_cmc(nreadparms)
+<       integer   ig2_lev_11_cmcd(nreadparms),ig2_lev_val_cmcd(nreadparms)
+22691,22692c22661,22662
+<       integer   cpsig2_lev_10(nlevs_cps)
+<       integer   cpsig2_lev_11(nlevs_cps),cpsig2_lev_12(nlevs_cps)
+---
+>       integer   cpsig2_lev_typ(nreadcpsparms)
+>       integer   cpsig2_lev_val(nreadcpsparms)
+22750,22751c22720,22721
+<       data genparm   /51,52,52,52,52,52,52,52
+<      &              ,51,51,51,51,51,51,51,11,11,11,11,11,11,11,39/
+---
+> 
+>       data genparm   /51,7*52,7*51,7*11,39/
+22790d22759
+< 
+22793,22803c22762,22764
+<       data ig2_lev_11_cmc /-3,-4,-3,-3,-4,-4,-3,-4,0,0,0,-4,-4,0
+<      &                     ,-4,-4,0,0,0,0/
+< c      data cpsig2_lev_typ  /13*100/
+< c      data cpsig2_lev_val  /900,850,800,750,700,650,600,550,500,450,400
+< c     &                     ,350,300/
+<       data cpsig2_lev_10  /13*100/
+<       data cpsig2_lev_11  /13*0/
+<       data cpsig2_lev_12  /90000,85000,80000,75000,70000,65000
+<      &         ,60000,55000,50000,45000,40000
+<      &           ,35000,30000/
+< 
+---
+>       data cpsig2_lev_typ  /13*100/
+>       data cpsig2_lev_val  /900,850,800,750,700,650,600,550,500,450,400
+>      &                     ,350,300/
+23010,23015c22971,22972
+<           if (inp%model == 16 ) then
+<             JPDT(11) = ig2_lev_11_cmc(ip)
+<             JPDT(12) = ig2_lev_val_cmc(ip)
+<           elseif (inp%model == 15 ) then
+<             JPDT(11) = ig2_lev_11_cmcd(ip)
+<             JPDT(12) = ig2_lev_val_cmcd(ip)
+---
+>           if (JPDT(10) == 100) then   ! isobaric surface
+>             JPDT(12) = ig2_lev_val(ip) * 100  !  GRIB2 levels are in Pa
+23017,23023c22974,22975
+<             JPDT(11) = 0
+<             if (JPDT(10) == 100) then   ! isobaric surface
+<               JPDT(12) = ig2_lev_val(ip) * 100  !  GRIB2 levels are in Pa
+<             else
+<               JPDT(12) = ig2_lev_val(ip) ! This is going to be either
+<      &                               ! mslp, SST, or 10m winds.
+<             endif
+---
+>             JPDT(12) = ig2_lev_val(ip) ! This is going to be either
+>                                        ! mslp, SST, or 10m winds.
+23383,23402c23335,23346
+< c              JPDT(10) = cpsig2_lev_typ(ip)
+<               JPDT(10) = cpsig2_lev_10(ip)
+< 
+<       if (inp%model == 1 .or. inp%model == 10 .or. inp%model == 7
+<      &  .or. inp%model == 22 .or. inp%model == 16
+<      &  .or. inp%model == 15 .or. inp%model == 8) then
+<               JPDT(11) = cpsig2_lev_11(ip)
+<               JPDT(12) = cpsig2_lev_12(ip)
+<       endif       
+< c              if (JPDT(10) == 100) then   ! isobaric surface
+< c                JPDT(12) = cpsig2_lev_val(ip) * 100  ! GRIB2 levels 
+< c                                                     ! are in Pa
+< c              else
+< c                if (verb .ge. 3) then
+< c                  print *,' '
+< c                  print *,'ERROR in getdata: JPDT(10) array value'
+< c                  print *,'should only be 100 in this CPS section'
+< c                  print *,'for GRIB2 data.'
+< c                endif
+< c              endif
+---
+>               JPDT(10) = cpsig2_lev_typ(ip)
+>               if (JPDT(10) == 100) then   ! isobaric surface
+>                 JPDT(12) = cpsig2_lev_val(ip) * 100  ! GRIB2 levels 
+>                                                      ! are in Pa
+>               else
+>                 if (verb .ge. 3) then
+>                   print *,' '
+>                   print *,'ERROR in getdata: JPDT(10) array value'
+>                   print *,'should only be 100 in this CPS section'
+>                   print *,'for GRIB2 data.'
+>                 endif
+>               endif
+29040c28984
+<             print *,'         glonmax (modified)=         ',glonmax
+---
+>             print *,'         glonmax (modified)=         ',glonmax+360.
+34482,34483c34426,34427
+<           case ('L','l');  basinid = 'AL'
+<           case ('E','e');  basinid = 'EP'
+---
+>           case ('A','a');  basinid = 'IO'
+>           case ('B','b');  basinid = 'IO'
+34485,34492c34429,34431
+<           case ('W','w');  basinid = 'WP'
+<           case ('O','o');  basinid = 'SC'
+<           case ('T','t');  basinid = 'EC'
+<           case ('U','u');  basinid = 'AU'
+<           case ('P','p');  basinid = 'SP'
+<           case ('S','s');  basinid = 'SI'
+<           case ('B','b');  basinid = 'BB'
+<           case ('A','a');  basinid = 'AA'
+---
+>           case ('E','e');  basinid = 'EP'
+>           case ('L','l');  basinid = 'AL'
+>           case ('P','p');  basinid = 'SH'
+34494c34433,34435
+<           case default;    basinid = '**'
+---
+>           case ('S','s');  basinid = 'SH'
+>           case ('W','w');  basinid = 'WP'
+>           case default;    basinid = 'HC'

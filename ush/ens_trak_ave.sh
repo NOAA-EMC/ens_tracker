@@ -150,12 +150,17 @@ if [ ${cmodel} = 'hgefs' ]; then
 elif [ "${cmodel}" = 'aigefs' ]; then
   for tfile in `ls -1 ${COMOUT}/a0*.t${cyc}z.cyclone.trackatcfunix`
   do
-  cat $tfile >>trak.allperts.atcfunix.${amodel}.${ymdh}
+    cat $tfile >>trak.allperts.atcfunix.${amodel}.${ymdh}
+  done
+elif [ ${cmodel} = "ens" ]; then
+  for tfile in `ls -1 ${COMOUT}/trak.${achar}[np]*.atcfunix.altg.${PDY}${cyc}`
+  do
+    cat $tfile >>trak.allperts.atcfunix.${amodel}.${ymdh}
   done
 else
   for tfile in `ls -1 ${COMOUT}/${achar}[np]*.t${cyc}z.cyclone.trackatcfunix`
   do
-  cat $tfile >>trak.allperts.atcfunix.${amodel}.${ymdh}
+    cat $tfile >>trak.allperts.atcfunix.${amodel}.${ymdh}
   done	
 fi
 

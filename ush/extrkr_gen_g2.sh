@@ -75,13 +75,13 @@ qid=$$
 #export cmodel=${cmodel:-$3}
 export jobid=${jobid:-testjob}
 export SENDCOM=${SENDCOM:-NO}
-export PHASEFLAG=y
-export WCORE_DEPTH=1.0
+#export PHASEFLAG=n
+#export WCORE_DEPTH=1.0
 #export PHASE_SCHEME=vtt
 #export PHASE_SCHEME=cps
-export PHASE_SCHEME=both
-export STRUCTFLAG=n
-export IKEFLAG=n
+#export PHASE_SCHEME=both
+#export STRUCTFLAG=n
+#export IKEFLAG=n
 
 if [ ! -d $TRKDATA ]
 then
@@ -169,24 +169,33 @@ case ${cmodel} in
        gfsdir=${gfsdir:-${COMINgfs:?}/${cyc}/atmos}                     ;
        gfsgfile=gfs.t${cyc}z.pgrb2.0p25.f                  ;
        vit_incr=6
-
        fcstlen=120                                         ;
        fcsthrs=$(seq -w -s' ' 0 $vit_incr $fcstlen)        ;
        atcfnum=15                                          ;
+#       if [ ${loopnum} -eq 8 ]; then
+#         atcfname="gfsr"
+#	 atcfout="gfsr"
+#       else
+#       atcfname="avnt"                                     ;
+#       atcfout="avnt"                                      ;
+#       fi                                                  ;
        atcfname="gfso"                                     ;
        atcfout="gfso"                                      ;
        atcffreq=600                                        ;
-
+       inp_data_type='grib'                                ;
+       gribver=2                                           ;
+       g2_jpdtn=0                                          ;
+       g2_mslp_parm_id=192                                 ;
+       g1_mslp_parm_id=130                                 ;
+       g1_sfcwind_lev_typ=105                              ;
+       g1_sfcwind_lev_val=10                               ;
        rundescr="xxxx"                                     ;
        atcfdescr="xxxx"                                    ;
-
-       mslpthresh=0.0015                                   ;
-       v850thresh=1.5000                                   ;
+       genflag='n'                                        ;
        modtyp='global'                                     ;
-
        file_sequence="onebig"                              ;
        lead_time_units='hours'                             ;
-       g2_jpdtn=0                                          ;
+       nest_type='fixed'                                   ;
        model=1                                             ;;
 
 # g2_jpdtn sets the variable that will be used as "JPDTN" for
@@ -249,17 +258,17 @@ case ${cmodel} in
        echo " "; set -x                                    ;
        pert=` echo ${pert} | tr '[A-Z]' '[a-z]'`           ;
        PERT=` echo ${pert} | tr '[a-z]' '[A-Z]'`           ;
-#       ensdira=${ensdira:-${COMROOT}/gens/prod/gefs.${PDY}/$cyc/pgrb2ap5};
-       ensdira=${ensdira:-${COMIN:?}/pgrb2ap5}             ;
+       ensdira=${ensdira:-${COMIN:?}/atmos/pgrb2ap5};
+#       ensdira=${ensdira:-${COMIN:?}/pgrb2ap5}             ;
        ensgfile=ge${pert}.t${cyc}z.pgrb2a.0p50.f           ;
 
-#       ensdirb=${ensdirb:-${COMROOT}/gens/prod/gefs.${PDY}/$cyc/pgrb2bp5};
-       ensdirb=${ensdirb:-${COMIN:?}/pgrb2bp5}             ;
+       ensdirb=${ensdirb:-${COMIN:?}/atmos/pgrb2bp5};
+#       ensdirb=${ensdirb:-${COMIN:?}/pgrb2bp5}             ;
        ensgfileb=ge${pert}.t${cyc}z.pgrb2b.0p50.f          ;
 
-       vit_incr=6
-       fcstlen=120                                         ;
-       fcsthrs=$(seq -w -s' ' 0 $vit_incr $fcstlen)        ;
+       vit_incr=${FHOUT_CYCLONE:-6}                        ;
+       fcstlen=${FHMAX_CYCLONE:-192}                       ;
+       fcsthrs=$(seq -f%03g -s' ' 0 $vit_incr $fcstlen)    ;
 
        atcfnum=91                                          ;
        pert_posneg=` echo "${pert}" | cut -c1-1`           ;
@@ -267,13 +276,53 @@ case ${cmodel} in
        atcfname="a${pert_posneg}${pert_num}"               ;
        atcfout="a${pert_posneg}${pert_num}"                ;
 
+       trkrtype='tcgen'                                  ;
        atcffreq=600                                        ;
        mslpthresh=0.0015                                   ;
+       max_mslp_850=400.0                                  ;
        v850thresh=1.5000                                   ;
        file_sequence="onebig"                              ;
        lead_time_units='hours'                             ;
        g2_jpdtn=1                                          ;
        modtyp='global'                                     ;
+       nest_type='fixed'                                   ;
+       contour_interval=100.0                              ;
+#       want_oci=.TRUE.                                     ;
+       write_vit='n'                                       ;
+       use_land_mask='n'                                   ;
+       inp_data_type='grib'                                ;
+
+       gribver=2                                           ;
+       g2_mslp_parm_id=1                                   ;
+       g1_mslp_parm_id=130                                 ;
+       g1_sfcwind_lev_typ=105                              ;
+       g1_sfcwind_lev_val=10                               ;
+
+       PHASEFLAG='y'                                      ;
+#       PHASEFLAG='n'                                      ;
+       PHASE_SCHEME='both'                                ;
+       WCORE_DEPTH=1.0                                    ;
+
+       pert_posneg=` echo "${pert}" | cut -c1-1`           ;
+       pert_num=`    echo "${pert}" | cut -c2-3`           ;
+
+       STRUCTFLAG='n'                                     ;
+       IKEFLAG='n'                                        ;
+       sstflag='y'                                        ;
+       atcfname="a${pert_posneg}${pert_num}"               ;
+       rundescr='xxxx'                                     ;
+       atcfdescr='xxxx'                                     ;
+       shear_calc_flag='y'                                ;
+       genflag='n'                                        ;
+       gen_read_rh_fields='n'                             ;
+       use_land_mask='n'                                  ;
+       read_separate_land_mask_file='n'                   ;
+       need_to_compute_rh_from_q='n'                      ;
+       smoothe_mslp_for_gen_scan='n'                      ;
+       depth_of_mslp_for_gen_scan=0.50                    ;
+       vortex_tilt_flag='n'                               ;
+       vortex_tilt_parm='zeta'                            ;
+       vortex_tilt_allow_thresh=1.0                       ;
        model=10                                            ;;
 
 # g2_jpdtn sets the variable that will be used as "JPDTN" for
@@ -361,30 +410,31 @@ if [ ${PHASEFLAG} = 'y' ]; then
 
 #J.Peng----2014-10-28---------
   if [ ${cmodel} = "gfs" ]; then
-  wgrib_parmlist="UGRD:850 UGRD:700 UGRD:500 UGRD:200 VGRD:850 VGRD:700 VGRD:500 VGRD:200 SurfaceU SurfaceV ABSV:850 ABSV:700 MSLET HGT:900 HGT:850 HGT:800 HGT:750 HGT:700 HGT:650 HGT:600 HGT:550 HGT:500 HGT:450 HGT:400 HGT:350 HGT:300 TMP:500 TMP:450 TMP:400 TMP:350 TMP:300 RH:500"
+    wgrib_parmlist="UGRD:850 UGRD:700 UGRD:500 UGRD:200 VGRD:850 VGRD:700 VGRD:500 VGRD:200 SurfaceU SurfaceV ABSV:850 ABSV:700 MSLET HGT:900 HGT:850 HGT:800 HGT:750 HGT:700 HGT:650 HGT:600 HGT:550 HGT:500 HGT:450 HGT:400 HGT:350 HGT:300 TMP:500 TMP:450 TMP:400 TMP:350 TMP:300 RH:500"
 
   elif [ ${cmodel} = "ngps" ]; then
-   wgrib_parmlist="UGRD:850 UGRD:700 UGRD:500 UGRD:200 VGRD:850 VGRD:700 VGRD:500 VGRD:200 SurfaceU SurfaceV PRMSL HGT:925 HGT:850 HGT:700 HGT:500 HGT:400 HGT:300 TMP:500 TMP:400 TMP:300 RH:500"
+    wgrib_parmlist="UGRD:850 UGRD:700 UGRD:500 UGRD:200 VGRD:850 VGRD:700 VGRD:500 VGRD:200 SurfaceU SurfaceV PRMSL HGT:925 HGT:850 HGT:700 HGT:500 HGT:400 HGT:300 TMP:500 TMP:400 TMP:300 RH:500"
 
   elif [ ${cmodel} = "ens" ]; then
-#   wgrib_parmlist="UGRD:850 UGRD:700 UGRD:500 UGRD:200 VGRD:850 VGRD:700 VGRD:500 VGRD:200 SurfaceU SurfaceV ABSV:850 ABSV:700 MSLET HGT:925 HGT:850 HGT:700 HGT:500 HGT:400 HGT:300 TMP:500 TMP:400 TMP:300 RH:500"
-  wgrib_parmlist="UGRD:850 UGRD:700 UGRD:500 UGRD:200 VGRD:850 VGRD:700 VGRD:500 VGRD:200 SurfaceU SurfaceV ABSV:850 ABSV:700 MSLET HGT:900 HGT:850 HGT:800 HGT:750 HGT:700 HGT:650 HGT:600 HGT:550 HGT:500 HGT:450 HGT:400 HGT:350 HGT:300 TMP:500 TMP:450 TMP:400 TMP:350 TMP:300 RH:500"
+    wgrib_parmlist=" HGT:850 HGT:700 UGRD:850 UGRD:700 UGRD:500 UGRD:200 VGRD:850 VGRD:700 VGRD:500 VGRD:200 SurfaceU SurfaceV ABSV:850 ABSV:700 PRMSL MSLET HGT:925 HGT:900 HGT:800 HGT:750 HGT:650 HGT:600 HGT:550 HGT:500 HGT:450 HGT:400 HGT:350 HGT:300 HGT:250 TMP:500 TMP:450 TMP:400 TMP:350 TMP:300 TMP:250 RH:1000 RH:925 RH:800 RH:750 RH:700 RH:650 RH:600 VVEL:500 LAND:surface :TMP:surface"
+#    wgrib_parmlist="UGRD:850 UGRD:700 UGRD:500 UGRD:200 VGRD:850 VGRD:700 VGRD:500 VGRD:200 SurfaceU SurfaceV ABSV:850 ABSV:700 MSLET HGT:900 HGT:850 HGT:800 HGT:750 HGT:700 HGT:650 HGT:600 HGT:550 HGT:500 HGT:450 HGT:400 HGT:350 HGT:300 TMP:500 TMP:450 TMP:400 TMP:350 TMP:300 RH:500"
 
   elif [ ${cmodel} = "cens" ]; then 
-  wgrib_parmlist="UGRD:850 UGRD:700 UGRD:500 UGRD:200 VGRD:850 VGRD:700 VGRD:500 VGRD:200 SurfaceU SurfaceV PRMSL HGT:925 HGT:850 HGT:700 HGT:500 HGT:250 TMP:500 TMP:250 RH:500"
+    wgrib_parmlist="UGRD:850 UGRD:700 UGRD:500 UGRD:200 VGRD:850 VGRD:700 VGRD:500 VGRD:200 SurfaceU SurfaceV PRMSL HGT:925 HGT:850 HGT:700 HGT:500 HGT:250 TMP:500 TMP:250 RH:500"
 
   elif [ ${cmodel} = "cmc" ]; then
-  wgrib_parmlist="UGRD:850 UGRD:700 UGRD:500 UGRD:200 VGRD:850 VGRD:700 VGRD:500 VGRD:200 SurfaceU SurfaceV ABSV:850 ABSV:700 PRMSL HGT:925 HGT:850 HGT:700 HGT:500 HGT:250 TMP:500 TMP:250 SPFH:500"
+    wgrib_parmlist="UGRD:850 UGRD:700 UGRD:500 UGRD:200 VGRD:850 VGRD:700 VGRD:500 VGRD:200 SurfaceU SurfaceV ABSV:850 ABSV:700 PRMSL HGT:925 HGT:850 HGT:700 HGT:500 HGT:250 TMP:500 TMP:250 SPFH:500"
 
   elif [ ${cmodel} = "fens" ]; then
-  wgrib_parmlist="UGRD:850 UGRD:700 UGRD:500 UGRD:200 VGRD:850 VGRD:700 VGRD:500 VGRD:200 SurfaceU SurfaceV PRMSL HGT:925 HGT:850 HGT:700 HGT:500 HGT:250 TMP:500 TMP:250 RH:500"
+    wgrib_parmlist="UGRD:850 UGRD:700 UGRD:500 UGRD:200 VGRD:850 VGRD:700 VGRD:500 VGRD:200 SurfaceU SurfaceV PRMSL HGT:925 HGT:850 HGT:700 HGT:500 HGT:250 TMP:500 TMP:250 RH:500"
 
   fi
-  wgrib_ec_hires_parmlist=" GH:850 GH:700 U:850 U:700 U:500 U:200 V:850 V:700 V:500 V:200 10U:sfc 10V:sfc MSL:sfc GH:300 GH:400 GH:500 GH:925 T:300 T:400 T:500 R:500"
+    wgrib_ec_hires_parmlist=" GH:850 GH:700 U:850 U:700 U:500 U:200 V:850 V:700 V:500 V:200 10U:sfc 10V:sfc MSL:sfc GH:300 GH:400 GH:500 GH:925 T:300 T:400 T:500 R:500"
 
 else
-  wgrib_parmlist=" HGT:850 HGT:700 UGRD:850 UGRD:700 UGRD:500 VGRD:850 VGRD:700 VGRD:500 SurfaceU SurfaceV ABSV:850 ABSV:700 MSLET "
-  wgrib_ec_hires_parmlist=" GH:850 GH:700 U:850 U:700 U:500 V:850 V:700 V:500 10U:sfc 10V:sfc MSL:sfc"
+#  wgrib_parmlist="HGT:850 HGT:700 UGRD:850 UGRD:700 UGRD:500 UGRD:400 UGRD:300 UGRD:200 VGRD:850 VGRD:700 VGRD:500 VGRD:400 VGRD:300 VGRD:200 UGRD:10 VGRD:10 ABSV:850 ABSV:700 PRMSL MSLET TMP:surface"
+  wgrib_parmlist=" HGT:850 HGT:700 UGRD:850 UGRD:700 UGRD:500 UGRD:200 VGRD:850 VGRD:700 VGRD:500 VGRD:200 SurfaceU SurfaceV ABSV:850 ABSV:700 PRMSL MSLET HGT:925 HGT:900 HGT:800 HGT:600 HGT:500 HGT:400 HGT:300 TMP:surface"
+  wgrib_ec_hires_parmlist="GH:850 GH:700 U:850 U:700 U:500 U:400 U:300 U:200 V:850 V:700 V:500 V:400 V:300 V:200 10U:sfc 10V:sfc MSL:sfc TMP:sfc"
 fi
 
 #---------------------------------------------------------------#
@@ -427,19 +477,25 @@ future_str="${future_ymd} ${future_hh}00"
 
 if [ ${modtyp} = 'global' ]
 then
+#  synvitdir=${COMROOT}/gfs/prod/gfs.${PDY}
   synvitdir=${COMINgfs:?}/${cyc}/atmos
   synvitfile=gfs.t${cyc}z.syndata.tcvitals.tm00
-  synvitold_dir=${synvitdir%.*}.${old_4ymd}/${old_hh}/atmos
+#  synvitold_dir=${COMROOT}/gfs/prod/gfs.${old_4ymd}
+  synvitold_dir=${synvitdir%.*}.${old_4ymd}/${old_hh}
   synvitold_file=gfs.t${old_hh}z.syndata.tcvitals.tm00
-  synvitfuture_dir=${synvitdir%.*}.${future_4ymd}/${future_hh}/atmos
+#  synvitfuture_dir=${COMROOT}/gfs/prod/gfs.${future_4ymd}
+  synvitfuture_dir=${synvitdir%.*}.${future_4ymd}/${future_hh}
   synvitfuture_file=gfs.t${future_hh}z.syndata.tcvitals.tm00
-else
-  synvitdir=${COMINnam:?}
-  synvitfile=nam.t${cyc}z.syndata.tcvitals.tm00
-  synvitold_dir=${synvitdir%.*}.${old_4ymd}
-  synvitold_file=nam.t${old_hh}z.syndata.tcvitals.tm00
-  synvitfuture_dir=${synvitdir%.*}.${future_4ymd}
-  synvitfuture_file=nam.t${future_hh}z.syndata.tcvitals.tm00
+#else
+#  synvitdir=${COMROOT}/nam/prod/nam.${PDY}
+#  synvitdir=${COMINnam:?}
+#  synvitfile=nam.t${cyc}z.syndata.tcvitals.tm00
+#  synvitold_dir=${COMROOT}/nam/prod/nam.${old_4ymd}
+#  synvitold_dir=${synvitdir%.*}.${old_4ymd}
+#  synvitold_file=nam.t${old_hh}z.syndata.tcvitals.tm00
+#  synvitfuture_dir=${COMROOT}/nam/prod/nam.${future_4ymd}
+#  synvitfuture_dir=${synvitdir%.*}.${future_4ymd}
+#  synvitfuture_file=nam.t${future_hh}z.syndata.tcvitals.tm00
 fi
 
 set +x
@@ -702,7 +758,7 @@ numvitrecs=`cat ${TRKDATA}/vitals.${atcfout}.${PDY}${cyc} | wc -l`
 #-----------------------------------------------------------------
 if [ ${numvitrecs} -gt 0 ]
 then
-  export pgm=supvit_g2
+  export pgm=supvit.x
   . prep_step
 
   # Input file
@@ -714,7 +770,7 @@ then
   msg="$pgm start for $atcfout at ${cyc}z"
   postmsg "$jlogfile" "$msg"
 
-  ${EXECens_tracker}/supvit_g2 <${TRKDATA}/suv_input.${atcfout}.${PDY}${cyc}
+  ${EXECens_tracker}/supvit.x <${TRKDATA}/suv_input.${atcfout}.${PDY}${cyc}
   suvrcc=$?
 
   if [ ${suvrcc} -eq 0 ]
@@ -730,7 +786,7 @@ then
     echo "!!! model= ${atcfout}, forecast initial time = ${PDY}${cyc}"
     echo " "
     set -x
-    err_exit "ERROR RUNNING supvit_g2 IN extrkr_gen_g2 LINE $LINENO"
+    err_exit "ERROR RUNNING supvit IN extrkr_gen_g2 LINE $LINENO"
   fi
 
 else
@@ -929,7 +985,7 @@ num_gen_vits=0
 
 if [ ${num_gen_vits} -gt 0 ]
 then
-  export pgm=supvit_gen
+  export pgm=supvit.x
   . prep_step
 
   # Input file
@@ -941,7 +997,7 @@ then
   msg="$pgm start for $atcfout at ${cyc}z"
   postmsg "$jlogfile" "$msg"
 
-  ${EXECens_tracker}/supvit_gen <${TRKDATA}/sgv_input.${atcfout}.${PDY}${cyc}
+  ${EXECens_tracker}/supvit.x <${TRKDATA}/sgv_input.${atcfout}.${PDY}${cyc}
   sgvrcc=$?
 
   if [ ${sgvrcc} -eq 0 ]
@@ -1017,31 +1073,16 @@ then
     
       fensfile=${fensdir}/${fensgfile}${fhour}${gensgfile}
 
-#if the first set of pert files c00 and fhour 00, wait 40 minutes, after wait 1 minute per pert....... total run time ~1 hr, 10 mins less than 1:10 wall time
-#if not data of opp wait 40 minutes
-if [ $fhour -eq 000 ] && [ "$DCOM_STATUS" = "data of opportunity" ]; then
-   sleepamt="sleep 2400"
-elif [ "$DCOM_STATUS" = "data of opportunity" ]; then
-   sleepamt="sleep 60"
-else
-   sleepamt="sleep 2400"
-fi
-
       let attempts=1
-      while [ $attempts -le 2 ]; do
-
+      while [ $attempts -le 40 ]; do
         if [ -s $fensfile ]; then
           break
         else
-          if [ $attempts -eq  1 ]; then
-             $sleepamt
-             let attempts=attempts+1
-	  else
-	     let attempts=attempts+1
-	  fi
-	 fi 
+          sleep 60
+          let attempts=attempts+1
+        fi
       done
-      if [ $attempts -gt 2 ] && [ ! -s $fensfile ]; then
+      if [ $attempts -gt 40 ] && [ ! -s $fensfile ]; then
         if [ "$DCOM_STATUS" = "data of opportunity" ]; then
           echo "$fensfile" >> ${DATA}/missing_fens.txt
           exit
@@ -1117,17 +1158,17 @@ fi
       # Output file
       export FORT51=${TRKDATA}/${cmodel}.${pert}.${PDY}${cyc}.z.f${fhour}
 
-      ${EXECens_tracker}/vint_g2.x <${namelist}
+      ${EXECens_tracker}/vint.x <${namelist}
       rcc=$?
 
       if [ $rcc -ne 0 ]; then
         set +x
         echo " "
-        echo "FATAL ERROR in call to vint_g2.x for GPH at fhour= $fhour"
+        echo "FATAL ERROR in call to vint.x for GPH at fhour= $fhour"
         echo "rcc= $rcc      EXITING.... "
         echo " "
         set -x
-        err_exit "vint_g2.x- ERROR for GPH AT extrkr_gen_g2.sh LINE $LINENO"
+        err_exit "vint.x- ERROR for GPH AT extrkr_gen_g2.sh LINE $LINENO"
       fi
  
 #     ----------------------------------------------------
@@ -1151,17 +1192,17 @@ fi
       # Output file
       export FORT51=${TRKDATA}/${cmodel}.${pert}.${PDY}${cyc}.t.f${fhour}
 
-      ${EXECens_tracker}/vint_g2.x <${namelist}
+      ${EXECens_tracker}/vint.x <${namelist}
       rcc=$?
 
       if [ $rcc -ne 0 ]; then
         set +x
         echo " "
-        echo "FATAL ERROR in call to vint_g2.x for T at fhour= $fhour"
+        echo "FATAL ERROR in call to vint.x for T at fhour= $fhour"
         echo "rcc= $rcc      EXITING.... "
         echo " "
         set -x
-        err_exit "vint_g2.x- ERROR for T AT extrkr_gen_g2.sh LINE $LINENO"
+        err_exit "vint.x- ERROR for T AT extrkr_gen_g2.sh LINE $LINENO"
       fi
 
 #     ----------------------------------------------------
@@ -1188,17 +1229,17 @@ fi
       # Output file
       export FORT51=${TRKDATA}/${cmodel}_tave.${pert}.${PDY}${cyc}.f${fhour}
 
-      ${EXECens_tracker}/tave_g2.x <${namelist}
+      ${EXECens_tracker}/tave.x <${namelist}
       rcc=$?
 
       if [ $rcc -ne 0 ]; then
         set +x
         echo " "
-        echo "FATAL ERROR in call to tave_g2.x at fhour= $fhour"
+        echo "FATAL ERROR in call to tave.x at fhour= $fhour"
         echo "rcc= $rcc      EXITING.... "
         echo " "
         set -x
-        err_exit "tave_g2.x- ERROR AT extrkr_gen_g2.sh LINE $LINENO"
+        err_exit "tave.x- ERROR AT extrkr_gen_g2.sh LINE $LINENO"
       fi
 
       tavefile=${TRKDATA}/${cmodel}_tave.${pert}.${PDY}${cyc}.f${fhour}
@@ -1313,24 +1354,24 @@ then
       do
         case ${parm} in
           "SurfaceU")
-          grep "UGRD:10 m " gfs.ix | ${WGRIB2:?} -i $gfile -append -grib \
-            ${TRKDATA}/master.gfsgribfile.${PDY}${cyc}.f${fhour} ;;
+              grep "UGRD:10 m " gfs.ix | ${WGRIB2:?} -i $gfile -append -grib \
+                           ${TRKDATA}/master.gfsgribfile.${PDY}${cyc}.f${fhour} ;;
           "SurfaceV")
-          grep "VGRD:10 m " gfs.ix | ${WGRIB2:?} -i $gfile -append -grib \
-            ${TRKDATA}/master.gfsgribfile.${PDY}${cyc}.f${fhour} ;;
-            *)
-          grep "${parm}" gfs.ix | ${WGRIB2:?} -i $gfile -append -grib \
-            ${TRKDATA}/master.gfsgribfile.${PDY}${cyc}.f${fhour} ;;
+              grep "VGRD:10 m " gfs.ix | ${WGRIB2:?} -i $gfile -append -grib \
+                           ${TRKDATA}/master.gfsgribfile.${PDY}${cyc}.f${fhour} ;;
+                  *)
+              grep "${parm}" gfs.ix | ${WGRIB2:?} -i $gfile -append -grib \
+                           ${TRKDATA}/master.gfsgribfile.${PDY}${cyc}.f${fhour} ;;
         esac
       done
 
       gfs_master_file=${TRKDATA}/master.gfsgribfile.${PDY}${cyc}.f${fhour}
       gfs_cat_file=${TRKDATA}/gfsgribfile.${PDY}${cyc}
-      ${GRB2INDEX:?} ${gfs_master_file} ${gfs_master_file}.ix
-      export err=$?; err_chk
+#      ${GRB2INDEX:?} ${gfs_master_file} ${gfs_master_file}.ix
+#      export err=$?; err_chk
 
-      g1=${gfs_master_file}
-      x1=${gfs_master_file}.ix
+#      g1=${gfs_master_file}
+#      x1=${gfs_master_file}.ix
       cat ${gfs_master_file} >>${gfs_cat_file}
     done
 
@@ -1343,6 +1384,10 @@ then
 
     for fhour in ${fcsthrs}
     do
+      if [ ${fhour} -eq 99 ]
+      then
+        continue
+      fi
 
       set +x
       echo " "
@@ -1388,11 +1433,9 @@ then
 #      ln -s -f ${TRKDATA}/${cmodel}.${PDY}${cyc}.t.f${fhour}     fort.51
 #      ${EXECens_tracker}/vint_g2.x <${namelist}
 #      rcc=$?
-
+      ffile=${gfile}
       gparm=11
 #      ffile=${TRKDATA}/${cmodel}.${PDY}${cyc}.t.f${fhour}
-      ffile=${gfile}
- 
       . prep_step
 
       # Input files
@@ -1400,26 +1443,32 @@ then
       echo "&timein ifcsthour=${fhour},"       >${namelist}
       echo "        iparm=${gparm},"          >>${namelist}
       echo "        gribver=${gribver},"      >>${namelist}
-      echo "        g2_jpdtn=${g2_jpdtn},"    >>${namelist}
-      echo "        g2_model=${model}/"       >>${namelist}
+      echo "        g2_jpdtn=${g2_jpdtn}/"    >>${namelist}
+#      echo "        g2_model=${model}/"       >>${namelist}
       export FORT11=${ffile}
       export FORT31=${ifile}
+
+      echo "FFILE = $ffile"
+      echo "IFILE = $ifile"
+      ls -l $ffile
+      ls -l $ifile
+      echo "Contents of FFILE:"
 
       # Output file
       export FORT51=${TRKDATA}/${cmodel}.tave.${PDY}${cyc}.f${fhour}
 #      export FORT92=${TRKDATA}/${cmodel}.tave92.${PDY}${cyc}.f${fhour}
 
-      ${EXECens_tracker}/tave_g2.x <${namelist}
+      ${EXECens_tracker}/tave.x <${namelist}
       rcc=$?
 
       if [ $rcc -ne 0 ]; then
         set +x
         echo " "
-        echo "FATAL ERROR in call to tave_g2.x at fhour= $fhour"
+        echo "FATAL ERROR in call to tave.x at fhour= $fhour"
         echo "rcc= $rcc      EXITING.... "
         echo " "
         set -x
-        err_exit "tave_g2.x- ERROR AT extrkr_gen_g2.sh LINE $LINENO"
+        err_exit "tave.x- ERROR AT extrkr_gen_g2.sh LINE $LINENO"
       fi
 
       tavefile=${TRKDATA}/${cmodel}.tave.${PDY}${cyc}.f${fhour}
@@ -1428,46 +1477,46 @@ then
       cat ${tavefile} >>${catfile}
 
 #J.Peng----2012-04-18---added for U-shear-----
-      gparm=33
-      ffile=${gfile}
+#      gparm=33
+#      ffile=${gfile}
 
-      . prep_step
+#      . prep_step
 
       # Input files
-      namelist=${TRKDATA}/ushear_input.${PDY}${cyc}
-      echo "&timein ifcsthour=${fhour},"  >${namelist}
-      echo "        iparm=${gparm},"          >>${namelist}
-      echo "        gribver=${gribver},"      >>${namelist}
-      echo "        g2_jpdtn=${g2_jpdtn},"    >>${namelist}
-      echo "        g2_model=${model}/"       >>${namelist}
-      export FORT11=${ffile}
-      export FORT31=${ifile}
+#      namelist=${TRKDATA}/ushear_input.${PDY}${cyc}
+#      echo "&timein ifcsthour=${fhour},"  >${namelist}
+#      echo "        iparm=${gparm},"          >>${namelist}
+#      echo "        gribver=${gribver},"      >>${namelist}
+#      echo "        g2_jpdtn=${g2_jpdtn}/"    >>${namelist}
+#      echo "        g2_model=${model}/"       >>${namelist}
+#      export FORT11=${ffile}
+#      export FORT31=${ifile}
 
       # Output file
-      export FORT51=${TRKDATA}/${cmodel}.ushear.${PDY}${cyc}.f${fhour}
+#      export FORT51=${TRKDATA}/${cmodel}.ushear.${PDY}${cyc}.f${fhour}
 
-      ${EXECens_tracker}/ushear_g2.x <${namelist}
-      rcc=$?
+#      ${EXECens_tracker}/ushear_g2.x <${namelist}
+#      rcc=$?
 
-      if [ $rcc -ne 0 ]; then
-        set +x
-        echo " "
-        echo "FATAL ERROR in call to ushear_g2.x at fhour= $fhour"
-        echo "rcc= $rcc      EXITING.... "
-        echo " "
-        set -x
-        err_exit "ushear_g2.x- ERROR AT extrkr_gen_g2.sh LINE $LINENO"
-      fi
+#      if [ $rcc -ne 0 ]; then
+#        set +x
+#        echo " "
+#        echo "FATAL ERROR in call to ushear_g2.x at fhour= $fhour"
+#        echo "rcc= $rcc      EXITING.... "
+#        echo " "
+#        set -x
+#        err_exit "ushear_g2.x- ERROR AT extrkr_gen_g2.sh LINE $LINENO"
+#      fi
 
-      ushearfile=${TRKDATA}/${cmodel}.ushear.${PDY}${cyc}.f${fhour}
-      cat ${ushearfile} >>${catfile}
+#      ushearfile=${TRKDATA}/${cmodel}.ushear.${PDY}${cyc}.f${fhour}
+#      cat ${ushearfile} >>${catfile}
 #J.Peng----2012-04-18---added for U-shear-----
 
-      set +x
-      echo " "
-      echo "Date in interpolation for fhour= $fhour after = `date`"
-      echo " "
-      set -x
+#      set +x
+#      echo " "
+#      echo "Date in interpolation for fhour= $fhour after = `date`"
+#      echo " "
+#      set -x
 
     done
 
@@ -1525,16 +1574,17 @@ then
       do
         case ${parm} in
           "SurfaceU")
-	        grep "UGRD:10 m " ens.ix | ${WGRIB2:?} -i $gfile -append -grib \
-	                      ${TRKDATA}/ens${pert}gribfile.${PDY}${cyc} ;;
+	        grep "UGRD:10 m above ground" ens.ix | ${WGRIB2:?} -i $gfile -append -grib \
+	                      ${TRKDATA}/ens${pert}gribfile.${PDY}${cyc}.${fhour} ;;
           "SurfaceV")
-	        grep "VGRD:10 m " ens.ix | ${WGRIB2:?} -i $gfile -append -grib \
-	                    ${TRKDATA}/ens${pert}gribfile.${PDY}${cyc} ;;
+	        grep "VGRD:10 m above ground" ens.ix | ${WGRIB2:?} -i $gfile -append -grib \
+	                    ${TRKDATA}/ens${pert}gribfile.${PDY}${cyc}.${fhour} ;;
                    *)
             grep "${parm}" ens.ix | ${WGRIB2:?} -i $gfile -append -grib \
-	                   ${TRKDATA}/ens${pert}gribfile.${PDY}${cyc} ;;
+	                   ${TRKDATA}/ens${pert}gribfile.${PDY}${cyc}.${fhour} ;;
         esac
       done
+      cat ${TRKDATA}/ens${pert}gribfile.${PDY}${cyc}.${fhour} >> ${TRKDATA}/ens${pert}gribfile.${PDY}${cyc}
     done
   
     ${GRB2INDEX:?} ${TRKDATA}/ens${pert}gribfile.${PDY}${cyc} ${TRKDATA}/ens${pert}ixfile.${PDY}${cyc}
@@ -1542,22 +1592,22 @@ then
 
 #   --------------------------------------------
     if [ ${PHASEFLAG} = 'y' ]; then
-    catfile=${TRKDATA}/ens${pert}.${PDY}${cyc}.catfile
-    >${catfile}
+      catfile=${TRKDATA}/ens${pert}.${PDY}${cyc}.catfile
+      >${catfile}
 
-    for fhour in ${fcsthrs}
-    do
+      for fhour in ${fcsthrs}
+      do
 
-      set +x
-      echo " "
-      echo "Date in interpolation for pert= $pert and fhour= $fhour before = `date`"
-      echo " "
-      set -x
+        set +x
+        echo " "
+        echo "Date in interpolation for pert= $pert and fhour= $fhour before = `date`"
+        echo " "
+        set -x
 
-      gfile=${TRKDATA}/ens${pert}gribfile.${PDY}${cyc}
-      ifile=${TRKDATA}/ens${pert}ixfile.${PDY}${cyc}
-      ${GRB2INDEX:?} $gfile $ifile
-      export err=$?; err_chk
+        gfile=${TRKDATA}/ens${pert}gribfile.${PDY}${cyc}
+        ifile=${TRKDATA}/ens${pert}ixfile.${PDY}${cyc}
+        ${GRB2INDEX:?} $gfile $ifile
+        export err=$?; err_chk
 
 #      gparm=7
 #      namelist=${TRKDATA}/vint_input.${PDY}${cyc}.z
@@ -1589,92 +1639,91 @@ then
 #      ${EXECens_tracker}/vint_g2.x <${namelist}
 #      rcc=$?
 
-      gparm=11
+        gparm=11
 #      ffile=${TRKDATA}/${cmodel}_${pert}.${PDY}${cyc}.t.f${fhour}
-      ffile=${gfile}
+        ffile=${gfile}
 #      ifile=${TRKDATA}/${cmodel}_${pert}.${PDY}${cyc}.t.f${fhour}.i
-      ifile=${TRKDATA}/ens${pert}ixfile.${PDY}${cyc}
+        ifile=${TRKDATA}/ens${pert}ixfile.${PDY}${cyc}
 #      ${GRB2INDEX:?} ${ffile} ${ifile}
 #      export err=$?; err_chk
 
       . prep_step
 
       # Input files
-      namelist=${TRKDATA}/tave_input.${PDY}${cyc}
-      echo "&timein ifcsthour=${fhour},"       >${namelist}
-      echo "        iparm=${gparm},"          >>${namelist}
-      echo "        gribver=${gribver},"      >>${namelist}
-      echo "        g2_jpdtn=${g2_jpdtn},"    >>${namelist}
-      echo "        g2_model=${model}/"       >>${namelist}
-      export FORT11=${ffile}
-      export FORT31=${ifile}
+        namelist=${TRKDATA}/tave_input.${PDY}${cyc}
+        echo "&timein ifcsthour=${fhour},"       >${namelist}
+        echo "        iparm=${gparm},"          >>${namelist}
+        echo "        gribver=${gribver},"      >>${namelist}
+        echo "        g2_jpdtn=${g2_jpdtn}/"    >>${namelist}
+        export FORT11=${ffile}
+        export FORT31=${ifile}
 
       # Output file
-      export FORT51=${TRKDATA}/${cmodel}_${pert}.tave.${PDY}${cyc}.f${fhour}
+        export FORT51=${TRKDATA}/${cmodel}_${pert}.tave.${PDY}${cyc}.f${fhour}
 
-      ${EXECens_tracker}/tave_g2.x <${namelist}
-      rcc=$?
+        ${EXECens_tracker}/tave.x <${namelist}
+        rcc=$?
 
-      if [ $rcc -ne 0 ]; then
-        set +x
-        echo " "
-        echo "FATAL ERROR in call to tave_g2.x at fhour= $fhour"
-        echo "rcc= $rcc      EXITING.... "
-        echo " "
-        set -x
-        err_exit "tave_g2.x- ERROR AT extrkr_gen_g2.sh LINE $LINENO"
-      fi
+        if [ $rcc -ne 0 ]; then
+          set +x
+          echo " "
+          echo "FATAL ERROR in call to tave.x at fhour= $fhour"
+          echo "rcc= $rcc      EXITING.... "
+          echo " "
+          set -x
+          err_exit "tave.x- ERROR AT extrkr_gen_g2.sh LINE $LINENO"
+        fi
 
-      tavefile=${TRKDATA}/${cmodel}_${pert}.tave.${PDY}${cyc}.f${fhour}
+        tavefile=${TRKDATA}/${cmodel}_${pert}.tave.${PDY}${cyc}.f${fhour}
 #      zfile=${TRKDATA}/${cmodel}_${pert}.${PDY}${cyc}.z.f${fhour}
 #      cat ${zfile} ${tavefile} >>${catfile}
-      cat ${tavefile} >>${catfile}
+        cat ${tavefile} >>${catfile}
 #      rm $tavefile $zfile
 
 #J.Peng----2014-10-15---added for U-shear-----
-      gparm=33
-      ffile=${gfile}
-      ifile=${TRKDATA}/ens${pert}ixfile.${PDY}${cyc}
+#      gparm=33
+#      ffile=${gfile}
+#      ifile=${TRKDATA}/ens${pert}ixfile.${PDY}${cyc}
 
-      . prep_step
+#      . prep_step
 
       # Input files
-      namelist=${TRKDATA}/ushear_input.${PDY}${cyc}
-      echo "&timein ifcsthour=${fhour},"  >${namelist}
-      echo "        iparm=${gparm},"          >>${namelist}
-      echo "        gribver=${gribver},"      >>${namelist}
-      echo "        g2_jpdtn=${g2_jpdtn},"    >>${namelist}
-      echo "        g2_model=${model}/"       >>${namelist}
-      export FORT11=${ffile}
-      export FORT31=${ifile}
+#      namelist=${TRKDATA}/ushear_input.${PDY}${cyc}
+#      echo "&timein ifcsthour=${fhour},"  >${namelist}
+#      echo "        iparm=${gparm},"          >>${namelist}
+#      echo "        gribver=${gribver},"      >>${namelist}
+#      echo "        g2_jpdtn=${g2_jpdtn},"    >>${namelist}
+#      echo "        g2_model=${model}/"       >>${namelist}
+#      export FORT11=${ffile}
+#      export FORT31=${ifile}
 
       # Output file
-      export FORT51=${TRKDATA}/${cmodel}_${pert}.ushear.${PDY}${cyc}.f${fhour}
+#      export FORT51=${TRKDATA}/${cmodel}_${pert}.ushear.${PDY}${cyc}.f${fhour}
 
-      ${EXECens_tracker}/ushear_g2.x <${namelist}
-      rcc=$?
+#      ${EXECens_tracker}/ushear_g2.x <${namelist}
+#      rcc=$?
 
-      if [ $rcc -ne 0 ]; then
-        set +x
-        echo " "
-        echo "FATAL ERROR in call to ushear_g2.x at fhour= $fhour"
-        echo "rcc= $rcc      EXITING.... "
-        echo " "
-        set -x
-        err_exit "ushear_g2.x- ERROR AT extrkr_gen_g2.sh LINE $LINENO"
-      fi
+#      if [ $rcc -ne 0 ]; then
+#        set +x
+#        echo " "
+#        echo "FATAL ERROR in call to ushear_g2.x at fhour= $fhour"
+#        echo "rcc= $rcc      EXITING.... "
+#        echo " "
+#        set -x
+#        err_exit "ushear_g2.x- ERROR AT extrkr_gen_g2.sh LINE $LINENO"
+#      fi
 
-      ushearfile=${TRKDATA}/${cmodel}_${pert}.ushear.${PDY}${cyc}.f${fhour}
-      cat ${ushearfile} >>${catfile}
+#      ushearfile=${TRKDATA}/${cmodel}_${pert}.ushear.${PDY}${cyc}.f${fhour}
+#      cat ${ushearfile} >>${catfile}
 #J.Peng----2014-10-15---added for U-shear-----
     
-      set +x
-      echo " "
-      echo "Date in interpolation for pert= $pert and fhour= $fhour after = `date`"
-      echo " "
-      set -x
+#      set +x
+#      echo " "
+#      echo "Date in interpolation for pert= $pert and fhour= $fhour after = `date`"
+#      echo " "
+#      set -x
     
-    done
+      done
     fi
   fi
 
@@ -1790,17 +1839,17 @@ then
       # Output file
       export FORT51=${TRKDATA}/${cmodel}.${PDY}${cyc}.z.f${fhour}
 
-      ${EXECens_tracker}/vint_g2.x <${namelist}
+      ${EXECens_tracker}/vint.x <${namelist}
       rcc=$?
 
       if [ $rcc -ne 0 ]; then
         set +x
         echo " "
-        echo "FATAL ERROR in call to vint_g2.x for GPH at fhour= $fhour"
+        echo "FATAL ERROR in call to vint.x for GPH at fhour= $fhour"
         echo "rcc= $rcc      EXITING.... "
         echo " "
         set -x
-        err_exit "vint_g2.x- ERROR for GPH AT extrkr_gen_g2.sh LINE $LINENO"
+        err_exit "vint.x- ERROR for GPH AT extrkr_gen_g2.sh LINE $LINENO"
       fi
 
 #     ----------------------------------------------------
@@ -1825,17 +1874,17 @@ then
       # Output file
       export FORT51=${TRKDATA}/${cmodel}.${PDY}${cyc}.t.f${fhour}
 
-      ${EXECens_tracker}/vint_g2.x <${namelist}
+      ${EXECens_tracker}/vint.x <${namelist}
       rcc=$?
 
       if [ $rcc -ne 0 ]; then
         set +x
         echo " "
-        echo "FATAL ERROR in call to vint_g2.x for T at fhour= $fhour"
+        echo "FATAL ERROR in call to vint.x for T at fhour= $fhour"
         echo "rcc= $rcc      EXITING.... "
         echo " "
         set -x
-        err_exit "vint_g2.x- ERROR for T AT extrkr_gen_g2.sh LINE $LINENO"
+        err_exit "vint.x- ERROR for T AT extrkr_gen_g2.sh LINE $LINENO"
       fi
 
 #     ----------------------------------------------------
@@ -1863,17 +1912,17 @@ then
       # Output file
       export FORT51=${TRKDATA}/${cmodel}_tave.${PDY}${cyc}.f${fhour}
 
-      ${EXECens_tracker}/tave_g2.x <${namelist}
+      ${EXECens_tracker}/tave.x <${namelist}
       rcc=$?
 
       if [ $rcc -ne 0 ]; then
         set +x
         echo " "
-        echo "FATAL ERROR in call to tave_g2.x at fhour= $fhour"
+        echo "FATAL ERROR in call to tave.x at fhour= $fhour"
         echo "rcc= $rcc      EXITING.... "
         echo " "
         set -x
-        err_exit "tave_g2.x- ERROR AT extrkr_gen_g2.sh LINE $LINENO"
+        err_exit "tave.x- ERROR AT extrkr_gen_g2.sh LINE $LINENO"
       fi
 
       tavefile=${TRKDATA}/${cmodel}_tave.${PDY}${cyc}.f${fhour}
@@ -2038,17 +2087,17 @@ then
       # Output file
       export FORT51=${TRKDATA}/${cmodel}.${PDY}${cyc}.z.f${fhour}
 
-      ${EXECens_tracker}/vint_g2.x <${namelist}
+      ${EXECens_tracker}/vint.x <${namelist}
       rcc=$?
 
       if [ $rcc -ne 0 ]; then
         set +x
         echo " "
-        echo "FATAL ERROR in call to vint_g2.x for GPH at fhour= $fhour"
+        echo "FATAL ERROR in call to vint.x for GPH at fhour= $fhour"
         echo "rcc= $rcc      EXITING.... "
         echo " "
         set -x
-        err_exit "vint_g2.x- ERROR for GPH AT extrkr_gen_g2.sh LINE $LINENO"
+        err_exit "vint.x- ERROR for GPH AT extrkr_gen_g2.sh LINE $LINENO"
       fi
 
 #     ----------------------------------------------------
@@ -2073,17 +2122,17 @@ then
       # Output file
       export FORT51=${TRKDATA}/${cmodel}.${PDY}${cyc}.t.f${fhour}
 
-      ${EXECens_tracker}/vint_g2.x <${namelist}
+      ${EXECens_tracker}/vint.x <${namelist}
       rcc=$?
 
       if [ $rcc -ne 0 ]; then
         set +x
         echo " "
-        echo "FATAL ERROR in call to vint_g2.x for T at fhour= $fhour"
+        echo "FATAL ERROR in call to vint.x for T at fhour= $fhour"
         echo "rcc= $rcc      EXITING.... "
         echo " "
         set -x
-        err_exit "vint_g2.x- ERROR for T AT extrkr_gen_g2.sh LINE $LINENO"
+        err_exit "vint.x- ERROR for T AT extrkr_gen_g2.sh LINE $LINENO"
       fi
 
 #     ----------------------------------------------------
@@ -2111,17 +2160,17 @@ then
       # Output file
       export FORT51=${TRKDATA}/${cmodel}_tave.${PDY}${cyc}.f${fhour}
 
-      ${EXECens_tracker}/tave_g2.x <${namelist}
+      ${EXECens_tracker}/tave.x <${namelist}
       rcc=$?
 
       if [ $rcc -ne 0 ]; then
         set +x
         echo " "
-        echo "FATAL ERROR in call to tave_g2.x at fhour= $fhour"
+        echo "FATAL ERROR in call to tave.x at fhour= $fhour"
         echo "rcc= $rcc      EXITING.... "
         echo " "
         set -x
-        err_exit "tave_g2.x- ERROR AT extrkr_gen_g2.sh LINE $LINENO"
+        err_exit "tave.x- ERROR AT extrkr_gen_g2.sh LINE $LINENO"
       fi
 
       tavefile=${TRKDATA}/${cmodel}_tave.${PDY}${cyc}.f${fhour}
@@ -2322,17 +2371,17 @@ then
         # Output file
         export FORT51=${TRKDATA}/${cmodel}.${pert}.${PDY}${cyc}.z.f${fhour}
         
-        ${EXECens_tracker}/vint_g2.x <${namelist}
+        ${EXECens_tracker}/vint.x <${namelist}
         rcc=$?
 
         if [ $rcc -ne 0 ]; then
           set +x
           echo " "
-          echo "FATAL ERROR in call to vint_g2.x for GPH at fhour= $fhour"
+          echo "FATAL ERROR in call to vint.x for GPH at fhour= $fhour"
           echo "rcc= $rcc      EXITING.... "
           echo " "
           set -x
-          err_exit "vint_g2.x- ERROR for GPH AT extrkr_gen_g2.sh LINE $LINENO"
+          err_exit "vint.x- ERROR for GPH AT extrkr_gen_g2.sh LINE $LINENO"
         fi
 
 #       ----------------------------------------------------
@@ -2358,17 +2407,17 @@ then
         # Output file
         export FORT51=${TRKDATA}/${cmodel}.${pert}.${PDY}${cyc}.t.f${fhour}
 
-        ${EXECens_tracker}/vint_g2.x <${namelist}
+        ${EXECens_tracker}/vint.x <${namelist}
         rcc=$?
 
         if [ $rcc -ne 0 ]; then
           set +x
           echo " "
-          echo "FATAL ERROR in call to vint_g2.x for T at fhour= $fhour"
+          echo "FATAL ERROR in call to vint.x for T at fhour= $fhour"
           echo "rcc= $rcc      EXITING.... "
           echo " "
           set -x
-          err_exit "vint_g2.x- ERROR for T AT extrkr_gen_g2.sh LINE $LINENO"
+          err_exit "vint.x- ERROR for T AT extrkr_gen_g2.sh LINE $LINENO"
         fi
 
 #       ----------------------------------------------------
@@ -2395,17 +2444,17 @@ then
         # Output file
         export FORT51=${TRKDATA}/${cmodel}_tave.${pert}.${PDY}${cyc}.f${fhour}
 
-        ${EXECens_tracker}/tave_g2.x <${namelist}
+        ${EXECens_tracker}/tave.x <${namelist}
         rcc=$?
 
         if [ $rcc -ne 0 ]; then
           set +x
           echo " "
-          echo "FATAL ERROR in call to tave_g2.x at fhour= $fhour"
+          echo "FATAL ERROR in call to tave.x at fhour= $fhour"
           echo "rcc= $rcc      EXITING.... "
           echo " "
           set -x
-          err_exit "tave_g2.x- ERROR AT extrkr_gen_g2.sh LINE $LINENO"
+          err_exit "tave.x- ERROR AT extrkr_gen_g2.sh LINE $LINENO"
         fi
 
         tavefile=${TRKDATA}/${cmodel}_tave.${pert}.${PDY}${cyc}.f${fhour}
@@ -2505,56 +2554,57 @@ then
   echo ${last_fcst_hour} >${TRKDATA}/last_fcst_hour.${atcfout}.${PDY}${cyc}
 fi
 
+#-----------------------------------------namelist definition-----------------------#
+source ${USHens_tracker}/gribvar.sh 
 namelist=${TRKDATA}/input.${atcfout}.${PDY}${cyc}
 ATCFNAME=` echo "${atcfname}" | tr '[a-z]' '[A-Z]'`
+#-----------------------------------------------------------------------------------#
 
 export atcfymdh=${scc}${syy}${smm}${sdd}${shh}
 
-contour_interval=100.0
-write_vit=y
-want_oci=.TRUE.
+#contour_interval=100.0
+#write_vit=n
+#want_oci=.TRUE.
 
-echo "&datein inp%bcc=${scc},inp%byy=${syy},inp%bmm=${smm},"      >${namelist}
-echo "        inp%bdd=${sdd},inp%bhh=${shh},inp%model=${model}," >>${namelist}
-echo "        inp%modtyp='${modtyp}',"                           >>${namelist}
-echo "        inp%lt_units='${lead_time_units}',"                >>${namelist}
-echo "        inp%file_seq='${file_sequence}',"                  >>${namelist}
-echo "        inp%nesttyp='${nest_type}'/"                       >>${namelist}
-echo "&atcfinfo atcfnum=${atcfnum},atcfname='${ATCFNAME}',"      >>${namelist}
-echo "          atcfymdh=${atcfymdh},atcffreq=${atcffreq}/"      >>${namelist}
-echo "&trackerinfo trkrinfo%westbd=${trkrwbd},"                  >>${namelist}
-echo "      trkrinfo%eastbd=${trkrebd},"                         >>${namelist}
-echo "      trkrinfo%northbd=${trkrnbd},"                        >>${namelist}
-echo "      trkrinfo%southbd=${trkrsbd},"                        >>${namelist}
-echo "      trkrinfo%type='${trkrtype}',"                        >>${namelist}
-echo "      trkrinfo%mslpthresh=${mslpthresh},"                  >>${namelist}
-echo "      trkrinfo%v850thresh=${v850thresh},"                  >>${namelist}
-echo "      trkrinfo%gridtype='${modtyp}',"                      >>${namelist}
-echo "      trkrinfo%contint=${contour_interval},"               >>${namelist}
-echo "      trkrinfo%want_oci=${want_oci},"                      >>${namelist}
-echo "      trkrinfo%out_vit='${write_vit}',"                    >>${namelist}
-echo "      trkrinfo%gribver=${gribver},"                        >>${namelist}
-echo "      trkrinfo%g2_jpdtn=${g2_jpdtn}/"                      >>${namelist}
-echo "&phaseinfo phaseflag='${PHASEFLAG}',"                      >>${namelist}
-echo "           phasescheme='${PHASE_SCHEME}',"                 >>${namelist}
-echo "           wcore_depth=${WCORE_DEPTH}/"                    >>${namelist}
-echo "&structinfo structflag='${STRUCTFLAG}',"                   >>${namelist}
-echo "            ikeflag='${IKEFLAG}'/"                         >>${namelist}
-echo "&fnameinfo  gmodname='${atcfname}',"                       >>${namelist}
-echo "            rundescr='${rundescr}',"                       >>${namelist}
-echo "            atcfdescr='${atcfdescr}'/"                     >>${namelist}
-echo "&verbose verb=3/"                                          >>${namelist}
-echo "&waitinfo use_waitfor='n',"                                >>${namelist}
-echo "          wait_min_age=10,"                                >>${namelist}
-echo "          wait_min_size=100,"                              >>${namelist}
-echo "          wait_max_wait=1800,"                             >>${namelist}
-echo "          wait_sleeptime=5,"                               >>${namelist}
-echo "          per_fcst_command=''/"                            >>${namelist}
+if [ ${loopnum} -eq 8 -a ${cmodel} = 'gfs' ]; then
+# set it artificially high to effectively turn off the check and 
+# ensure it won't be triggered
+  max_mslp_850=4000.0
+else
+  max_mslp_850=400.0
+fi
 
-export pgm=gettrk_gen_g2
+source ${USHens_tracker}/namelist_var.sh
+
+export pgm=gettrk.x
 . prep_step
 
-export FORT11=${gribfile}
+cp ${namelist} namelist.gettrk
+export FORT555=namelist.gettrk
+
+if [ ${inp_data_type} = 'grib' ]; then
+  export FORT11=${gribfile}
+else
+  export FORT11=${netcdffile}
+  if [ ${read_separate_land_mask_file} = 'y' ]; then
+    FORT17=${ncdf_ls_mask_filename}
+  fi
+fi
+
+if [ -s ${TRKDATA}/vitals.upd.${atcfout}.${PDY}${cyc} ]; then
+  cp ${TRKDATA}/vitals.upd.${atcfout}.${PDY}${cyc} \
+     ${TRKDATA}/tcvit_rsmc_storms.txt
+else
+>${TRKDATA}/tcvit_rsmc_storms.txt
+fi
+
+if [ -s ${TRKDATA}/genvitals.upd.${atcfout}.${PDY}${cyc} ]; then
+  cp ${TRKDATA}/genvitals.upd.${atcfout}.${PDY}${cyc} \
+     ${TRKDATA}/tcvit_genesis_storms.txt
+else
+  >${TRKDATA}/tcvit_genesis_storms.txt
+fi
+
 export FORT12=${TRKDATA}/vitals.upd.${atcfout}.${PDY}${shh}
 export FORT14=${TRKDATA}/genvitals.upd.${cmodel}.${atcfout}.${PDY}${cyc}
 export FORT15=${FIXens_tracker}/${cmodel}.genesis_leadtimes_120
@@ -2570,6 +2620,7 @@ if [ ${trkrtype} = 'tracker' ]; then
     export FORT66=${TRKDATA}/trak.${atcfout}.atcf_gen.${stormenv}.${PDY}${cyc}
     export FORT68=${TRKDATA}/trak.${atcfout}.atcf_sink.${stormenv}.${PDY}${cyc}
     export FORT69=${TRKDATA}/trak.${atcfout}.atcf_hfip.${stormenv}.${PDY}${cyc}
+    export FORT81=${TRKDATA}/trak.${atcfout}.parmfix.${PDY}${CYL}
   else
     export FORT61=${TRKDATA}/trak.${atcfout}.all.${PDY}${cyc}
     export FORT62=${TRKDATA}/trak.${atcfout}.atcf.${PDY}${cyc}
@@ -2578,6 +2629,7 @@ if [ ${trkrtype} = 'tracker' ]; then
     export FORT66=${TRKDATA}/trak.${atcfout}.atcf_gen.${PDY}${cyc}
     export FORT68=${TRKDATA}/trak.${atcfout}.atcf_sink.${PDY}${cyc}
     export FORT69=${TRKDATA}/trak.${atcfout}.atcf_hfip.${PDY}${cyc}
+    export FORT81=${TRKDATA}/trak.${atcfout}.parmfix.${PDY}${CYL}
   fi
 else
   export FORT61=${TRKDATA}/trak.${atcfout}.all.${regtype}.${PDY}${cyc}
@@ -2587,6 +2639,7 @@ else
   export FORT66=${TRKDATA}/trak.${atcfout}.atcf_gen.${regtype}.${PDY}${cyc}
   export FORT68=${TRKDATA}/trak.${atcfout}.atcf_sink.${regtype}.${PDY}${cyc}
   export FORT69=${TRKDATA}/trak.${atcfout}.atcf_hfip.${regtype}.${PDY}${cyc}
+  export FORT81=${TRKDATA}/trak.${atcfout}.parmfix.${PDY}${CYL}
 fi
 
 if [ ${atcfname} = 'aear' ]
@@ -2638,16 +2691,16 @@ msg="$pgm start for $atcfout at ${cyc}z"
 postmsg "$jlogfile" "$msg"
 
 set +x
-echo "+++ TIMING: BEFORE gettrk  ---> `date`"
+echo "+++ TIMING: BEFORE gettrk.x  ---> `date`"
 set -x
 
 ulimit -c unlimited
 
-${EXECens_tracker}/gettrk_gen_g2 <${namelist}
+${EXECens_tracker}/gettrk.x <${namelist}
 gettrk_rcc=$?
 
 set +x
-echo "+++ TIMING: AFTER  gettrk  ---> `date`"
+echo "+++ TIMING: AFTER  gettrk.x  ---> `date`"
 set -x
 
 #--------------------------------------------------------------#
@@ -2665,22 +2718,22 @@ if [ ${gettrk_rcc} -eq 0 ]; then
 
   if [ "$SENDCOM" = 'YES' ]; then
     cp ${TRKDATA}/trak.${atcfout}.atcfunix.${regtype}.${PDY}${cyc} ${COMOUT}/
-#    cp ${TRKDATA}/trak.${atcfout}.atcf_gen.${regtype}.${PDY}${cyc} ${COMOUT}/
+    cp ${TRKDATA}/trak.${atcfout}.atcf_gen.${regtype}.${PDY}${cyc} ${COMOUT}/
 
-    #if [ "$SENDDBN" = 'YES' ]; then
-    #  $DBNROOT/bin/dbn_alert MODEL ENS_GENESIS $job ${COMOUT}/trak.${atcfout}.atcfunix.${regtype}.${PDY}${cyc}
-    #fi
+    if [ "$SENDDBN" = 'YES' ]; then
+    $DBNROOT/bin/dbn_alert MODEL ENS_GENESIS $job ${COMOUT}/trak.${atcfout}.atcfunix.${regtype}.${PDY}${cyc}
+    fi
   fi
   msg="$pgm end for $atcfout at ${cyc}z completed normally"
   postmsg "$jlogfile" "$msg"
 else
   set +x
   echo " "
-  echo "FATAL ERROR:  An error occurred while running gettrk_gen_g2, "
+  echo "FATAL ERROR:  An error occurred while running gettrk.x, "
   echo "!!! which is the program that actually gets the track."
-  echo "!!! Return code from gettrk_gen_g2 = ${gettrk_rcc}"
+  echo "!!! Return code from gettrk = ${gettrk_rcc}"
   echo "!!! model= ${atcfout}, forecast initial time = ${PDY}${cyc}"
   echo " "
   set -x
-  err_exit "ERROR RUNNING gettrk_gen_g2 IN 2nd step"
+  err_exit "ERROR RUNNING gettrk.x IN 2nd step"
 fi
