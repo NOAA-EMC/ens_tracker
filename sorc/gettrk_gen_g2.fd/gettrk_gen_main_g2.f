@@ -12860,6 +12860,9 @@ c     These (i,j) coordinates are returned as ilonfix and jlatfix.
      &     ,trkrinfo,ifilret)
         if (ifilret == 0) then
           igridzeta(n) = int ((gridpoint_maxmin * 1e6) + 0.5)
+          if ( igridzeta(n) .ge. 9999 ) then
+            igridzeta(n)=9999
+          endif
         else
           igridzeta(n) = -99
         endif
